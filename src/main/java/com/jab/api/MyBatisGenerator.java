@@ -305,7 +305,7 @@ public class MyBatisGenerator {
       String namespace = StringUtils.toNonNull(properties.get("namespace"));
       String targetProject = StringUtils.toNonNull(properties.get("targetProject"));
       if (namespace.equals("")) {
-        namespace = "work/biz/log/";
+        namespace = "tempDir/";
       }
       //auto-generate Jsp,action and configuration
       if (generateExample) {

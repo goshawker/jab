@@ -1,7 +1,8 @@
 package com.jab.util;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
 
@@ -22,7 +23,7 @@ public class FileUtils {
   /**
    * The _log.
    */
-  static Logger _log = Logger.getLogger("com.jdframe.sys.core.util.FileUtils");
+  static Logger log = LogManager.getLogger(FileUtils.class);
 
   /**
    * Checks if is existed.
@@ -99,7 +100,7 @@ public class FileUtils {
     }
     inputStream = FileUtils.class.getResourceAsStream(resource);
     if (inputStream == null) {
-      _log.error("Could not find resource " + resource);
+      log.error("Could not find resource " + resource);
       throw new FileNotFoundException(resource);
     } else {
 //			_log.debug("Find resource "+resource +" in Jar.");

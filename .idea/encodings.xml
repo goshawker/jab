@@ -4,7 +4,10 @@
     <file url="file://$PROJECT_DIR$/src/main/java/com/jab/api/IntrospectedTable.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/jab/api/MyBatisGenerator.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/jab/api/TableConfiguration.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/jab/core/Action.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/jab/core/HttpAction.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/jab/core/IntrospectedTable.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/jab/core/JABHttpAction.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/jab/util/ByteUtils.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/jab/util/ClassUtils.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/jab/util/DateUtils.java" charset="GBK" />
@@ -26,6 +29,7 @@
     <file url="file://$PROJECT_DIR$/src/main/java/com/jab/util/ValidateUtils.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/jab/util/XmlUtils.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/src/main/resources/DBConfig.xml" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/template" charset="GBK" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

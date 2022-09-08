@@ -43,8 +43,6 @@ public class ByteUtils implements Serializable {
   }
 
   /**
-   * To bytes.
-   *
    * @param value the value
    * @return the byte[]
    */
@@ -58,8 +56,6 @@ public class ByteUtils implements Serializable {
   }
 
   /**
-   * To int.
-   *
    * @param bytes the bytes
    * @return the int
    */

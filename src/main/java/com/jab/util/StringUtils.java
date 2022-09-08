@@ -1,6 +1,6 @@
 package com.jab.util;
 
-import com.jab.core.VOProject;
+import com.jab.core.ValueObject;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Array;
@@ -410,7 +410,7 @@ public class StringUtils {
     }
     StringBuffer r = new StringBuffer(__c1.getName()); // 得到obj名称
 
-    if (obj instanceof VOProject) {
+    if (obj instanceof ValueObject) {
       // 检查本类域和所有超类域
       do {
         r.append(obj + "[");

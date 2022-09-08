@@ -1,0 +1,67 @@
+package #package;
+
+import com.jdframe.sys.core.action.JdframeAction;
+import com.jdframe.sys.core.util.*;
+import #package.*;
+ 
+// TODO: Auto-generated Javadoc
+/** 
+ * The Path : #package.#classname
+ *  
+ * Last-Modified-Time : #datetime
+ *
+ * @author 
+ * @see
+ * @version 1.0
+ */
+public class #classname extends #package.Action {
+	
+  
+   
+    @Override
+    protected String initial(){
+    	return INITIAL;
+    }
+    
+	 
+	@Override
+	protected String perform() {
+	    #initPk
+		int i = sqlsession.update("#newid",var);
+		if(i>0){
+		    /**
+			String task_title = "Title";
+			String task_link = "url";
+			String task_from = "01";//SystemId
+			String Task_expire_date = DateUtils._newDateTime(5);
+			String menu_id = "1000028";
+			
+			//Send Task
+			boolean isSend  =  _sendTask(task_title, Tokens._priority.CRITICAL, task_link, task_from, Task_expire_date, menu_id);
+			if(isSend)
+			 setSystemMessage("Success!");
+			else
+			 setSystemMessage("Send Failed!",true,null);
+			*/
+			 var = null;
+			 var = new #vo();
+			 setSystemMessage("Save Item Success!",true,null);
+		}else{
+			//fail
+			setSystemMessage("Save Item Failed!",true,null);
+		}
+		 
+		var = new #vo();
+		return SUCCESS;
+	}
+
+	
+ 
+	@Override
+	protected void validators() {
+		// TODO Auto-generated method stub
+	}
+	
+ 
+	 
+}
