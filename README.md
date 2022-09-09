@@ -1,2 +1,2 @@
 # jab
-This is an open source tool for automatic source code builds, automatically generating front-end and back-end code based on the profile system to reduce code writing efforts.
+This is an open source tool for automatically building source code, according to the configuration file, the system automatically generates front-end and back-end code, the main purpose is to reduce front-end and back-end code writing work.
