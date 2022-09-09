@@ -3,11 +3,12 @@ package com.jab.util;
 import java.io.Serializable;
 
 /**
- * @author mike
- * @version 1.0
- * @description: TODO
- * @date 2022/9/7 14:12
- */
+*
+* @Author: goshawker@yeah.net
+* @Description:
+* @Date: 2022/9/8 16:33
+* @Version: 1.0
+*/
 public class ByteUtils implements Serializable {
 
   protected byte[] _bytes;

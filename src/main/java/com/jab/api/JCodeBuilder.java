@@ -17,6 +17,8 @@ package com.jab.api;
 
 import com.jab.util.FileUtils;
 import com.jab.util.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.mybatis.generator.api.*;
 import org.mybatis.generator.config.Configuration;
 import org.mybatis.generator.config.Context;
@@ -35,9 +37,14 @@ import java.util.*;
 import static org.mybatis.generator.internal.util.ClassloaderUtility.getCustomClassloader;
 import static org.mybatis.generator.internal.util.messages.Messages.getString;
 
-
-public class MyBatisGenerator {
-  protected org.apache.log4j.Logger _log = org.apache.log4j.Logger.getLogger(getClass());
+/**
+ * @description: 自动代码生成主类入口
+ * @author mike
+ * @date 2022/9/8 20:05
+ * @version 1.0
+ */
+public class JCodeBuilder {
+  private final Logger log = LogManager.getLogger(getClass());
 
   private final Configuration configuration;
 
@@ -68,8 +75,8 @@ public class MyBatisGenerator {
    *                      you do not want warnings returned.
    * @throws InvalidConfigurationException if the specified configuration is invalid
    */
-  public MyBatisGenerator(Configuration configuration, ShellCallback shellCallback,
-                          List<String> warnings) throws InvalidConfigurationException {
+  public JCodeBuilder(Configuration configuration, ShellCallback shellCallback,
+                      List<String> warnings) throws InvalidConfigurationException {
     super();
     if (configuration == null) {
       throw new IllegalArgumentException(getString("RuntimeError.2")); //$NON-NLS-1$
@@ -310,44 +317,45 @@ public class MyBatisGenerator {
       //auto-generate Jsp,action and configuration
       if (generateExample) {
         boolean mainjsp = FileUtils.generateMainJsp(table, namespace, targetProject);
-        		if(mainjsp){
-        			_log.debug("generate main.jsp success.");
-        		}
+        if (mainjsp) {
+          log.debug("generate main.jsp success.");
+
+        }
         boolean createjsp = FileUtils.generateNewJsp(table, namespace, targetProject);
-        		if(createjsp){
-        			_log.debug("generate new.jsp success.");
-        		}
+        if (createjsp) {
+          log.debug("generate new.jsp success.");
+        }
         boolean modifyjsp = FileUtils.generateUpdateJsp(table, namespace, targetProject);
-        		if(modifyjsp){
-        			_log.debug("generate update.jsp success.");
-        		}
+        if (modifyjsp) {
+          log.debug("generate update.jsp success.");
+        }
 
         boolean mainaction = FileUtils.generateAction(table, namespace, targetProject);
-        		if(mainaction){
-        			_log.debug("generate mainaction file success.");
-        		}
+        if (mainaction) {
+          log.debug("generate mainaction file success.");
+        }
         boolean queryaction = FileUtils.generateQueryAction(table, namespace, targetProject);
-        		if(queryaction){
-        			_log.debug("generate queryaction file success.");
-        		}
+        if (queryaction) {
+          log.debug("generate queryaction file success.");
+        }
         boolean createaction = FileUtils.generateNewAction(table, namespace, targetProject);
-        		if(createaction){
-        			_log.debug("generate createaction file success.");
-        		}
+        if (createaction) {
+          log.debug("generate createaction file success.");
+        }
         boolean modifyaction = FileUtils.generateUpdateAction(table, namespace, targetProject);
-        		if(modifyaction){
-        			_log.debug("generate modifyaction file success.");
-        		}
+        if (modifyaction) {
+          log.debug("generate modifyaction file success.");
+        }
 
         boolean deleteaction = FileUtils.generateDeleteAction(table, namespace, targetProject);
-        		if(deleteaction){
-        			_log.debug("generate modifyaction file success.");
-        		}
+        if (deleteaction) {
+          log.debug("generate modifyaction file success.");
+        }
 
         boolean configaction = FileUtils.generateConfiguration(table, namespace, targetProject);
-        		if(configaction){
-        			_log.debug("generate configaction file success.");
-        		}
+        if (configaction) {
+          log.debug("generate configaction file success.");
+        }
 
         List<GeneratedXmlFile> list = table.getGeneratedXmlFiles();
         for (GeneratedXmlFile generatedXmlFile : list) {

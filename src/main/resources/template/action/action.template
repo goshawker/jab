@@ -3,8 +3,7 @@ package #package;
 import com.jdframe.sys.core.action.JdframeAction;
 import #package.*;
  
-// TODO: Auto-generated Javadoc
-/** 
+/**
  * The Path : #package.#classname
  *  
  * Last-Modified-Time : #datetime

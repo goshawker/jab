@@ -7,8 +7,7 @@ import com.jdframe.sys.core.util.*;
 import #package.*;
 
  
-// TODO: Auto-generated Javadoc
-/** 
+/**
  * The Path : #package.#classname
  *  
  * Last-Modified-Time : #datetime
@@ -21,14 +20,12 @@ public class #classname extends #package.Action {
  
     @Override
 	protected String initial() {
-		// TODO Auto-generated method stub
     	return INITIAL;
 	}
 	
  
 	@Override
 	protected String perform() {
-		// TODO Auto-generated method stub
 			int i = sqlsession.delete("#deleteid", var);
 			if(i>0){
 				setSystemMessage("Delete Item Success!");
@@ -47,9 +44,7 @@ public class #classname extends #package.Action {
  
 	@Override
 	protected void validators() {
-		// TODO Auto-generated method stub
-  
-	}
+  	}
 
   
 	
