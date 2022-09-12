@@ -31,11 +31,12 @@ import java.util.ArrayList;
 
 
 /**
- * @author mike
- * @version 1.0
- * @description: TODO
- * @date 2022/9/7 18:27
- */
+*
+* @Author: goshawker@yeah.net
+* @Description:
+* @Date: 2022/9/12 11:06
+* @Version: 1.0
+*/
 public class HttpAction extends HttpServlet implements Action {
   protected Logger log = LogManager.getLogger(HttpAction.class);
   // 返还前台的消息提示

@@ -10,11 +10,12 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * @author mike
- * @version 1.0
- * @description: TODO
- * @date 2022/9/7 18:58
- */
+*
+* @Author: goshawker@yeah.net
+* @Description:
+* @Date: 2022/9/12 11:06
+* @Version: 1.0
+*/
 public abstract class JABHttpAction extends HttpAction {
 
   /**

@@ -4,14 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-
-// TODO: Auto-generated Javadoc
 /**
- * @description: TODO
- * @author mike
- * @date 2022/9/7 14:18
- * @version 1.0
- */
+*
+* @Author: goshawker@yeah.net
+* @Description:
+* @Date: 2022/9/12 11:01
+* @Version: 1.0
+*/
 public class Mail {
 
 	/** The from addr. */

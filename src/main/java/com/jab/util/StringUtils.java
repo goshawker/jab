@@ -12,14 +12,13 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.UUID;
 
-// TODO: Auto-generated Javadoc
-
 /**
- * @author mike
- * @version 1.0
- * @description: TODO
- * @date 2022/9/7 14:18
- */
+*
+* @Author: goshawker@yeah.net
+* @Description:
+* @Date: 2022/9/12 11:00
+* @Version: 1.0
+*/
 public class StringUtils {
 
   /**
@@ -503,7 +502,6 @@ public class StringUtils {
         count = 0;
       }
     }
-
     sTmp = sTmp.trim();
     iLen = sTmp.length();
     if (sTmp.charAt(iLen - 1) == '¡„') {
@@ -555,6 +553,11 @@ public class StringUtils {
         sRes = "¡„";
     }
     return sRes;
+  }
+  public static void main(String[] args){
+    String res = StringUtils.doubleToChinese(2010910.02);
+    System.out.println(res);
+
   }
 
 }

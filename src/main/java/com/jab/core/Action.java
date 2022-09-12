@@ -18,11 +18,12 @@ package com.jab.core;
 // TODO: Auto-generated Javadoc
 
 /**
- * @author mike
- * @version 1.0
- * @description: TODO
- * @date 2022/9/7 18:28
- */
+*
+* @Author: goshawker@yeah.net
+* @Description:
+* @Date: 2022/9/12 11:06
+* @Version: 1.0
+*/
 public interface Action {
   String SUCCESS = "success";
   String NONE = "none";

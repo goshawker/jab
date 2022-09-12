@@ -6,14 +6,13 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
-
-// TODO: Auto-generated Javadoc
 /**
- * @description: TODO
- * @author mike
- * @date 2022/9/7 14:19
- * @version 1.0
- */
+*
+* @Author: goshawker@yeah.net
+* @Description:
+* @Date: 2022/9/12 11:04
+* @Version: 1.0
+*/
 public class ClassUtils {
 	
 	/** The Constant DOT. */

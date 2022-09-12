@@ -4,15 +4,13 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-
-// TODO: Auto-generated Javadoc
-
 /**
- * @author mike
- * @version 1.0
- * @description: TODO
- * @date 2022/9/7 14:18
- */
+*
+* @Author: goshawker@yeah.net
+* @Description:
+* @Date: 2022/9/12 11:00
+* @Version: 1.0
+*/
 public class URLUtils {
 
   /**
@@ -24,7 +22,6 @@ public class URLUtils {
   public static URL fromClass(Class contextClass) {
     String resourceName = contextClass.getName();
     int dotIndex = resourceName.lastIndexOf('.');
-
     if (dotIndex != -1)
       resourceName = resourceName.substring(0, dotIndex);
     resourceName = resourceName + ".properties";
@@ -72,21 +69,17 @@ public class URLUtils {
         loader = Thread.currentThread().getContextClassLoader();
       } catch (SecurityException e) {
         URLUtils utilURL = new URLUtils();
-
         loader = utilURL.getClass().getClassLoader();
       }
     }
-
     if (url == null)
       url = loader.getResource(resourceName);
     if (url == null)
       url = loader.getResource(resourceName + ".properties");
-
     if (url == null)
       url = ClassLoader.getSystemResource(resourceName);
     if (url == null)
       url = ClassLoader.getSystemResource(resourceName + ".properties");
-
     if (url == null)
       url = fromFilename(resourceName);
 

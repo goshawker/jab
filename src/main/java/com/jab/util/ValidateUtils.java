@@ -4,14 +4,14 @@ import java.text.ParseException;
 import java.util.*;
 
 
-// TODO: Auto-generated Javadoc
 
 /**
- * @author mike
- * @version 1.0
- * @description: TODO
- * @date 2022/9/7 14:18
- */
+*
+* @Author: goshawker@yeah.net
+* @Description:
+* @Date: 2022/9/12 11:00
+* @Version: 1.0
+*/
 public class ValidateUtils {
 
   /**
@@ -381,15 +381,12 @@ public class ValidateUtils {
   public static boolean isAlphabetic(String s) {
     if (isEmpty(s))
       return true;
-
     for (int i = 0; i < s.length(); i++) {
       char c = s.charAt(i);
-
       if (!isLetter(c)) {
         return false;
       }
     }
-
     return true;
   }
 
@@ -402,15 +399,11 @@ public class ValidateUtils {
   public static boolean isAlphanumeric(String s) {
     if (isEmpty(s))
       return true;
-
     for (int i = 0; i < s.length(); i++) {
       char c = s.charAt(i);
-
       if (!isLetterOrDigit(c))
         return false;
-
     }
-
     return true;
   }
 
@@ -523,8 +516,8 @@ public class ValidateUtils {
       } else {
         String normalizedZip = s.substring(0, 5);
         int iZip = Integer.parseInt(normalizedZip);
-				retval = ((iZip < 96701) || (iZip > 96898))
-								&& ((iZip < 99501) || (iZip > 99950));
+        retval = ((iZip < 96701) || (iZip > 96898))
+                && ((iZip < 99501) || (iZip > 99950));
       }
     }
     return retval;
@@ -544,7 +537,6 @@ public class ValidateUtils {
     int sum = 0;
     int mul = 1;
     int l = st.length();
-
     if (l > 19)
       return false;
     for (int i = 0; i < l; i++) {
@@ -579,10 +571,8 @@ public class ValidateUtils {
   public static boolean isDate(String date) {
     if (isEmpty(date))
       return true;
-
     int dateSlash1 = date.indexOf("/");
     int dateSlash2 = date.lastIndexOf("/");
-
     if ((dateSlash1 <= 0) || (dateSlash1 == dateSlash2))
       return false;
     String month = date.substring(0, dateSlash1);
@@ -603,11 +593,9 @@ public class ValidateUtils {
   public static boolean isDate(String year, String month, String day) {
     if ((!isYear(year)) || (!isMonth(month)) || (!isDay(day)))
       return false;
-
     int intYear = Integer.parseInt(year);
     int intMonth = Integer.parseInt(month);
     int intDay = Integer.parseInt(day);
-
     if (intDay > __daysInMonth[(intMonth - 1)])
       return false;
     return (intMonth != 2) || (intDay <= daysInFebruary(intYear));
@@ -625,10 +613,8 @@ public class ValidateUtils {
       return true;
     int dateSlash1 = date.indexOf("/");
     int dateSlash2 = date.lastIndexOf("/");
-
     if (dateSlash1 <= 0)
       return false;
-
     Date passed = null;
     if (dateSlash1 == dateSlash2) {
       String month = date.substring(0, dateSlash1);
@@ -654,7 +640,6 @@ public class ValidateUtils {
         return false;
       passed = DateUtils.parseDateTime(year + "-" + "month" + "day");
     }
-
     Date now = new Date();
     if (passed != null) {
       return passed.after(now);
@@ -693,7 +678,6 @@ public class ValidateUtils {
   public static boolean isDinersClub(String cc) {
     int firstdig = Integer.parseInt(cc.substring(0, 1));
     int seconddig = Integer.parseInt(cc.substring(1, 2));
-
     if ((cc.length() == 14) && (firstdig == 3)
             && ((seconddig == 0) || (seconddig == 6) || (seconddig == 8)))
       return isCreditCard(cc);
@@ -708,7 +692,6 @@ public class ValidateUtils {
    */
   public static boolean isDiscover(String cc) {
     String first4digs = cc.substring(0, 4);
-
     if ((cc.length() == 16) && (first4digs.equals("6011")))
       return isCreditCard(cc);
     return false;
@@ -723,16 +706,12 @@ public class ValidateUtils {
   public static boolean isEmail(String s) {
     if (isEmpty(s))
       return true;
-
     if (isWhitespace(s))
       return false;
-
     int i = 1;
     int sLength = s.length();
-
     while ((i < sLength) && (s.charAt(i) != '@'))
       i++;
-
     return (i < sLength - 1) && (s.charAt(i) == '@');
   }
 
@@ -764,7 +743,6 @@ public class ValidateUtils {
    */
   public static boolean isEnRoute(String cc) {
     String first4digs = cc.substring(0, 4);
-
     if ((cc.length() == 15)
             && ((first4digs.equals("2014")) || (first4digs.equals("2149"))))
       return isCreditCard(cc);
@@ -780,15 +758,11 @@ public class ValidateUtils {
   public static boolean isFloat(String s) {
     if (isEmpty(s))
       return true;
-
     boolean seenDecimalPoint = false;
-
     if (s.startsWith("."))
       return false;
-
     for (int i = 0; i < s.length(); i++) {
       char c = s.charAt(i);
-
       if (c == ".".charAt(0)) {
         if (!seenDecimalPoint)
           seenDecimalPoint = true;
@@ -796,7 +770,6 @@ public class ValidateUtils {
           return false;
       } else if (!isDigit(c))
         return false;
-
     }
 
     return true;
@@ -823,10 +796,8 @@ public class ValidateUtils {
   public static boolean isInteger(String s) {
     if (isEmpty(s))
       return true;
-
     for (int i = 0; i < s.length(); i++) {
       char c = s.charAt(i);
-
       if (!isDigit(c))
         return false;
 
@@ -846,12 +817,9 @@ public class ValidateUtils {
   public static boolean isIntegerInRange(String s, int a, int b) {
     if (isEmpty(s))
       return true;
-
     if (!isSignedInteger(s))
       return false;
-
     int num = Integer.parseInt(s);
-
     return (num >= a) && (num <= b);
   }
 
@@ -864,9 +832,7 @@ public class ValidateUtils {
   public static boolean isInternationalPhoneNumber(String s) {
     if (isEmpty(s))
       return true;
-
     String normalizedPhone = stripCharsInBag(s, "()- ");
-
     return isPositiveInteger(normalizedPhone);
   }
 
@@ -961,7 +927,6 @@ public class ValidateUtils {
       return true;
     try {
       int temp = Integer.parseInt(s);
-
       return temp < 0;
     } catch (Exception e) {
     }
@@ -979,7 +944,6 @@ public class ValidateUtils {
       return true;
     try {
       int temp = Integer.parseInt(s);
-
       return temp >= 0;
     } catch (Exception e) {
     }
@@ -997,7 +961,6 @@ public class ValidateUtils {
       return true;
     try {
       int temp = Integer.parseInt(s);
-
       return temp <= 0;
     } catch (Exception e) {
     }
@@ -1036,7 +999,6 @@ public class ValidateUtils {
       return true;
     try {
       long temp = Long.parseLong(s);
-
       return temp > 0L;
     } catch (Exception e) {
     }
@@ -1052,9 +1014,7 @@ public class ValidateUtils {
   public static boolean isSSN(String s) {
     if (isEmpty(s))
       return true;
-
     String normalizedSSN = stripCharsInBag(s, "- ");
-
     return (isInteger(normalizedSSN)) && (normalizedSSN.length() == 9);
   }
 
@@ -1081,7 +1041,6 @@ public class ValidateUtils {
       return true;
     try {
       double temp = Double.parseDouble(s);
-
       return true;
     } catch (Exception e) {
     }
@@ -1099,7 +1058,6 @@ public class ValidateUtils {
       return true;
     try {
       float temp = Float.parseFloat(s);
-
       return temp <= 0.0F;
     } catch (Exception e) {
     }
@@ -1117,7 +1075,6 @@ public class ValidateUtils {
       return true;
     try {
       int temp = Integer.parseInt(s);
-
       return true;
     } catch (Exception e) {
     }
@@ -1135,7 +1092,6 @@ public class ValidateUtils {
       return true;
     try {
       long temp = Long.parseLong(s);
-
       return true;
     } catch (Exception e) {
     }
@@ -1439,8 +1395,6 @@ public class ValidateUtils {
   }
 
   /**
-   * Title:  _isWindows
-   * Description: TODO(这里用一句话描述这个方法的作用)
    *
    * @param
    * @return boolean
@@ -1448,6 +1402,6 @@ public class ValidateUtils {
   public static boolean isWindows() {
     Properties prop = System.getProperties();
     String os = prop.getProperty("os.name");
-		return os.toLowerCase().startsWith("win");
-	}
+    return os.toLowerCase().startsWith("win");
+  }
 }

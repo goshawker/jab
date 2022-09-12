@@ -3,15 +3,13 @@ package com.jab.util;
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Date;
 
-
-// TODO: Auto-generated Javadoc
-
 /**
- * @author mike
- * @version 1.0
- * @description: TODO
- * @date 2022/9/7 14:29
- */
+*
+* @Author: goshawker@yeah.net
+* @Description:
+* @Date: 2022/9/12 11:01
+* @Version: 1.0
+*/
 public class ParameterUtils {
 
   /**
@@ -169,10 +167,7 @@ public class ParameterUtils {
                                     String paramName, boolean emptyStringsOK) {
     String temp = request.getParameter(paramName);
     if (emptyStringsOK) {
-      if (temp != null) {
-        return temp;
-      }
-      return null;
+      return temp;
     }
 
     return getParameter(request, paramName);

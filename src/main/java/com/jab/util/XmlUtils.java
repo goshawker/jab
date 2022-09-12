@@ -1,5 +1,6 @@
 package com.jab.util;
 
+import com.sun.org.apache.xpath.internal.XPathAPI;
 import org.w3c.dom.*;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -15,15 +16,13 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.net.URL;
 
-
-// TODO: Auto-generated Javadoc
-
 /**
- * @author mike
- * @version 1.0
- * @description: TODO
- * @date 2022/9/7 14:18
- */
+*
+* @Author: goshawker@yeah.net
+* @Description:
+* @Date: 2022/9/12 11:00
+* @Version: 1.0
+*/
 public class XmlUtils {
 
   /**
@@ -37,7 +36,7 @@ public class XmlUtils {
    * @param element the element
    * @return the element text
    */
-  public static final String getElementText(Element element) {
+  public static String getElementText(Element element) {
     NodeList nl = element.getChildNodes();
     for (int i = 0; i < nl.getLength(); i++) {
       Node c = nl.item(i);
@@ -139,12 +138,11 @@ public class XmlUtils {
    *
    * @param document the document
    * @param out      the out
-   * @throws IOException                          Signals that an I/O exception has occurred.
    * @throws TransformerFactoryConfigurationError the transformer factory configuration error
    * @throws TransformerException                 the transformer exception
    */
-  public static final void print(Document document, OutputStream out)
-          throws IOException, TransformerFactoryConfigurationError,
+  public static void print(Document document, OutputStream out)
+          throws TransformerFactoryConfigurationError,
           TransformerException {
     print(document, new OutputStreamWriter(out), __encoding);
   }
@@ -158,7 +156,7 @@ public class XmlUtils {
    * @throws TransformerFactoryConfigurationError the transformer factory configuration error
    * @throws TransformerException                 the transformer exception
    */
-  public static final void print(Document document, File file)
+  public static void print(Document document, File file)
           throws IOException, TransformerFactoryConfigurationError,
           TransformerException {
     print(document, new FileWriter(file), __encoding);
@@ -174,8 +172,8 @@ public class XmlUtils {
    * @throws TransformerException                 the transformer exception
    * @throws IOException                          Signals that an I/O exception has occurred.
    */
-  public static final void print(Document document, String file,
-                                 String encoding) throws TransformerFactoryConfigurationError,
+  public static void print(Document document, String file,
+                           String encoding) throws TransformerFactoryConfigurationError,
           TransformerException, IOException {
     print(document, new FileWriter(file), encoding);
   }
@@ -190,12 +188,10 @@ public class XmlUtils {
    * @param sysId    the sys id
    * @throws TransformerFactoryConfigurationError the transformer factory configuration error
    * @throws TransformerException                 the transformer exception
-   * @throws IOException                          Signals that an I/O exception has occurred.
    */
-  public static final void print(Document document, String file,
-                                 String encoding, String publicId, String sysId)
-          throws TransformerFactoryConfigurationError, TransformerException,
-          IOException {
+  public static void print(Document document, String file,
+                           String encoding, String publicId, String sysId)
+          throws TransformerFactoryConfigurationError, TransformerException {
     Transformer transformer = TransformerFactory.newInstance()
             .newTransformer();
 
@@ -232,32 +228,26 @@ public class XmlUtils {
   /**
    * Xpath.
    *
-   * @param base
-   *            the base
-   * @param xpath
-   *            the xpath
+   * @param base  the base
+   * @param xpath the xpath
    * @return the node
-   * @throws TransformerException
-   *             the transformer exception
+   * @throws TransformerException the transformer exception
    */
-//	public static final Node xpath(Node base, String xpath)
-//			throws TransformerException {
-//		return XPathAPI.selectSingleNode(base, xpath);
-//	}
+  public static final Node xpath(Node base, String xpath)
+          throws TransformerException {
+    return XPathAPI.selectSingleNode(base, xpath);
+  }
 
   /**
    * Xpath list.
    *
-   * @param base
-   *            the base
-   * @param xpath
-   *            the xpath
+   * @param base  the base
+   * @param xpath the xpath
    * @return the node list
-   * @throws TransformerException
-   *             the transformer exception
+   * @throws TransformerException the transformer exception
    */
-//	public static final NodeList xpathList(Node base, String xpath)
-//			throws TransformerException {
-//		return XPathAPI.selectNodeList(base, xpath);
-//	}
+  public static NodeList xpathList(Node base, String xpath)
+          throws TransformerException {
+    return XPathAPI.selectNodeList(base, xpath);
+  }
 }

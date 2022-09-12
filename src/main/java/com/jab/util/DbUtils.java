@@ -4,7 +4,8 @@ import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -15,13 +16,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
-// TODO: Auto-generated Javadoc
-
 /**
- * @author mike
- * @version 1.0
- * @description: TODO
- * @date 2022/9/7 14:18
+ *
+ * @Author: goshawker@yeah.net
+ * @Description:
+ * @Date: 2022/9/12 11:04
+ * @Version: 1.0
  */
 public class DbUtils {
 
@@ -60,7 +60,7 @@ public class DbUtils {
   /**
    * The __log.
    */
-  static Logger __log = Logger.getLogger(DbUtils.class);
+  Logger log = LogManager.getLogger(DbUtils.class);
   /**
    * The __sql session.
    */

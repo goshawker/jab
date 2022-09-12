@@ -38,11 +38,12 @@ import static org.mybatis.generator.internal.util.ClassloaderUtility.getCustomCl
 import static org.mybatis.generator.internal.util.messages.Messages.getString;
 
 /**
- * @description: 自动代码生成主类入口
- * @author mike
- * @date 2022/9/8 20:05
- * @version 1.0
- */
+*
+* @Author: goshawker@yeah.net
+* @Description:
+* @Date: 2022/9/12 11:06
+* @Version: 1.0
+*/
 public class JCodeBuilder {
   private final Logger log = LogManager.getLogger(getClass());
 
