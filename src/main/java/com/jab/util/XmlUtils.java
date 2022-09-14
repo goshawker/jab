@@ -15,14 +15,14 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.net.URL;
+import java.util.Vector;
 
 /**
-*
-* @Author: goshawker@yeah.net
-* @Description:
-* @Date: 2022/9/12 11:00
-* @Version: 1.0
-*/
+ * @Author: goshawker@yeah.net
+ * @Description:
+ * @Date: 2022/9/12 11:00
+ * @Version: 1.0
+ */
 public class XmlUtils {
 
   /**
@@ -48,6 +48,44 @@ public class XmlUtils {
   }
 
   /**
+   * get elements by tagName.
+   *
+   * @return the document
+   * @throws ParserConfigurationException the parser configuration exception
+   */
+  public static NodeList getElementsByTagName(Document document, String TagName) {
+    return document.getElementsByTagName(TagName);
+  }
+
+  /**
+   * get node attributes.
+   *
+   * @return the document
+   * @throws ParserConfigurationException the parser configuration exception
+   */
+  public static NamedNodeMap[] getNodeAttributes(Document document, String TagName) {
+    Vector<NamedNodeMap> vector = new Vector<>();
+    NodeList lst = document.getElementsByTagName(TagName);
+    for (int i = 0; i < lst.getLength(); i++) {
+      Node node = lst.item(i);
+      vector.add(node.getAttributes());
+    }
+    return vector.toArray(new NamedNodeMap[vector.size()]);
+  }
+
+  /**
+   * prase config.xml and return the item-node attributes.
+   *
+   * @return the document
+   * @throws ParserConfigurationException the parser configuration exception
+   */
+  public static NamedNodeMap[] parseConfigXml(String TagName) throws ParserConfigurationException, IOException, SAXException {
+    InputStream is = ClassLoader.getSystemResourceAsStream("config.xml");
+    Document doc = parse(is);
+    return getNodeAttributes(doc, TagName);
+  }
+
+  /**
    * New document.
    *
    * @return the document
@@ -59,7 +97,7 @@ public class XmlUtils {
   }
 
   /**
-   * Parses the.
+   * Parses the file.
    *
    * @param file the file
    * @return the document
@@ -74,7 +112,7 @@ public class XmlUtils {
   }
 
   /**
-   * Parses the.
+   * Parses the xml-string.
    *
    * @param xml the xml
    * @return the document
@@ -89,7 +127,7 @@ public class XmlUtils {
   }
 
   /**
-   * Parses the.
+   * Parses the inputStream.
    *
    * @param is the is
    * @return the document
@@ -104,7 +142,7 @@ public class XmlUtils {
   }
 
   /**
-   * Parses the.
+   * Parses the inputSource.
    *
    * @param is the is
    * @return the document
@@ -119,7 +157,7 @@ public class XmlUtils {
   }
 
   /**
-   * Parses the.
+   * Parses the url.
    *
    * @param url the url
    * @return the document
@@ -249,5 +287,53 @@ public class XmlUtils {
   public static NodeList xpathList(Node base, String xpath)
           throws TransformerException {
     return XPathAPI.selectNodeList(base, xpath);
+  }
+
+  public static String getNodeValue(NamedNodeMap map, String nodeName) {
+    if (map.getNamedItem(nodeName) == null) {
+      return null;
+    } else {
+      Node node = map.getNamedItem(nodeName);
+      return node.getNodeValue();
+    }
+  }
+
+  public static String getNodeValue(NamedNodeMap map, String nodeName,boolean nullToEmpty) {
+    if (map.getNamedItem(nodeName) == null) {
+      if(nullToEmpty){
+        return "";
+      }
+      return null;
+    } else {
+      Node node = map.getNamedItem(nodeName);
+      return node.getNodeValue();
+    }
+  }
+
+  public static void main(String[] args) {
+    try {
+      NamedNodeMap[] vector = parseConfigXml("item");
+      for (NamedNodeMap map : vector) {
+        String id = getNodeValue(map, "id");
+        String lable = getNodeValue(map, "lable");
+        String type = getNodeValue(map, "type");
+        String length = getNodeValue(map, "length");
+        String default_ = getNodeValue(map, "default");
+        String primarykey = getNodeValue(map, "primarykey");
+
+        System.out.printf("id:%s, lable:%s, type:%s, length:%s, default:%s, primarykey:%s; ", id, lable, type, length, default_, primarykey);
+        System.out.println();
+      }
+      vector = parseConfigXml("file");
+      String saveDir = getNodeValue(vector[0], "saveDir");
+      System.out.println(saveDir);
+    } catch (ParserConfigurationException e) {
+      throw new RuntimeException(e);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    } catch (SAXException e) {
+      throw new RuntimeException(e);
+    }
+
   }
 }

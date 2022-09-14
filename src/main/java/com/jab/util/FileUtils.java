@@ -5,9 +5,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
+import org.w3c.dom.NamedNodeMap;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.util.List;
+import java.util.Vector;
 
 
 /**
@@ -755,6 +759,107 @@ public class FileUtils {
     return false;
   }
 
+  public static boolean generateMainHtml() throws Exception {
+    StringBuffer queryCondition = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
+    StringBuffer queryResultTitle = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
+    StringBuffer queryResultData = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
+    String blank7 = "						";
+    String blank2 = "	";
+    String blank9 = blank7 + blank2;
+    Vector<NamedNodeMap> primarykeys = new Vector<>();
+    NamedNodeMap[] args = XmlUtils.parseConfigXml("item");
+    for (NamedNodeMap map : args) {
+      String id = XmlUtils.getNodeValue(map,"id",true).toLowerCase();
+      String lable = XmlUtils.getNodeValue(map,"lable",true).toLowerCase();
+      String type = XmlUtils.getNodeValue(map,"type",true).toLowerCase();
+      String length = XmlUtils.getNodeValue(map,"length",true).toLowerCase();
+      String default_ = XmlUtils.getNodeValue(map,"default",true).toLowerCase();
+      String primarykey = XmlUtils.getNodeValue(map,"primarykey",true).toLowerCase();
+      if(!StringUtils.isEmptyOrNull(primarykey)){
+        primarykeys.add(map);
+      }
+
+      String fieldStr = "<input type=\"text\" name=\"" + id + "\" id=\"" + id + "\" size=\"" + length + "\" maxlength=\"" + (Integer.parseInt(length) + 1) + "\">";
+      if (type.toLowerCase().equals("date")) {
+        fieldStr = "<input type=\"date\"  name=\"" + id + "\"    cssStyle=\"width:200px\" >";
+      }
+      queryCondition.append(blank7).append("<tr class=\"repCnd\">").append("\r\n");
+      queryCondition.append(blank9).append("<td class=\"repCndLb\">").append(lable).append(":</td>").append("\r\n");
+      queryCondition.append(blank9).append("<td class=\"repCndEditRight\">").append("\r\n");
+      queryCondition.append(blank9).append(blank2).append(fieldStr).append("\r\n");
+      queryCondition.append(blank9).append("</td>").append("\r\n");
+      queryCondition.append(blank7).append("</tr>").append("\r\n");
+      //query result title
+      queryResultTitle.append(blank9 + blank7).append("<td class=\"editGridHd\" nowrap=\"nowrap\" >").append("\r\n");
+      queryResultTitle.append(blank9 + blank7).append(blank2).append(id).append("\r\n");
+      queryResultTitle.append(blank9 + blank7).append("</td>").append("\r\n");
+      //query result data
+      String format = "";
+      if (type.toLowerCase().equals("datetime")) {
+        format = " format=\"yyyy-MM-dd HH:mm:ss\" ";
+      }
+      queryResultData.append(blank9 + blank7).append("<td class=\"editGrid\"  align=\"left\">").append("\r\n");
+      queryResultData.append(blank9 + blank7).append(blank2).append("<s:property value=\"#list.").append(id).append("\"  " + format + "/>").append("\r\n");
+      queryResultData.append(blank9 + blank7).append("</td>").append("\r\n");
+    }
+
+    //query result title.operation
+    queryResultTitle.append(blank9 + blank7).append("<td class=\"editGridHd\" nowrap=\"nowrap\" >").append("\r\n");
+    queryResultTitle.append(blank9 + blank7).append(blank2).append("Operation").append("\r\n");
+    queryResultTitle.append(blank9 + blank7).append("</td>").append("\r\n");
+
+
+    StringBuffer linkParameters = new StringBuffer();
+    for (NamedNodeMap keys : primarykeys) {
+      String propertyname = XmlUtils.getNodeValue(keys,"id");
+      String format = "";
+      if (XmlUtils.getNodeValue(keys,"type").equals("date")) {
+        format = " format=\"yyyy-MM-dd HH:mm:ss\" ";
+      }
+      linkParameters.append(blank9).append("<s:param name=\"var.").append(propertyname).append("\" value=\"#list.").append(propertyname).append("\"  " + format + "> </s:param>").append("\r\n");
+    }
+
+    try {
+      //get template
+      InputStream is = getResourceAsStream("template/html/main.template");
+      String template = IOUtils.toString(is);
+//      template = template.replaceAll("#namespace", namespace);
+      template = template.replaceAll("#QUERYCONDITION#", queryCondition.toString());
+      template = template.replaceAll("#QUERYRESULTTITLE#", queryResultTitle.toString());
+      template = template.replaceAll("#QUERYRESULTDATA#", queryResultData.toString());
+      template = template.replaceAll("#LINKPARAMETERS#", linkParameters.toString());
+      template = template.replaceAll("#COLSPANCOUNT#", String.valueOf(args.length));
+      args = XmlUtils.parseConfigXml("file");
+      String saveDir = XmlUtils.getNodeValue(args[0], "saveDir");
+      String overwrite = XmlUtils.getNodeValue(args[0], "overwrite");
+      String fileDir = "";
+      if (File.separator.equals("\\")) {
+        fileDir += saveDir.replaceAll("/", "\\\\");
+      } else {
+        fileDir += saveDir.replaceAll("\\\\", "/");
+      }
+      File dir = new File(fileDir);
+      if (!dir.exists()) {
+        dir.mkdirs();
+      }
+      String file = fileDir + File.separator + "main.html";
+      File f = new File(file);
+      if (f.exists() && overwrite.equals("true")) {
+        System.out.println("Existing file " + file + " was overwritten");
+        f.delete();
+      } else {
+        System.out.println("Generating  file " + file + " was created");
+      }
+      f.createNewFile();
+      writeFile(f, template, "UTF-8");
+      return true;
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return false;
+  }
+
   /**
    * Writes, or overwrites, the contents of the specified file
    *
@@ -773,6 +878,7 @@ public class FileUtils {
     BufferedWriter bw = new BufferedWriter(osw);
     bw.write(content);
     bw.close();
+    System.out.println("file  " + file + "  created." );
   }
 
 

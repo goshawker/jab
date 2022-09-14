@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<root>
+    <file saveDir="d:\jad" overwrite="true"></file>
+    <items>
+        <item id="id" lable="id" type="text" length="100" default="" primarykey="true"></item>
+        <item id="Name" lable="Name" type="text" length="100" default=""></item>
+        <item id="Age" lable="Age" type="number" length="50" default=""></item>
+        <item id="Sex" lable="Sex" type="option" length="10" default=""></item>
+        <item id="BirthDate" lable="Birth Date" type="date" length="10" default=""></item>
+    </items>
+</root>

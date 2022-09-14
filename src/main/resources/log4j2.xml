@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--日志级别: OFF > FATAL > ERROR > WARN > INFO > DEBUG > TRACE > ALL -->
 <!--自动检测本配置文件间隔时间： monitorInterval-->
-<configuration status="DEBUG" monitorInterval="30">
+<configuration status="INFO" monitorInterval="30">
     <Properties>
         <Property name="logFilePath">logs</Property>
         <Property name="logFileName">jab.log</Property>

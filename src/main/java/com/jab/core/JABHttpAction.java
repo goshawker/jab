@@ -10,12 +10,11 @@ import java.io.File;
 import java.io.IOException;
 
 /**
-*
-* @Author: goshawker@yeah.net
-* @Description:
-* @Date: 2022/9/12 11:06
-* @Version: 1.0
-*/
+ * @Author: goshawker@yeah.net
+ * @Description:
+ * @Date: 2022/9/12 11:06
+ * @Version: 1.0
+ */
 public abstract class JABHttpAction extends HttpAction {
 
   /**
@@ -47,10 +46,6 @@ public abstract class JABHttpAction extends HttpAction {
    */
   protected abstract String perform();
 
-  /**
-   * Validators方法，已经初始化SqlSession,无异常自动提交，有异常执行回滚操作..
-   */
-  protected abstract void validators();
 
   /**
    * Initial方法，已经初始化SqlSession,无异常自动提交，有异常执行回滚操作.
@@ -95,7 +90,6 @@ public abstract class JABHttpAction extends HttpAction {
   }
 
 
-
   /**
    * 框架内置方法 init(), 子类实现initial()即可.
    *
@@ -107,7 +101,7 @@ public abstract class JABHttpAction extends HttpAction {
   }
 
   /**
-   * @description: TODO
+   * @description:
    * @author mike
    * @date 2022/9/7 18:56
    * @version 1.0
@@ -135,7 +129,6 @@ public abstract class JABHttpAction extends HttpAction {
         f = null;
         return true;
       } catch (IOException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
         return false;
       }
@@ -161,7 +154,6 @@ public abstract class JABHttpAction extends HttpAction {
     try {
       FileUtils.copyFile(attach, savefile);
     } catch (IOException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
       return null;
     }
