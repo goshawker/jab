@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<items>
+    <item id="Name" type="text" length="100" default=""></item>
+    <item id="Age" type="number" length="50" default=""></item>
+    <item id="Sex" type="option" length="10" default=""></item>
+    <item id="Birth Date" type="date" length="10" default=""></item>
+</items>

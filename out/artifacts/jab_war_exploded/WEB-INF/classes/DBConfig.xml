@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <typeAliases>
+    <!-- This is the alias system configuration, can not modify-->
+     	<typeAlias type="com.jdframe.sys.dao.model.T_sys_consumer" alias="t_sys_consumer"/>
+     	<typeAlias type="com.jdframe.sys.dao.model.T_sys_organization" alias="t_sys_organization"/>
+     	<typeAlias type="com.jdframe.sys.dao.model.T_sys_user" alias="t_sys_user"/>
+     	<typeAlias type="com.jdframe.sys.dao.model.T_sys_code" alias="t_sys_code"/>
+     	<typeAlias type="com.jdframe.sys.dao.model.T_sys_menu" alias="t_sys_menu"/>
+     	<typeAlias type="com.jdframe.sys.dao.model.T_sys_role" alias="t_sys_role"/>
+     	<typeAlias type="com.jdframe.sys.dao.model.T_sys_station" alias="t_sys_station"/>
+     	<typeAlias type="com.jdframe.sys.dao.model.T_sys_grant" alias="t_sys_grant"/>
+     	<typeAlias type="com.jdframe.sys.dao.model.T_sys_task" alias="t_sys_task"/>
+     	<typeAlias type="com.jdframe.sys.dao.model.T_sys_task_receive" alias="t_sys_task_receive"/>
+     	<typeAlias type="com.jdframe.sys.dao.model.T_sys_notice" alias="t_sys_notice"/>
+     	<typeAlias type="com.jdframe.sys.dao.model.T_sys_log" alias="t_sys_log"/>
+     
+     
+    </typeAliases> 
+    <!-- This is the plugins system configuration, can not modify-->
+    <plugins>  
+    	<plugin interceptor="com.jdframe.sys.core.interceptor.OffsetLimitInterceptor">  
+        	<property name="dialect" value="oracle"/>  
+        	<property name="pageSqlId" value=".*listPage.*"/>  
+    	</plugin>  
+    </plugins> 
+     
+     
+      <!-- This is the JNDI data-source configuration-->
+	<environments default="development">
+		<environment id="development">
+			<transactionManager type="JDBC" />
+			<dataSource type="JNDI">
+				<property name="data_source" value="ORACLE_DEFAULT" />
+			</dataSource>
+			
+		</environment>
+	</environments>
+	 
+	<mappers>
+	 <!-- This is the mapper system configuration, can not modify-->
+		<mapper resource="com/jdframe/sys/dao/mappers/t_sys_consumer.xml"  />
+		<mapper resource="com/jdframe/sys/dao/mappers/t_sys_organization.xml" />
+		<mapper resource="com/jdframe/sys/dao/mappers/t_sys_user.xml" />
+		<mapper resource="com/jdframe/sys/dao/mappers/t_sys_code.xml" />
+		<mapper resource="com/jdframe/sys/dao/mappers/t_sys_menu.xml" />
+		<mapper resource="com/jdframe/sys/dao/mappers/t_sys_role.xml" />
+		<mapper resource="com/jdframe/sys/dao/mappers/t_sys_station.xml" />
+		<mapper resource="com/jdframe/sys/dao/mappers/t_sys_grant.xml" />
+		<mapper resource="com/jdframe/sys/dao/mappers/t_sys_task.xml" />
+		<mapper resource="com/jdframe/sys/dao/mappers/t_sys_task_receive.xml" />
+		<mapper resource="com/jdframe/sys/dao/mappers/t_sys_notice.xml" />
+	    <mapper resource="com/jdframe/sys/dao/mappers/t_sys_log.xml" />
+	
+	<!-- This is the mapper configuration, custom configuration in the following: -->
+		<mapper resource="work/dao/mappers/T_work_dj_nsrxx.xml" />
+	<!--Add auto-generated mapper configuration here	-->
+		<mapper resource="work/dao/mappers/T_work_tiden.xml" />
+	 
+	</mappers>
+</configuration>

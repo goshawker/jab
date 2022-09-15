@@ -79,12 +79,24 @@ public class XmlUtils {
    * @return the document
    * @throws ParserConfigurationException the parser configuration exception
    */
-  public static NamedNodeMap[] parseConfigXml(String TagName) throws ParserConfigurationException, IOException, SAXException {
-    InputStream is = ClassLoader.getSystemResourceAsStream("config.xml");
-    Document doc = parse(is);
-    return getNodeAttributes(doc, TagName);
+  public static NamedNodeMap[] parseConfigXml(String TagName,boolean reload) throws ParserConfigurationException, IOException, SAXException {
+    if(reload || config == null) {
+      InputStream is = ClassLoader.getSystemResourceAsStream("config.xml");
+      config = parse(is);
+    }
+    return getNodeAttributes(config, TagName);
   }
-
+  /**
+   * prase config.xml and return the item-node attributes.
+   *
+   * @return the document
+   * @throws ParserConfigurationException the parser configuration exception
+   */
+  public static NamedNodeMap[] parseConfigXml(String TagName) throws ParserConfigurationException, IOException, SAXException {
+    return parseConfigXml(TagName,false);
+  }
+  //config.xml
+  private static Document config = null;
   /**
    * New document.
    *
@@ -327,6 +339,11 @@ public class XmlUtils {
       vector = parseConfigXml("file");
       String saveDir = getNodeValue(vector[0], "saveDir");
       System.out.println(saveDir);
+
+      vector = parseConfigXml("items");
+      String namespace = getNodeValue(vector[0], "namespace");
+      System.out.println(namespace);
+
     } catch (ParserConfigurationException e) {
       throw new RuntimeException(e);
     } catch (IOException e) {

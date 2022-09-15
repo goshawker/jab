@@ -11,6 +11,8 @@ public class Test {
 
 
   public static void main(String[] args){
-    System.out.printf("=============");
+    String str = "man|woman";
+    String[] s = str.split("\\|");
+    System.out.printf("============="+s.length);
   }
 }

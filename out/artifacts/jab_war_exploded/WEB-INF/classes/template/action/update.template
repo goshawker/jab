@@ -1,0 +1,50 @@
+package #package;
+
+import org.apache.ibatis.session.SqlSession;
+
+import com.jdframe.sys.core.model.UserProfile;
+import com.jdframe.sys.core.util.*;
+import #package.*;
+
+ 
+// TODO: Auto-generated Javadoc
+/** 
+ * The Path : #package.#classname
+ *  
+ * Last-Modified-Time : #datetime
+ *
+ * @author 
+ * @see
+ * @version 1.0
+ */
+public class #classname extends #package.Action {
+ 
+    @Override
+	protected String initial() {
+		// TODO Auto-generated method stub
+		var = sqlsession.selectOne("#initid", var);
+    	return INITIAL;
+	}
+	
+ 
+	@Override
+	protected String perform() {
+		// TODO Auto-generated method stub
+		int i = sqlsession.update("#updateid", var);
+		if(i>0){
+			setSystemMessage("Update Item Success!");
+		}else{
+		    setSystemMessage("Update Item Failed!");
+		}
+		var = new #vo();
+		return SUCCESS;
+		 
+	}
+
+	@Override
+	protected void validators() {
+		// TODO Auto-generated method stub
+  
+	}
+
+}

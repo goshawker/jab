@@ -773,15 +773,28 @@ public class FileUtils {
       String lable = XmlUtils.getNodeValue(map,"lable",true).toLowerCase();
       String type = XmlUtils.getNodeValue(map,"type",true).toLowerCase();
       String length = XmlUtils.getNodeValue(map,"length",true).toLowerCase();
-      String default_ = XmlUtils.getNodeValue(map,"default",true).toLowerCase();
+      String default_ = XmlUtils.getNodeValue(map,"default",true);
       String primarykey = XmlUtils.getNodeValue(map,"primarykey",true).toLowerCase();
+      String options = XmlUtils.getNodeValue(map,"options",true);
       if(!StringUtils.isEmptyOrNull(primarykey)){
         primarykeys.add(map);
       }
 
-      String fieldStr = "<input type=\"text\" name=\"" + id + "\" id=\"" + id + "\" size=\"" + length + "\" maxlength=\"" + (Integer.parseInt(length) + 1) + "\">";
+      String fieldStr = "<input type=\"text\" name=\"" + id + "\" id=\"" + id+ "\" value=\"" + default_ + "\"  maxlength=\"" + (Integer.parseInt(length) + 1) + "\"  style=\"width:" + Integer.parseInt(length) + "px\">";
       if (type.toLowerCase().equals("date")) {
-        fieldStr = "<input type=\"date\"  name=\"" + id + "\"    cssStyle=\"width:200px\" >";
+        fieldStr = "<input type=\"date\"  name=\"" + id + "\" value=\"" + default_ +"\"  placeholder=\"Only date\"  style=\"width:" + (Integer.parseInt(length) + 5) + "px\" >";
+      }else if(type.toLowerCase().equals("number")){
+        fieldStr = "<input type=\"number\"    id=\"" + id + "\"  name=\"" + id + "\" value=\""+default_+ "\" placeholder=\"Only numbers\"  min=\"0\" max=\"120\" step=\"1\" style=\"width:" + Integer.parseInt(length) + "px\" >";
+      }else if(type.toLowerCase().equals("select")){
+        String html="";
+        html += "<select  id=\"" + id + "\"    name=\"" + id + "\" value=\""+default_+"\"  style=\"width:" + Integer.parseInt(length)  + "px\" > \r\t";
+        String[] optons_ =  options.split("\\|");
+        html += "<option value=\"\"></option> \r\t";
+        for (int i = 0; i < optons_.length; i++) {
+          html += "<option value=\""+optons_[i]+"\">"+optons_[i]+"</option> \r\t";
+        }
+        html += "</select>";
+        fieldStr = html;
       }
       queryCondition.append(blank7).append("<tr class=\"repCnd\">").append("\r\n");
       queryCondition.append(blank9).append("<td class=\"repCndLb\">").append(lable).append(":</td>").append("\r\n");
@@ -818,12 +831,16 @@ public class FileUtils {
       }
       linkParameters.append(blank9).append("<s:param name=\"var.").append(propertyname).append("\" value=\"#list.").append(propertyname).append("\"  " + format + "> </s:param>").append("\r\n");
     }
+    NamedNodeMap[] items = XmlUtils.parseConfigXml("items");
+    String namespace = XmlUtils.getNodeValue(items[0], "namespace");
+
 
     try {
       //get template
       InputStream is = getResourceAsStream("template/html/main.template");
       String template = IOUtils.toString(is);
-//      template = template.replaceAll("#namespace", namespace);
+      template = template.replaceAll("#NAMESPACE#", namespace.concat("/query"));
+      template = template.replaceAll("#DONEW#", namespace.concat("/new"));
       template = template.replaceAll("#QUERYCONDITION#", queryCondition.toString());
       template = template.replaceAll("#QUERYRESULTTITLE#", queryResultTitle.toString());
       template = template.replaceAll("#QUERYRESULTDATA#", queryResultData.toString());
