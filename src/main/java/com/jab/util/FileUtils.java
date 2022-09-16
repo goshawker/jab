@@ -10,6 +10,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
@@ -780,6 +781,7 @@ public class FileUtils {
         primarykeys.add(map);
       }
 
+      //query conditions.
       String fieldStr = "<input type=\"text\" name=\"" + id + "\" id=\"" + id+ "\" value=\"" + default_ + "\"  maxlength=\"" + (Integer.parseInt(length) + 1) + "\"  style=\"width:" + Integer.parseInt(length) + "px\">";
       if (type.toLowerCase().equals("date")) {
         fieldStr = "<input type=\"date\"  name=\"" + id + "\" value=\"" + default_ +"\"  placeholder=\"Only date\"  style=\"width:" + (Integer.parseInt(length) + 5) + "px\" >";
@@ -796,6 +798,7 @@ public class FileUtils {
         html += "</select>";
         fieldStr = html;
       }
+
       queryCondition.append(blank7).append("<tr class=\"repCnd\">").append("\r\n");
       queryCondition.append(blank9).append("<td class=\"repCndLb\">").append(lable).append(":</td>").append("\r\n");
       queryCondition.append(blank9).append("<td class=\"repCndEditRight\">").append("\r\n");
@@ -806,13 +809,14 @@ public class FileUtils {
       queryResultTitle.append(blank9 + blank7).append("<td class=\"editGridHd\" nowrap=\"nowrap\" >").append("\r\n");
       queryResultTitle.append(blank9 + blank7).append(blank2).append(id).append("\r\n");
       queryResultTitle.append(blank9 + blank7).append("</td>").append("\r\n");
+
       //query result data
       String format = "";
       if (type.toLowerCase().equals("datetime")) {
         format = " format=\"yyyy-MM-dd HH:mm:ss\" ";
       }
       queryResultData.append(blank9 + blank7).append("<td class=\"editGrid\"  align=\"left\">").append("\r\n");
-      queryResultData.append(blank9 + blank7).append(blank2).append("<s:property value=\"#list.").append(id).append("\"  " + format + "/>").append("\r\n");
+      queryResultData.append(blank9 + blank7).append(blank2).append("\r\n");
       queryResultData.append(blank9 + blank7).append("</td>").append("\r\n");
     }
 
@@ -822,59 +826,65 @@ public class FileUtils {
     queryResultTitle.append(blank9 + blank7).append("</td>").append("\r\n");
 
 
-    StringBuffer linkParameters = new StringBuffer();
-    for (NamedNodeMap keys : primarykeys) {
-      String propertyname = XmlUtils.getNodeValue(keys,"id");
-      String format = "";
-      if (XmlUtils.getNodeValue(keys,"type").equals("date")) {
-        format = " format=\"yyyy-MM-dd HH:mm:ss\" ";
-      }
-      linkParameters.append(blank9).append("<s:param name=\"var.").append(propertyname).append("\" value=\"#list.").append(propertyname).append("\"  " + format + "> </s:param>").append("\r\n");
-    }
+//    StringBuffer linkParameters = new StringBuffer();
+//    for (NamedNodeMap keys : primarykeys) {
+//      String propertyname = XmlUtils.getNodeValue(keys,"id");
+//      String format = "";
+//      if (XmlUtils.getNodeValue(keys,"type").equals("date")) {
+//        format = " format=\"yyyy-MM-dd HH:mm:ss\" ";
+//      }
+//      linkParameters.append(blank9).append("<s:param name=\"var.").append(propertyname).append("\" value=\"#list.").append(propertyname).append("\"  " + format + "> </s:param>").append("\r\n");
+//    }
+
     NamedNodeMap[] items = XmlUtils.parseConfigXml("items");
     String namespace = XmlUtils.getNodeValue(items[0], "namespace");
-
-
     try {
-      //get template
-      InputStream is = getResourceAsStream("template/html/main.template");
-      String template = IOUtils.toString(is);
-      template = template.replaceAll("#NAMESPACE#", namespace.concat("/query"));
-      template = template.replaceAll("#DONEW#", namespace.concat("/new"));
-      template = template.replaceAll("#QUERYCONDITION#", queryCondition.toString());
-      template = template.replaceAll("#QUERYRESULTTITLE#", queryResultTitle.toString());
-      template = template.replaceAll("#QUERYRESULTDATA#", queryResultData.toString());
-      template = template.replaceAll("#LINKPARAMETERS#", linkParameters.toString());
-      template = template.replaceAll("#COLSPANCOUNT#", String.valueOf(args.length));
-      args = XmlUtils.parseConfigXml("file");
-      String saveDir = XmlUtils.getNodeValue(args[0], "saveDir");
-      String overwrite = XmlUtils.getNodeValue(args[0], "overwrite");
-      String fileDir = "";
-      if (File.separator.equals("\\")) {
-        fileDir += saveDir.replaceAll("/", "\\\\");
-      } else {
-        fileDir += saveDir.replaceAll("\\\\", "/");
-      }
-      File dir = new File(fileDir);
-      if (!dir.exists()) {
-        dir.mkdirs();
-      }
-      String file = fileDir + File.separator + "main.html";
-      File f = new File(file);
-      if (f.exists() && overwrite.equals("true")) {
-        System.out.println("Existing file " + file + " was overwritten");
-        f.delete();
-      } else {
-        System.out.println("Generating  file " + file + " was created");
-      }
-      f.createNewFile();
-      writeFile(f, template, "UTF-8");
+      HashMap<String,String> replace = new HashMap<>();
+      replace.put("#NAMESPACE#", namespace.concat("/query"));
+      replace.put("#DONEW#", namespace.concat("/new"));
+      replace.put("#QUERYCONDITION#", queryCondition.toString());
+      replace.put("#GRIDHEAD#", queryResultTitle.toString());
+      replace.put("#GRIDDATA#", queryResultData.toString());
+
+      autoGenerateHtml("template/html/main.template",replace,"main.html");
       return true;
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
     return false;
+  }
+
+
+  private static void autoGenerateHtml(String templateFile, HashMap<String,String> replace, String newName) throws ParserConfigurationException, IOException, SAXException {
+    InputStream is = getResourceAsStream(templateFile);
+    String template = IOUtils.toString(is);
+    for (String key:replace.keySet()) {
+      template = template.replaceAll(key, replace.get(key));
+    }
+    NamedNodeMap[] args  = XmlUtils.parseConfigXml("file");
+    String saveDir = XmlUtils.getNodeValue(args[0], "saveDir");
+    String overwrite = XmlUtils.getNodeValue(args[0], "overwrite");
+    String fileDir = "";
+    if (File.separator.equals("\\")) {
+      fileDir += saveDir.replaceAll("/", "\\\\");
+    } else {
+      fileDir += saveDir.replaceAll("\\\\", "/");
+    }
+    File dir = new File(fileDir);
+    if (!dir.exists()) {
+      dir.mkdirs();
+    }
+    String file = fileDir + File.separator + newName;
+    File f = new File(file);
+    if (f.exists() && overwrite.equals("true")) {
+      System.out.println("Existing file " + file + " was overwritten");
+      f.delete();
+    } else {
+      System.out.println("Generating  file " + file + " was created");
+    }
+    f.createNewFile();
+    writeFile(f, template, "UTF-8");
   }
 
   /**

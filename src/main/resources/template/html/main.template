@@ -124,7 +124,7 @@
     </tr>
   </table>
 </div>
-<form action="#NAMESPACE#" enctype="multipart/form-data" method="post" onsubmit="doSubmit()">
+<form action="#NAMESPACE#" enctype="multipart/form-data" method="post">
   <table border="0" cellpadding="0" cellspacing="0" width="100%">
     <tr height="5">
       <td nowrap="nowrap" width="15">&nbsp;</td>
@@ -160,7 +160,6 @@
               &nbsp; Query Results:
             </td>
           </tr>
-
           <tr>
             <td width="5">&nbsp;</td>
             <td id="tagsContainer" width="100%">
@@ -168,14 +167,11 @@
                 <table class="editGrid" id="sortTbl" width="100%">
                   <!-- query result title -->
                   <tr class="editGridHd">
-                    #QUERYRESULTTITLE#
+                    #GRIDHEAD#
                   </tr>
                   <tr class="editGrid" type="data">
-                    #QUERYRESULTDATA#
+                    #GRIDDATA#
                     <td class="editGrid" nowrap="nowrap">
-                      <a onclick="">New</a>
-                      <a onclick="">Delete</a>
-                      <a onclick="">Update</a>
                     </td>
                   </tr>
                 </table>
