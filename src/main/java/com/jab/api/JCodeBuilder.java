@@ -50,9 +50,14 @@ public class JCodeBuilder {
 
   public void generate() throws Exception {
 
-    boolean mainjsp = FileUtils.generateMainHtml();
-    if (mainjsp) {
-      log.debug("generate main.jsp success.");
+    boolean mainHtml = FileUtils.generateMainHtml();
+    if (mainHtml) {
+      log.debug("generate main.html success.");
+
+    }
+    boolean valueObject = FileUtils.generateValueObject();
+    if (valueObject) {
+      log.debug("generate valueObject.java success.");
 
     }
 

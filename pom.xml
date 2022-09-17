@@ -77,6 +77,13 @@
             <artifactId>mybatis-generator-core</artifactId>
             <version>1.4.1</version>
         </dependency>
+
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.17</version>
+        </dependency>
+
     </dependencies>
 
 

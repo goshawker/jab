@@ -1,0 +1,7 @@
+/**
+*Lambdas annotation
+*/
+@Data
+public class #VALUEOBJECTNAME#{
+   #VALUEOBJECTFIELD#
+}

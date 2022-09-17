@@ -86,6 +86,32 @@ public class XmlUtils {
     }
     return getNodeAttributes(config, TagName);
   }
+  public static NamedNodeMap[] parseItem(boolean reload) throws ParserConfigurationException, IOException, SAXException {
+    return parseConfigXml("item",reload);
+  }
+  public static NamedNodeMap[] parseItems(boolean reload) throws ParserConfigurationException, IOException, SAXException {
+    return parseConfigXml("items",reload);
+  }
+  public static NamedNodeMap[] parseFile(boolean reload) throws ParserConfigurationException, IOException, SAXException {
+    return parseConfigXml("file",reload);
+  }
+  public static NamedNodeMap[] parseDatabase(boolean reload) throws ParserConfigurationException, IOException, SAXException {
+    return parseConfigXml("database",reload);
+  }
+
+  public static NamedNodeMap[] parseItem() throws ParserConfigurationException, IOException, SAXException {
+    return parseConfigXml("item",false);
+  }
+
+  public static NamedNodeMap[] parseItems() throws ParserConfigurationException, IOException, SAXException {
+    return parseConfigXml("items",false);
+  }
+  public static NamedNodeMap[] parseFile() throws ParserConfigurationException, IOException, SAXException {
+    return parseConfigXml("file",false);
+  }
+  public static NamedNodeMap[] parseDatabase() throws ParserConfigurationException, IOException, SAXException {
+    return parseConfigXml("database",false);
+  }
   /**
    * prase config.xml and return the item-node attributes.
    *
@@ -95,6 +121,11 @@ public class XmlUtils {
   public static NamedNodeMap[] parseConfigXml(String TagName) throws ParserConfigurationException, IOException, SAXException {
     return parseConfigXml(TagName,false);
   }
+
+  public static NamedNodeMap[] parseItemsNode() throws ParserConfigurationException, IOException, SAXException {
+    return parseConfigXml("items",false);
+  }
+
   //config.xml
   private static Document config = null;
   /**
@@ -322,35 +353,4 @@ public class XmlUtils {
     }
   }
 
-  public static void main(String[] args) {
-    try {
-      NamedNodeMap[] vector = parseConfigXml("item");
-      for (NamedNodeMap map : vector) {
-        String id = getNodeValue(map, "id");
-        String lable = getNodeValue(map, "lable");
-        String type = getNodeValue(map, "type");
-        String length = getNodeValue(map, "length");
-        String default_ = getNodeValue(map, "default");
-        String primarykey = getNodeValue(map, "primarykey");
-
-        System.out.printf("id:%s, lable:%s, type:%s, length:%s, default:%s, primarykey:%s; ", id, lable, type, length, default_, primarykey);
-        System.out.println();
-      }
-      vector = parseConfigXml("file");
-      String saveDir = getNodeValue(vector[0], "saveDir");
-      System.out.println(saveDir);
-
-      vector = parseConfigXml("items");
-      String namespace = getNodeValue(vector[0], "namespace");
-      System.out.println(namespace);
-
-    } catch (ParserConfigurationException e) {
-      throw new RuntimeException(e);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    } catch (SAXException e) {
-      throw new RuntimeException(e);
-    }
-
-  }
 }

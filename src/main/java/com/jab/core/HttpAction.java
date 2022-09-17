@@ -15,7 +15,6 @@
  */
 package com.jab.core;
 
-import com.jab.util.DbUtils;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -77,9 +76,6 @@ public class HttpAction extends HttpServlet implements Action {
   }
   protected HttpSession getSession() {
     return this.httpRequest.getSession();
-  }
-  protected SqlSession buildDBSession() {
-    return DbUtils.builder().openSession();
   }
 
   public ArrayList getPagenationList() {

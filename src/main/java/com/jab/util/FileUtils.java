@@ -10,6 +10,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
@@ -760,6 +761,44 @@ public class FileUtils {
     return false;
   }
 
+  public static boolean generateValueObject() throws Exception {
+    StringBuffer valueObjectName = new StringBuffer("");
+    StringBuffer valueObjectField = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
+    NamedNodeMap[] args = XmlUtils.parseItem();
+    for (NamedNodeMap map : args) {
+      String id = XmlUtils.getNodeValue(map,"id",true).toLowerCase();
+      String type = XmlUtils.getNodeValue(map,"type",true).toLowerCase();
+      String default_ = XmlUtils.getNodeValue(map,"default",true);
+      valueObjectField.append("\t \t private ");
+      if(type.equals("text") || type.equals("select")){
+        valueObjectField.append("String ");
+      }else if(type.equals("number")){
+        valueObjectField.append("BigDecimal ");
+      }else if(type.equals("date")){
+        valueObjectField.append("Date ");
+      }
+      valueObjectField.append(id+" ;\r\n");
+    }
+
+    args = XmlUtils.parseItems();
+    String namespace = XmlUtils.getNodeValue(args[0], "namespace");
+    String tableName = XmlUtils.getNodeValue(args[0], "tableName");
+    valueObjectName.append(tableName);
+    try {
+
+      HashMap<String,String> replace = new HashMap<>();
+      replace.put("#VALUEOBJECTNAME#", valueObjectName.toString());
+      replace.put("#VALUEOBJECTFIELD#", valueObjectField.toString());
+      autoGenerateHtml("template/valueobject/valueobject.template",replace,tableName+".java");
+      return true;
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+    return false;
+  }
+
   public static boolean generateMainHtml() throws Exception {
     StringBuffer queryCondition = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
     StringBuffer queryResultTitle = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
@@ -768,7 +807,7 @@ public class FileUtils {
     String blank2 = "	";
     String blank9 = blank7 + blank2;
     Vector<NamedNodeMap> primarykeys = new Vector<>();
-    NamedNodeMap[] args = XmlUtils.parseConfigXml("item");
+    NamedNodeMap[] args = XmlUtils.parseItem();
     for (NamedNodeMap map : args) {
       String id = XmlUtils.getNodeValue(map,"id",true).toLowerCase();
       String lable = XmlUtils.getNodeValue(map,"lable",true).toLowerCase();
@@ -780,7 +819,6 @@ public class FileUtils {
       if(!StringUtils.isEmptyOrNull(primarykey)){
         primarykeys.add(map);
       }
-
       //query conditions.
       String fieldStr = "<input type=\"text\" name=\"" + id + "\" id=\"" + id+ "\" value=\"" + default_ + "\"  maxlength=\"" + (Integer.parseInt(length) + 1) + "\"  style=\"width:" + Integer.parseInt(length) + "px\">";
       if (type.toLowerCase().equals("date")) {
@@ -798,7 +836,6 @@ public class FileUtils {
         html += "</select>";
         fieldStr = html;
       }
-
       queryCondition.append(blank7).append("<tr class=\"repCnd\">").append("\r\n");
       queryCondition.append(blank9).append("<td class=\"repCndLb\">").append(lable).append(":</td>").append("\r\n");
       queryCondition.append(blank9).append("<td class=\"repCndEditRight\">").append("\r\n");
@@ -819,24 +856,11 @@ public class FileUtils {
       queryResultData.append(blank9 + blank7).append(blank2).append("\r\n");
       queryResultData.append(blank9 + blank7).append("</td>").append("\r\n");
     }
-
     //query result title.operation
     queryResultTitle.append(blank9 + blank7).append("<td class=\"editGridHd\" nowrap=\"nowrap\" >").append("\r\n");
     queryResultTitle.append(blank9 + blank7).append(blank2).append("Operation").append("\r\n");
     queryResultTitle.append(blank9 + blank7).append("</td>").append("\r\n");
-
-
-//    StringBuffer linkParameters = new StringBuffer();
-//    for (NamedNodeMap keys : primarykeys) {
-//      String propertyname = XmlUtils.getNodeValue(keys,"id");
-//      String format = "";
-//      if (XmlUtils.getNodeValue(keys,"type").equals("date")) {
-//        format = " format=\"yyyy-MM-dd HH:mm:ss\" ";
-//      }
-//      linkParameters.append(blank9).append("<s:param name=\"var.").append(propertyname).append("\" value=\"#list.").append(propertyname).append("\"  " + format + "> </s:param>").append("\r\n");
-//    }
-
-    NamedNodeMap[] items = XmlUtils.parseConfigXml("items");
+    NamedNodeMap[] items = XmlUtils.parseItems();
     String namespace = XmlUtils.getNodeValue(items[0], "namespace");
     try {
       HashMap<String,String> replace = new HashMap<>();

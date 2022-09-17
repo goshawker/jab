@@ -73,19 +73,7 @@ public abstract class JABHttpAction extends HttpAction {
    * @return the string
    */
   private String $private() {
-    long start = System.currentTimeMillis();
     String returnStr = SUCCESS;
-    sqlsession = buildDBSession();
-    try {
-      returnStr = perform();
-      sqlsession.commit();
-    } catch (Exception e) {
-      sqlsession.rollback();
-      e.printStackTrace();
-    } finally {
-      sqlsession.close();
-    }
-    log.info("<Call " + this.getClass().getName() + " perform Completed,Measured milliseconds :" + (System.currentTimeMillis() - start) + ">");
     return returnStr;
   }
 
@@ -107,17 +95,7 @@ public abstract class JABHttpAction extends HttpAction {
    * @version 1.0
    */
   private String O00000000000OOOOO() {
-    long start = System.currentTimeMillis();
     String returnStr = SUCCESS;
-    sqlsession = buildDBSession();
-    try {
-      returnStr = initial();
-      sqlsession.commit();
-    } finally {
-      sqlsession.rollback();
-      sqlsession.close();
-    }
-    log.debug("<Call initial Completed,Measured milliseconds :" + (System.currentTimeMillis() - start) + ">");
     return returnStr;
   }
 
