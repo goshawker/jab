@@ -137,7 +137,6 @@ public class FileUtils {
     }
   }
 
-
   public static boolean generateConfiguration(IntrospectedTable table, String namespace, String targetProject) {
     // TODO Auto-generated method stub
 
@@ -195,9 +194,6 @@ public class FileUtils {
 
   public static boolean generateDeleteAction(IntrospectedTable table, String namespace, String targetProject) {
     // TODO Auto-generated method stub
-    // TODO Auto-generated method stub
-
-
     StringBuffer form = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
     String blank7 = "						";
     String blank2 = "	";
@@ -209,7 +205,6 @@ public class FileUtils {
     } else {
       _package = namespace.replaceAll("/", ".");
     }
-
     String classname = "DeleteAction";
     String datetime = DateUtils.newDateTime();
     String deleteid = table.getDeleteByPrimaryKeyStatementId();
@@ -222,8 +217,6 @@ public class FileUtils {
       template = template.replaceAll("#vo", vo);
       template = template.replaceAll("#datetime", datetime);
       template = template.replaceAll("#deleteid", deleteid);
-
-
       String fileDir = targetProject;
       if (File.separator.equals("\\")) {
         fileDir += namespace.replaceAll("/", "\\\\");
@@ -254,8 +247,6 @@ public class FileUtils {
 
   public static boolean generateUpdateAction(IntrospectedTable table, String namespace, String targetProject) {
     // TODO Auto-generated method stub
-
-
     StringBuffer form = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
     String blank7 = "						";
     String blank2 = "	";
@@ -266,7 +257,6 @@ public class FileUtils {
     } else {
       _package = namespace.replaceAll("/", ".");
     }
-
     String classname = "UpdateAction";
     String datetime = DateUtils.newDateTime();
     String updateid = table.getUpdateByPrimaryKeyStatementId();
@@ -282,8 +272,6 @@ public class FileUtils {
       template = template.replaceAll("#datetime", datetime);
       template = template.replaceAll("#updateid", updateid);
       template = template.replaceAll("#vo", vo);
-
-
       String fileDir = targetProject;
       if (File.separator.equals("\\")) {
         fileDir += namespace.replaceAll("/", "\\\\");
@@ -315,7 +303,6 @@ public class FileUtils {
   public static boolean generateNewAction(IntrospectedTable table,
                                           String namespace, String targetProject) {
     // TODO Auto-generated method stub
-
     StringBuffer form = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
     String blank7 = "						";
     String blank2 = "	";
@@ -363,8 +350,6 @@ public class FileUtils {
       template = template.replaceAll("#datetime", datetime);
       template = template.replaceAll("#initPk", pkinit);
       template = template.replaceAll("#newid", table.getInsertSelectiveStatementId());
-
-
       String fileDir = targetProject;
       if (File.separator.equals("\\")) {
         fileDir += namespace.replaceAll("/", "\\\\");
@@ -392,14 +377,10 @@ public class FileUtils {
     }
     return false;
   }
-
   public static boolean generateQueryAction(IntrospectedTable table,
                                             String namespace, String targetProject) {
     // TODO Auto-generated method stub
-
-
     StringBuffer form = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
-
     String blank7 = "						";
     String blank2 = "	";
     String blank9 = blank7 + blank2;
@@ -410,8 +391,6 @@ public class FileUtils {
       _package = namespace.replaceAll("/", ".");
     }
     List<IntrospectedColumn> list = table.getPrimaryKeyColumns();
-
-
     String classname = "QueryAction";
     String datetime = DateUtils.newDateTime();
     String queryId = table.getSelectByPrimaryKeyQueryId();
@@ -422,11 +401,8 @@ public class FileUtils {
       String template = IOUtils.toString(is);
       template = template.replaceAll("#package", _package);
       template = template.replaceAll("#classname", classname);
-
       template = template.replaceAll("#datetime", datetime);
       template = template.replaceAll("#queryid", queryId);
-
-
       String fileDir = targetProject;
       if (File.separator.equals("\\")) {
         fileDir += namespace.replaceAll("/", "\\\\");
@@ -454,12 +430,9 @@ public class FileUtils {
     }
     return false;
   }
-
   public static boolean generateAction(IntrospectedTable table, String namespace, String targetProject) {
     // TODO Auto-generated method stub
-
     StringBuffer form = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
-
     String blank7 = "						";
     String blank2 = "	";
     String blank9 = blank7 + blank2;
@@ -475,11 +448,7 @@ public class FileUtils {
 
     for (IntrospectedColumn column : table.getAllColumns()) {
       String propertyname = column.getJavaProperty();
-
-
     }
-
-
     try {
       //get template
       InputStream is = getResourceAsStream("template/action/action.template");
@@ -488,7 +457,6 @@ public class FileUtils {
       template = template.replaceAll("#classname", classname);
       template = template.replaceAll("#datetime", datetime);
       template = template.replaceAll("#vo", vo);
-
 
       String fileDir = targetProject;
       if (File.separator.equals("\\")) {
@@ -520,15 +488,12 @@ public class FileUtils {
 
   public static boolean generateUpdateJsp(IntrospectedTable table, String namespace, String targetProject) {
     // TODO Auto-generated method stub
-
     StringBuffer form = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
-
     String blank7 = "						";
     String blank2 = "	";
     String blank9 = blank7 + blank2;
     for (IntrospectedColumn column : table.getAllColumns()) {
       String propertyname = column.getJavaProperty();
-
       String readonly = table.getPrimaryKeyColumns().contains(column) ? "readonly=\"true\"" : "";
       int length = column.getLength();
       int type = column.getJdbcType();
@@ -548,7 +513,6 @@ public class FileUtils {
           fieldStr.append("<s:hidden name=\"var." + propertyname + "\" ></s:hidden>");
           fieldStr.append("<s:property value=\"var." + propertyname + "\" />");
         }
-
       }
 
       form.append(blank7).append("<tr class=\"repCnd\">").append("\r\n");
@@ -558,15 +522,12 @@ public class FileUtils {
       form.append(blank9).append("</td>").append("\r\n");
       form.append(blank7).append("</tr>").append("\r\n");
     }
-
-
     try {
       //get template
       InputStream is = getResourceAsStream("template/jsp/update.template");
       String template = IOUtils.toString(is);
       template = template.replaceAll("#namespace", namespace);
       template = template.replaceAll("#form", form.toString());
-
 
       String fileDir = targetProject;
       if (File.separator.equals("\\")) {
@@ -598,10 +559,7 @@ public class FileUtils {
 
   public static boolean generateNewJsp(IntrospectedTable table, String namespace, String targetProject) {
     // TODO Auto-generated method stub
-
-
     StringBuffer form = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
-
     String blank7 = "						";
     String blank2 = "	";
     String blank9 = blank7 + blank2;
@@ -616,11 +574,9 @@ public class FileUtils {
       if (type == java.sql.Types.DATE || type == java.sql.Types.TIMESTAMP) {
         fieldStr = "<sx:datetimepicker  displayFormat=\"yyyy-MM-dd\" name=\"var." + propertyname + "\"    cssStyle=\"width:200px\" ></sx:datetimepicker>";
       }
-
       if (table.getPrimaryKeyColumns().contains(column)) {
         tips = "<font color='red'>&nbsp;*&nbsp;Auto-generated If The Input Is Empty</font>";
       }
-
       form.append(blank7).append("<tr class=\"repCnd\">").append("\r\n");
       form.append(blank9).append("<td class=\"repCndLb\">").append(column.getActualColumnName()).append(":</td>").append("\r\n");
       form.append(blank9).append("<td class=\"repCndEditRight\">").append("\r\n");
@@ -628,16 +584,12 @@ public class FileUtils {
       form.append(blank9).append("</td>").append("\r\n");
       form.append(blank7).append("</tr>").append("\r\n");
     }
-
-
     try {
       //get template
       InputStream is = getResourceAsStream("template/jsp/new.template");
       String template = IOUtils.toString(is);
       template = template.replaceAll("#namespace", namespace);
       template = template.replaceAll("#form", form.toString());
-
-
       String fileDir = targetProject;
       if (File.separator.equals("\\")) {
         fileDir += namespace.replaceAll("/", "\\\\");
@@ -668,7 +620,6 @@ public class FileUtils {
 
   public static boolean generateMainJsp(IntrospectedTable table, String namespace, String targetProject) {
     // TODO Auto-generated method stub
-
     StringBuffer queryCondition = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
     StringBuffer queryResultTitle = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
     StringBuffer queryResultData = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
@@ -689,13 +640,10 @@ public class FileUtils {
       queryCondition.append(blank9).append(blank2).append(fieldStr).append("\r\n");
       queryCondition.append(blank9).append("</td>").append("\r\n");
       queryCondition.append(blank7).append("</tr>").append("\r\n");
-
-
       //query result title
       queryResultTitle.append(blank9 + blank7).append("<td class=\"editGridHd\" nowrap=\"nowrap\" >").append("\r\n");
       queryResultTitle.append(blank9 + blank7).append(blank2).append(propertyname).append("\r\n");
       queryResultTitle.append(blank9 + blank7).append("</td>").append("\r\n");
-
       //query result data
       String format = "";
       if (column.getJdbcType() >= 91 && column.getJdbcType() <= 93) {
@@ -709,8 +657,6 @@ public class FileUtils {
     queryResultTitle.append(blank9 + blank7).append("<td class=\"editGridHd\" nowrap=\"nowrap\" >").append("\r\n");
     queryResultTitle.append(blank9 + blank7).append(blank2).append("Operation").append("\r\n");
     queryResultTitle.append(blank9 + blank7).append("</td>").append("\r\n");
-
-
     StringBuffer linkParameters = new StringBuffer();
     for (IntrospectedColumn column : table.getPrimaryKeyColumns()) {
       String propertyname = column.getJavaProperty();
@@ -720,7 +666,6 @@ public class FileUtils {
       }
       linkParameters.append(blank9).append("<s:param name=\"var.").append(propertyname).append("\" value=\"#list.").append(propertyname).append("\"  " + format + "> </s:param>").append("\r\n");
     }
-
     try {
       //get template
       InputStream is = getResourceAsStream("template/jsp/main.template");
@@ -731,7 +676,6 @@ public class FileUtils {
       template = template.replaceAll("#queryresultdata", queryResultData.toString());
       template = template.replaceAll("#linkparameters", linkParameters.toString());
       template = template.replaceAll("#colspancount", String.valueOf(table.getAllColumns().size()));
-
       String fileDir = targetProject;
       if (File.separator.equals("\\")) {
         fileDir += namespace.replaceAll("/", "\\\\");
@@ -778,13 +722,11 @@ public class FileUtils {
       }
       valueObjectField.append(id + " ;\r\n");
     }
-
     args = XmlUtils.parseItems();
     String namespace = XmlUtils.getNodeValue(args[0], "namespace");
     String tableName = XmlUtils.getNodeValue(args[0], "tableName");
     valueObjectName.append(tableName);
     try {
-
       HashMap<String, String> replace = new HashMap<>();
       replace.put("#VALUEOBJECTNAME#", valueObjectName.toString());
       replace.put("#VALUEOBJECTFIELD#", valueObjectField.toString());
@@ -794,13 +736,12 @@ public class FileUtils {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-
     return false;
   }
+
   public static boolean generateUpdateHtml() throws Exception {
     // TODO Auto-generated method stub
     StringBuffer formfield = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
-
     String blank7 = "						";
     String blank2 = "	";
     String blank9 = blank7 + blank2;
@@ -818,11 +759,11 @@ public class FileUtils {
       String readOnly = "";
       if (!StringUtils.isEmptyOrNull(primarykey)) {
         readOnly = "readonly";
-        lable = "<font style=\"color:red\">"+lable+"</font>";
+        lable = "<font style=\"color:red\">" + lable + "</font>";
         primarykeys.add(map);
         updatestr += id + "='+data[i]." + id + "+" + "'&";
       }
-      String fieldStr = "<input type=\"text\" name=\"" + id + "\" id=\"" + id + "\" value=\"" + default_ + "\"  maxlength=\"" + (Integer.parseInt(length) + 1) + "\"  style=\"width:" + Integer.parseInt(length) + "px\"   "+readOnly+">";
+      String fieldStr = "<input type=\"text\" name=\"" + id + "\" id=\"" + id + "\" value=\"" + default_ + "\"  maxlength=\"" + (Integer.parseInt(length) + 1) + "\"  style=\"width:" + Integer.parseInt(length) + "px\"   " + readOnly + ">";
       if (type.equalsIgnoreCase("date")) {
         fieldStr = "<input type=\"date\"  name=\"" + id + "\" value=\"" + default_ + "\"  placeholder=\"Only date\"  style=\"width:" + (Integer.parseInt(length) + 5) + "px\" >";
       } else if (type.equalsIgnoreCase("number")) {
@@ -859,6 +800,7 @@ public class FileUtils {
     }
     return false;
   }
+
   public static boolean generateNewHtml() throws Exception {
     // TODO Auto-generated method stub
     StringBuffer formfield = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
@@ -916,11 +858,8 @@ public class FileUtils {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-
-
     return false;
   }
-
 
   public static boolean generateMainHtml() throws Exception {
     StringBuffer queryCondition = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
@@ -971,7 +910,6 @@ public class FileUtils {
       queryResultTitle.append(blank9 + blank7).append("<td class=\"editGridHd\" nowrap=\"nowrap\" >").append("\r\n");
       queryResultTitle.append(blank9 + blank7).append(blank2).append(id).append("\r\n");
       queryResultTitle.append(blank9 + blank7).append("</td>").append("\r\n");
-
       //query result data
       String format = "";
       if (type.equalsIgnoreCase("datetime")) {
@@ -996,7 +934,6 @@ public class FileUtils {
       replace.put("#GRIDHEAD#", queryResultTitle.toString());
       replace.put("#GRIDDATA#", queryResultData.toString());
       replace.put("#UPDATESTR#", updatestr.endsWith("&") ? updatestr.substring(0, updatestr.length() - 1) : updatestr);
-
       autoGenerateHtml("template/html/main.template", replace, "main.html");
       return true;
     } catch (IOException e) {
@@ -1005,7 +942,6 @@ public class FileUtils {
     }
     return false;
   }
-
 
   private static void autoGenerateHtml(String templateFile, HashMap<String, String> replace, String newName) throws ParserConfigurationException, IOException, SAXException {
     InputStream is = getResourceAsStream(templateFile);
@@ -1058,6 +994,4 @@ public class FileUtils {
     bw.close();
     System.out.println("file  " + file + "  created.");
   }
-
-
 }
