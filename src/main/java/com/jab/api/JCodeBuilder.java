@@ -55,6 +55,14 @@ public class JCodeBuilder {
       log.debug("generate main.html success.");
 
     }
+    boolean newHtml = FileUtils.generateNewHtml();
+    if (newHtml) {
+      log.debug("generate new.html success.");
+    }
+    boolean updateHtml = FileUtils.generateUpdateHtml();
+    if (updateHtml) {
+      log.debug("generate update.html success.");
+    }
     boolean valueObject = FileUtils.generateValueObject();
     if (valueObject) {
       log.debug("generate valueObject.java success.");
@@ -62,14 +70,8 @@ public class JCodeBuilder {
     }
 
 
-//        boolean createjsp = FileUtils.generateNewJsp(table, namespace, targetProject);
-//        if (createjsp) {
-//          log.debug("generate new.jsp success.");
-//        }
-//        boolean modifyjsp = FileUtils.generateUpdateJsp(table, namespace, targetProject);
-//        if (modifyjsp) {
-//          log.debug("generate update.jsp success.");
-//        }
+
+
 //
 //        boolean mainaction = FileUtils.generateAction(table, namespace, targetProject);
 //        if (mainaction) {
