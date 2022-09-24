@@ -808,6 +808,7 @@ public class FileUtils {
     String blank9 = blank7 + blank2;
     Vector<NamedNodeMap> primarykeys = new Vector<>();
     NamedNodeMap[] args = XmlUtils.parseItem();
+    String updatestr="";
     for (NamedNodeMap map : args) {
       String id = XmlUtils.getNodeValue(map,"id",true).toLowerCase();
       String lable = XmlUtils.getNodeValue(map,"lable",true).toLowerCase();
@@ -818,6 +819,7 @@ public class FileUtils {
       String options = XmlUtils.getNodeValue(map,"options",true);
       if(!StringUtils.isEmptyOrNull(primarykey)){
         primarykeys.add(map);
+        updatestr += id+"='+data[i]."+id+"+"+"'&";
       }
       //query conditions.
       String fieldStr = "<input type=\"text\" name=\"" + id + "\" id=\"" + id+ "\" value=\"" + default_ + "\"  maxlength=\"" + (Integer.parseInt(length) + 1) + "\"  style=\"width:" + Integer.parseInt(length) + "px\">";
@@ -852,9 +854,9 @@ public class FileUtils {
       if (type.toLowerCase().equals("datetime")) {
         format = " format=\"yyyy-MM-dd HH:mm:ss\" ";
       }
-      queryResultData.append(blank9 + blank7).append("<td class=\"editGrid\"  align=\"left\">").append("\r\n");
-      queryResultData.append(blank9 + blank7).append(blank2).append("\r\n");
-      queryResultData.append(blank9 + blank7).append("</td>").append("\r\n");
+      queryResultData.append(blank7).append("trHtml +=\"<td class='editGrid'  align='left'>").append("\"");
+      queryResultData.append("+data[i]."+id+"+");
+      queryResultData.append("\"</td>\"").append(";\r\n");
     }
     //query result title.operation
     queryResultTitle.append(blank9 + blank7).append("<td class=\"editGridHd\" nowrap=\"nowrap\" >").append("\r\n");
@@ -869,6 +871,7 @@ public class FileUtils {
       replace.put("#QUERYCONDITION#", queryCondition.toString());
       replace.put("#GRIDHEAD#", queryResultTitle.toString());
       replace.put("#GRIDDATA#", queryResultData.toString());
+      replace.put("#UPDATESTR#", updatestr.endsWith("&")?updatestr.substring(0,updatestr.length()-1): updatestr.toString());
 
       autoGenerateHtml("template/html/main.template",replace,"main.html");
       return true;

@@ -169,10 +169,7 @@
                   <tr class="editGridHd">
                     #GRIDHEAD#
                   </tr>
-                  <tr class="editGrid" type="data">
-                    #GRIDDATA#
-                    <td class="editGrid" nowrap="nowrap">
-                    </td>
+                  <tr class="editGrid" type="data" id="tdata">
                   </tr>
                 </table>
               </div>
@@ -199,8 +196,19 @@
       if(xmlHttpRequest.readyState === 4){
         if(xmlHttpRequest.status >= 200 && xmlHttpRequest.status < 300){
           let string = xmlHttpRequest.responseText;
-          let obj = JSON.parse(string);
-          console.log(obj);
+          const data = JSON.parse(string);
+          let count = data.length;
+          let trHtml="";
+
+          for (let i = 0; i < count; i++) {
+            trHtml +="<tr  class=\"editGrid\" nowrap=\"nowrap\">";
+            #GRIDDATA#
+            trHtml+="<td class='editGrid'  align='left'><a href='#NAMESPACE#/edit?#UPDATESTR#'>Edit</a><a href='#NAMESPACE#/delete?#UPDATESTR#'>Delete</a></td>";
+            trHtml +="</tr>";
+          }
+          document.getElementById("tdata").innerHTML = trHtml;
+
+
         } else if(xmlHttpRequest.status >= 400){
           alert('the request has failed. please try again later. error info:['+xmlHttpRequest.responseText+']');
         }
