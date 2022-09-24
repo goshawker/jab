@@ -864,8 +864,8 @@ public class FileUtils {
     String namespace = XmlUtils.getNodeValue(items[0], "namespace");
     try {
       HashMap<String,String> replace = new HashMap<>();
-      replace.put("#NAMESPACE#", namespace.concat("/query"));
-      replace.put("#DONEW#", namespace.concat("/new"));
+      replace.put("#NAMESPACE#", namespace.concat(""));
+      replace.put("#DONEW#", namespace.concat(""));
       replace.put("#QUERYCONDITION#", queryCondition.toString());
       replace.put("#GRIDHEAD#", queryResultTitle.toString());
       replace.put("#GRIDDATA#", queryResultData.toString());
