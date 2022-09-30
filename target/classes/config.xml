@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <root>
     <file saveDir="d:\jad" overwrite="true"></file>
-    <items namespace="/student">
+    <items namespace="./student" tableName="stu">
         <item id="id" lable="id" type="text" length="100" default="" primarykey="true"></item>
-        <item id="Name" lable="Name" type="text" length="200" default=""></item>
+        <item id="Name" lable="Name" type="text" length="200" default=""  primarykey="true"></item>
         <item id="Age" lable="Age" type="number" length="100" default=""></item>
         <item id="Sex" lable="Sex" type="select" length="100"  default="" options="man|woman"></item>
         <item id="BirthDate" lable="Birth Date" type="date" length="100" default=""></item>
     </items>
+    <!-- com.mysql.jdbc.Driver -->
+    <database driver="com.mysql.cj.jdbc.Driver" ip="127.0.0.1" port="3306" instance="mydb" user="root" pwd="mysql"></database>
 </root>

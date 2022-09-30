@@ -49,20 +49,23 @@ public class JCodeBuilder {
   }
 
   public void generate() throws Exception {
-
+    //generate main.html
     boolean mainHtml = FileUtils.generateMainHtml();
     if (mainHtml) {
       log.debug("generate main.html success.");
 
     }
+    //generate new.html
     boolean newHtml = FileUtils.generateNewHtml();
     if (newHtml) {
       log.debug("generate new.html success.");
     }
+    //generate update.html
     boolean updateHtml = FileUtils.generateUpdateHtml();
     if (updateHtml) {
       log.debug("generate update.html success.");
     }
+    //generate valueObject.java
     boolean valueObject = FileUtils.generateValueObject();
     if (valueObject) {
       log.debug("generate valueObject.java success.");

@@ -124,7 +124,7 @@
     </tr>
   </table>
 </div>
-<form action="#NAMESPACE#" enctype="multipart/form-data" method="post" onsubmit="doSubmit()">
+<form action="#NAMESPACE#/query" enctype="multipart/form-data" method="post">
   <table border="0" cellpadding="0" cellspacing="0" width="100%">
     <tr height="5">
       <td nowrap="nowrap" width="15">&nbsp;</td>
@@ -143,9 +143,9 @@
           #QUERYCONDITION#
           <tr class="bgLight" height="30">
             <td align="right" class="normalFont" colspan="4">
-              <input type="submit" accesskey="s" value="Query(s)"> &nbsp;
+              <input type="button" accesskey="s" value="Query(s)" onclick="Query()"> &nbsp;
               <input type="reset" accesskey="c" value="Reset(c)">
-              <input type="button" accesskey="n"  name="init" value="New(n)" onclick="window.location.href='new.html'">&nbsp;&nbsp;&nbsp;&nbsp;
+              <input type="button" accesskey="n"  name="init" value="New(n)" onclick="window.location.href='#NAMESPACE#/new.html'">&nbsp;&nbsp;&nbsp;&nbsp;
             </td>
           </tr>
         </table>
@@ -160,7 +160,6 @@
               &nbsp; Query Results:
             </td>
           </tr>
-
           <tr>
             <td width="5">&nbsp;</td>
             <td id="tagsContainer" width="100%">
@@ -168,15 +167,9 @@
                 <table class="editGrid" id="sortTbl" width="100%">
                   <!-- query result title -->
                   <tr class="editGridHd">
-                    #QUERYRESULTTITLE#
+                    #GRIDHEAD#
                   </tr>
-                  <tr class="editGrid" type="data">
-                    #QUERYRESULTDATA#
-                    <td class="editGrid" nowrap="nowrap">
-                      <a onclick="">New</a>
-                      <a onclick="">Delete</a>
-                      <a onclick="">Update</a>
-                    </td>
+                  <tr class="editGrid" type="data" id="tdata">
                   </tr>
                 </table>
               </div>
@@ -188,5 +181,42 @@
     </tr>
   </table>
 </form>
+<script type="text/javascript">
+  function Query(){
+    let form = document.getElementsByTagName('FORM')[0];
+    let requestUrl = form.action;
+    let xmlHttpRequest;
+    if (window.XMLHttpRequest) {
+      xmlHttpRequest = new XMLHttpRequest();
+    } else {
+      xmlHttpRequest = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    xmlHttpRequest.open('GET',requestUrl);
+    xmlHttpRequest.onreadystatechange = ()=>{
+      if(xmlHttpRequest.readyState === 4){
+        if(xmlHttpRequest.status >= 200 && xmlHttpRequest.status < 300){
+          let string = xmlHttpRequest.responseText;
+          const data = JSON.parse(string);
+          let count = data.length;
+          let trHtml="";
+
+          for (let i = 0; i < count; i++) {
+            trHtml +="<tr  class=\"editGrid\" nowrap=\"nowrap\">";
+            #GRIDDATA#
+            trHtml+="<td class='editGrid'  align='left'><a href='#NAMESPACE#/edit?#UPDATESTR#'>Edit</a><a href='#NAMESPACE#/delete?#UPDATESTR#'>Delete</a></td>";
+            trHtml +="</tr>";
+          }
+          document.getElementById("tdata").innerHTML = trHtml;
+
+
+        } else if(xmlHttpRequest.status >= 400){
+          alert('the request has failed. please try again later. error info:['+xmlHttpRequest.responseText+']');
+        }
+      }
+    }
+    xmlHttpRequest.send('a=9&b=6');
+  }
+
+</script>
 </body>
 </html>

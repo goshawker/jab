@@ -50,7 +50,7 @@
             <appender-ref ref="RollingFileWarn"/>
             <appender-ref ref="RollingFileError"/>
         </root>
-        <AsyncLogger name="AsyncLogger" level="trace" includeLocation="true" additivity="false">
+        <AsyncLogger name="AsyncLogger" level="DEBUG" includeLocation="true" additivity="false">
             <appender-ref ref="RollingFileError"/>
         </AsyncLogger>
     </loggers>
