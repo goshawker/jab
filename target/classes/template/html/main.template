@@ -214,7 +214,8 @@
         }
       }
     }
-    xmlHttpRequest.send('a=9&b=6');
+    let parameters = '#REQUSTPARAMETERS#';
+    xmlHttpRequest.send(parameters);
   }
 
 </script>
