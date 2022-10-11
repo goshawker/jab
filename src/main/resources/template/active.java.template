@@ -1,19 +1,46 @@
 package #NAMESPACE#;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-import javax.servlet.annotation.*;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebServlet(name = "#NAMESPACE#/active", value = "#NAMESPACE#/active")
-public class QueryServlet extends HttpServlet {
+public class Active extends HttpServlet {
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    String method = request.getParameters("requestMethod");
-
+    String method = request.getParameter("requestMethod");
+    if (method.indexOf("query") != -1) {
+      query(request, response);
+    } else if (method.indexOf("anew") != -1) {
+      aNew(request, response);
+    } else if (method.indexOf("update") != -1) {
+      update(request, response);
+    } else if (method.indexOf("delete") != -1) {
+      delete(request, response);
+    }
   }
+
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    doGet(request,response);
+    doGet(request, response);
+  }
+
+  public void query(HttpServletRequest request, HttpServletResponse response) {
+
+  }
+
+  public void aNew(HttpServletRequest request, HttpServletResponse response) {
+
+  }
+
+  public void update(HttpServletRequest request, HttpServletResponse response) {
+
+  }
+
+  public void delete(HttpServletRequest request, HttpServletResponse response) {
+
   }
 }
