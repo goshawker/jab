@@ -74,7 +74,7 @@
     </tr>
   </table>
 </div>
-<form action="#NAMESPACE#/update" enctype="multipart/form-data" method="post">
+<form action="#NAMESPACE#/action" enctype="multipart/form-data" method="post">
   <table border="0" cellpadding="0" cellspacing="0" width="100%">
     <tr height="5">
       <td nowrap="nowrap" width="15">&nbsp;</td>
@@ -91,6 +91,7 @@
           #FORMFIELD#
           <tr class="bgLight" height="30">
             <td align="right" class="normalFont" colspan="4">
+              <input type="hidden" id="requestMethod" name="requestMethod" value="update">
               <input accesskey="S" onclick="save()" type="button" value="Submit(S)"> &nbsp;
               <input accesskey="c" type="reset" value="Reset(c)">
             </td>

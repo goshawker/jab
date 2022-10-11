@@ -29,40 +29,6 @@ public class FileUtils {
   static Logger log = LogManager.getLogger(FileUtils.class);
 
   /**
-   * Checks if is existed.
-   *
-   * @param pathName the path name
-   * @return true, if is existed
-   */
-  public static boolean isExisted(String pathName) {
-    File file = new File(pathName);
-    return file.exists();
-  }
-
-  /**
-   * Removes the.
-   *
-   * @param pathName the path name
-   * @return true, if successful
-   */
-  public static boolean remove(String pathName) {
-    File file = new File(pathName);
-    return file.delete();
-  }
-
-  /**
-   * Rename.
-   *
-   * @param oldPathName the old path name
-   * @param newPathName the new path name
-   * @return true, if successful
-   */
-  public static boolean rename(String oldPathName, String newPathName) {
-    File from = new File(oldPathName);
-    return from.renameTo(new File(newPathName));
-  }
-
-  /**
    * _copy file.
    *
    * @param source            the source
@@ -111,325 +77,7 @@ public class FileUtils {
     return inputStream;
   }
 
-  /**
-   * Gets the system environment variable separate char.
-   *
-   * @return string
-   */
-  public static String getSystemEnvironmentVariableSeparateChar() {
-    if (ValidateUtils.isWindows()) {
-      return ";";
-    } else {
-      return ":";
-    }
-  }
 
-  /**
-   * _get classpath char.
-   *
-   * @return the string
-   */
-  public static String getSystemClasspathChar() {
-    if (ValidateUtils.isWindows()) {
-      return "%CLASSPATH%";
-    } else {
-      return "$CLASSPATH";
-    }
-  }
-
-  public static boolean generateConfiguration(IntrospectedTable table, String namespace, String targetProject) {
-    // TODO Auto-generated method stub
-
-    String _package = "";
-    if (namespace.startsWith("/")) {
-      _package = namespace.substring(1).replaceAll("/", ".");
-    } else {
-      _package = namespace.replaceAll("/", ".");
-    }
-
-    String classname = "struts-" + table.getBaseRecordType().replaceAll("\\.", "_");
-    String packagename = table.getBaseRecordType().toLowerCase();
-    packagename = packagename.substring(packagename.lastIndexOf(".") + 1);
-    try {
-      //get template
-      InputStream is = getResourceAsStream("template/configuration/struts.template");
-      String template = IOUtils.toString(is);
-      template = template.replaceAll("#packagename", packagename);
-      template = template.replaceAll("#namespace", namespace);
-      template = template.replaceAll("#package", _package);
-
-
-      String fileDir = targetProject;
-      if (File.separator.equals("\\")) {
-        fileDir += namespace.replaceAll("/", "\\\\");
-      } else {
-        fileDir += namespace.replaceAll("\\\\", "/");
-      }
-      File dir = new File(fileDir);
-      if (!dir.exists()) {
-        dir.mkdirs();
-      }
-      String file = fileDir + File.separator + classname + ".xml";
-      File f = new File(file);
-      if (f.exists()) {
-        System.out.println("Existing file " + file + " was overwritten");
-        f.delete();
-      } else {
-        System.out.println("Generating  file " + file + " was created");
-      }
-      f.createNewFile();
-      writeFile(f, template, "UTF-8");
-      System.out.println("\r\n <!--Important ::  Add follow auto-generated struts configuration To src/struts.xml -->");
-      String mapper = " <include file=\"" + classname + ".xml" + "\"></include>";
-      System.out.println(mapper);
-      System.out.println("\r\n <!--Important :: (Menu Enter Url)--> \r\n " + namespace + "/query!init");
-      System.out.println("\r\n");
-      return true;
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    return false;
-  }
-
-  public static boolean generateDeleteAction(IntrospectedTable table, String namespace, String targetProject) {
-    // TODO Auto-generated method stub
-    StringBuffer form = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
-    String blank7 = "						";
-    String blank2 = "	";
-    String blank9 = blank7 + blank2;
-    String _package = "";
-    String vo = table.getBaseRecordType();
-    if (namespace.startsWith("/")) {
-      _package = namespace.substring(1).replaceAll("/", ".");
-    } else {
-      _package = namespace.replaceAll("/", ".");
-    }
-    String classname = "DeleteAction";
-    String datetime = DateUtils.newDateTime();
-    String deleteid = table.getDeleteByPrimaryKeyStatementId();
-    try {
-      //get template
-      InputStream is = getResourceAsStream("template/action/delete.template");
-      String template = IOUtils.toString(is);
-      template = template.replaceAll("#package", _package);
-      template = template.replaceAll("#classname", classname);
-      template = template.replaceAll("#vo", vo);
-      template = template.replaceAll("#datetime", datetime);
-      template = template.replaceAll("#deleteid", deleteid);
-      String fileDir = targetProject;
-      if (File.separator.equals("\\")) {
-        fileDir += namespace.replaceAll("/", "\\\\");
-      } else {
-        fileDir += namespace.replaceAll("\\\\", "/");
-      }
-      File dir = new File(fileDir);
-      if (!dir.exists()) {
-        dir.mkdirs();
-      }
-      String file = fileDir + File.separator + classname + ".java";
-      File f = new File(file);
-      if (f.exists()) {
-        System.out.println("Existing file " + file + " was overwritten");
-        f.delete();
-      } else {
-        System.out.println("Generating  file " + file + " was created");
-      }
-      f.createNewFile();
-      writeFile(f, template, "UTF-8");
-      return true;
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    return false;
-  }
-
-  public static boolean generateUpdateAction(IntrospectedTable table, String namespace, String targetProject) {
-    // TODO Auto-generated method stub
-    StringBuffer form = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
-    String blank7 = "						";
-    String blank2 = "	";
-    String blank9 = blank7 + blank2;
-    String _package = "";
-    if (namespace.startsWith("/")) {
-      _package = namespace.substring(1).replaceAll("/", ".");
-    } else {
-      _package = namespace.replaceAll("/", ".");
-    }
-    String classname = "UpdateAction";
-    String datetime = DateUtils.newDateTime();
-    String updateid = table.getUpdateByPrimaryKeyStatementId();
-    String initid = table.getSelectByPrimaryKeyStatementId();
-    String vo = table.getBaseRecordType();
-    try {
-      //get template
-      InputStream is = getResourceAsStream("template/action/update.template");
-      String template = IOUtils.toString(is);
-      template = template.replaceAll("#package", _package);
-      template = template.replaceAll("#classname", classname);
-      template = template.replaceAll("#initid", initid);
-      template = template.replaceAll("#datetime", datetime);
-      template = template.replaceAll("#updateid", updateid);
-      template = template.replaceAll("#vo", vo);
-      String fileDir = targetProject;
-      if (File.separator.equals("\\")) {
-        fileDir += namespace.replaceAll("/", "\\\\");
-      } else {
-        fileDir += namespace.replaceAll("\\\\", "/");
-      }
-      File dir = new File(fileDir);
-      if (!dir.exists()) {
-        dir.mkdirs();
-      }
-      String file = fileDir + File.separator + classname + ".java";
-      File f = new File(file);
-      if (f.exists()) {
-        System.out.println("Existing file " + file + " was overwritten");
-        f.delete();
-      } else {
-        System.out.println("Generating  file " + file + " was created");
-      }
-      f.createNewFile();
-      writeFile(f, template, "UTF-8");
-      return true;
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    return false;
-  }
-
-  public static boolean generateNewAction(IntrospectedTable table,
-                                          String namespace, String targetProject) {
-    // TODO Auto-generated method stub
-    StringBuffer form = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
-    String blank7 = "						";
-    String blank2 = "	";
-    String blank9 = blank7 + blank2;
-    String _package = "";
-    String pkinit = "// TODO Auto-generated \r\n";
-    pkinit += blank2 + "//Initialization Primary Key Propertity! \r\n";
-    String vo = table.getBaseRecordType();
-    if (namespace.startsWith("/")) {
-      _package = namespace.substring(1).replaceAll("/", ".");
-    } else {
-      _package = namespace.replaceAll("/", ".");
-    }
-    List<IntrospectedColumn> list = table.getPrimaryKeyColumns();
-    //JDBCConnectionConfiguration jcc = table.getContext().getJdbcConnectionConfiguration();
-    //HashMap pk  = DbUtils._buildPKValues(jcc.getDriverClass(),jcc.getConnectionURL(),jcc.getUserId(),jcc.getPassword(), table.getTableConfiguration().getTableName());
-    for (int i = 0; i < list.size(); i++) {
-      String typename = list.get(i).getJavaProperty();
-      int type = list.get(i).getJdbcType();
-      pkinit += blank2 + "if(StringUtils.isEmptyOrNull(var.get" + typename.replaceFirst(String.valueOf(typename.charAt(0)), String.valueOf(typename.charAt(0)).toUpperCase()) + "()))\r\n";
-      if (type == java.sql.Types.NUMERIC
-              || type == java.sql.Types.INTEGER
-              || type == java.sql.Types.BIGINT
-              || type == java.sql.Types.FLOAT
-              || type == java.sql.Types.DECIMAL
-              || type == java.sql.Types.DOUBLE) {
-
-        pkinit += blank2 + blank2 + "var.set" + typename.replaceFirst(String.valueOf(typename.charAt(0)), String.valueOf(typename.charAt(0)).toUpperCase()) + "(DbUtils.getAutoIncrementLsb(\"" + table.getTableConfiguration().getTableName() + "\", \"" + list.get(i).getActualColumnName() + "\"));\r\n";
-      } else if (type >= 91 && type <= 93) {
-        pkinit += blank2 + blank2 + "var.set" + typename.replaceFirst(String.valueOf(typename.charAt(0)), String.valueOf(typename.charAt(0)).toUpperCase()) + "(new java.util.Date());\r\n";
-
-      } else {
-        pkinit += blank2 + blank2 + "var.set" + typename.replaceFirst(String.valueOf(typename.charAt(0)), String.valueOf(typename.charAt(0)).toUpperCase()) + "(DbUtils.getRandomStringLsb().substring(0," + list.get(i).getLength() + "));\r\n";
-      }
-    }
-    String classname = "NewAction";
-    String datetime = DateUtils.newDateTime();
-    try {
-      //get template
-      InputStream is = getResourceAsStream("template/action/new.template");
-      String template = IOUtils.toString(is);
-      template = template.replaceAll("#package", _package);
-      template = template.replaceAll("#classname", classname);
-      template = template.replaceAll("#vo", vo);
-      template = template.replaceAll("#datetime", datetime);
-      template = template.replaceAll("#initPk", pkinit);
-      template = template.replaceAll("#newid", table.getInsertSelectiveStatementId());
-      String fileDir = targetProject;
-      if (File.separator.equals("\\")) {
-        fileDir += namespace.replaceAll("/", "\\\\");
-      } else {
-        fileDir += namespace.replaceAll("\\\\", "/");
-      }
-      File dir = new File(fileDir);
-      if (!dir.exists()) {
-        dir.mkdirs();
-      }
-      String file = fileDir + File.separator + classname + ".java";
-      File f = new File(file);
-      if (f.exists()) {
-        System.out.println("Existing file " + file + " was overwritten");
-        f.delete();
-      } else {
-        System.out.println("Generating  file " + file + " was created");
-      }
-      f.createNewFile();
-      writeFile(f, template, "UTF-8");
-      return true;
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    return false;
-  }
-  public static boolean generateQueryAction(IntrospectedTable table,
-                                            String namespace, String targetProject) {
-    // TODO Auto-generated method stub
-    StringBuffer form = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
-    String blank7 = "						";
-    String blank2 = "	";
-    String blank9 = blank7 + blank2;
-    String _package = "";
-    if (namespace.startsWith("/")) {
-      _package = namespace.substring(1).replaceAll("/", ".");
-    } else {
-      _package = namespace.replaceAll("/", ".");
-    }
-    List<IntrospectedColumn> list = table.getPrimaryKeyColumns();
-    String classname = "QueryAction";
-    String datetime = DateUtils.newDateTime();
-    String queryId = table.getSelectByPrimaryKeyQueryId();
-    //String queryId = table.getSelectByNoNPrimaryKeyStatementId();
-    try {
-      //get template
-      InputStream is = getResourceAsStream("template/action/query.template");
-      String template = IOUtils.toString(is);
-      template = template.replaceAll("#package", _package);
-      template = template.replaceAll("#classname", classname);
-      template = template.replaceAll("#datetime", datetime);
-      template = template.replaceAll("#queryid", queryId);
-      String fileDir = targetProject;
-      if (File.separator.equals("\\")) {
-        fileDir += namespace.replaceAll("/", "\\\\");
-      } else {
-        fileDir += namespace.replaceAll("\\\\", "/");
-      }
-      File dir = new File(fileDir);
-      if (!dir.exists()) {
-        dir.mkdirs();
-      }
-      String file = fileDir + File.separator + classname + ".java";
-      File f = new File(file);
-      if (f.exists()) {
-        System.out.println("Existing file " + file + " was overwritten");
-        f.delete();
-      } else {
-        System.out.println("Generating  file " + file + " was created");
-      }
-      f.createNewFile();
-      writeFile(f, template, "UTF-8");
-      return true;
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    return false;
-  }
   public static boolean generateAction(IntrospectedTable table, String namespace, String targetProject) {
     // TODO Auto-generated method stub
     StringBuffer form = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
@@ -486,223 +134,6 @@ public class FileUtils {
     return false;
   }
 
-  public static boolean generateUpdateJsp(IntrospectedTable table, String namespace, String targetProject) {
-    // TODO Auto-generated method stub
-    StringBuffer form = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
-    String blank7 = "						";
-    String blank2 = "	";
-    String blank9 = blank7 + blank2;
-    for (IntrospectedColumn column : table.getAllColumns()) {
-      String propertyname = column.getJavaProperty();
-      String readonly = table.getPrimaryKeyColumns().contains(column) ? "readonly=\"true\"" : "";
-      int length = column.getLength();
-      int type = column.getJdbcType();
-      StringBuffer fieldStr = new StringBuffer();
-      fieldStr.append("<s:textfield " + readonly + " name=\"var." + propertyname + "\" size=\"" + propertyname + "\" size=\"" + length + "\" maxlength=\"" + (length) + "\"></s:textfield>");
-      if (type == java.sql.Types.DATE || type == java.sql.Types.TIMESTAMP) {
-        fieldStr.setLength(0);
-        fieldStr.append("<sx:datetimepicker    displayFormat=\"yyyy-MM-dd\" name=\"var." + propertyname + "\"    cssStyle=\"width:200px\" ></sx:datetimepicker>");
-      }
-      if (table.getPrimaryKeyColumns().contains(column)) {
-        fieldStr.setLength(0);
-
-        if (type >= 91 && type <= 93) {
-          fieldStr.append("<s:hidden name=\"var." + propertyname + "\"  format=\"yyyy-MM-dd HH:mm:ss\"></s:hidden>");
-          fieldStr.append("<s:property value=\"var." + propertyname + "\"   format=\"yyyy-MM-dd HH:mm:ss\" />");
-        } else {
-          fieldStr.append("<s:hidden name=\"var." + propertyname + "\" ></s:hidden>");
-          fieldStr.append("<s:property value=\"var." + propertyname + "\" />");
-        }
-      }
-
-      form.append(blank7).append("<tr class=\"repCnd\">").append("\r\n");
-      form.append(blank9).append("<td class=\"repCndLb\">").append(column.getActualColumnName()).append(":</td>").append("\r\n");
-      form.append(blank9).append("<td class=\"repCndEditRight\">").append("\r\n");
-      form.append(blank9).append(blank2).append(fieldStr).append("\r\n");
-      form.append(blank9).append("</td>").append("\r\n");
-      form.append(blank7).append("</tr>").append("\r\n");
-    }
-    try {
-      //get template
-      InputStream is = getResourceAsStream("template/jsp/update.template");
-      String template = IOUtils.toString(is);
-      template = template.replaceAll("#namespace", namespace);
-      template = template.replaceAll("#form", form.toString());
-
-      String fileDir = targetProject;
-      if (File.separator.equals("\\")) {
-        fileDir += namespace.replaceAll("/", "\\\\");
-      } else {
-        fileDir += namespace.replaceAll("\\\\", "/");
-      }
-      File dir = new File(fileDir);
-      if (!dir.exists()) {
-        dir.mkdirs();
-      }
-      String file = fileDir + File.separator + "update.jsp";
-      File f = new File(file);
-      if (f.exists()) {
-        System.out.println("Existing file " + file + " was overwritten");
-        f.delete();
-      } else {
-        System.out.println("Generating  file " + file + " was created");
-      }
-      f.createNewFile();
-      writeFile(f, template, "UTF-8");
-      return true;
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    return false;
-  }
-
-  public static boolean generateNewJsp(IntrospectedTable table, String namespace, String targetProject) {
-    // TODO Auto-generated method stub
-    StringBuffer form = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
-    String blank7 = "						";
-    String blank2 = "	";
-    String blank9 = blank7 + blank2;
-    for (IntrospectedColumn column : table.getAllColumns()) {
-      String propertyname = column.getJavaProperty();
-      int length = column.getLength();
-      int type = column.getJdbcType();
-      String readonly = table.getPrimaryKeyColumns().contains(column) ? "readonly=\"true\"" : "";
-      String tips = "";
-
-      String fieldStr = "<s:textfield name=\"var." + propertyname + "\" size=\"" + propertyname + "\" size=\"" + length + "\" maxlength=\"" + (length) + "\"></s:textfield>";
-      if (type == java.sql.Types.DATE || type == java.sql.Types.TIMESTAMP) {
-        fieldStr = "<sx:datetimepicker  displayFormat=\"yyyy-MM-dd\" name=\"var." + propertyname + "\"    cssStyle=\"width:200px\" ></sx:datetimepicker>";
-      }
-      if (table.getPrimaryKeyColumns().contains(column)) {
-        tips = "<font color='red'>&nbsp;*&nbsp;Auto-generated If The Input Is Empty</font>";
-      }
-      form.append(blank7).append("<tr class=\"repCnd\">").append("\r\n");
-      form.append(blank9).append("<td class=\"repCndLb\">").append(column.getActualColumnName()).append(":</td>").append("\r\n");
-      form.append(blank9).append("<td class=\"repCndEditRight\">").append("\r\n");
-      form.append(blank9).append(blank2).append(fieldStr).append(tips).append("\r\n");
-      form.append(blank9).append("</td>").append("\r\n");
-      form.append(blank7).append("</tr>").append("\r\n");
-    }
-    try {
-      //get template
-      InputStream is = getResourceAsStream("template/jsp/new.template");
-      String template = IOUtils.toString(is);
-      template = template.replaceAll("#namespace", namespace);
-      template = template.replaceAll("#form", form.toString());
-      String fileDir = targetProject;
-      if (File.separator.equals("\\")) {
-        fileDir += namespace.replaceAll("/", "\\\\");
-      } else {
-        fileDir += namespace.replaceAll("\\\\", "/");
-      }
-      File dir = new File(fileDir);
-      if (!dir.exists()) {
-        dir.mkdirs();
-      }
-      String file = fileDir + File.separator + "new.jsp";
-      File f = new File(file);
-      if (f.exists()) {
-        System.out.println("Existing file " + file + " was overwritten");
-        f.delete();
-      } else {
-        System.out.println("Generating  file " + file + " was created");
-      }
-      f.createNewFile();
-      writeFile(f, template, "UTF-8");
-      return true;
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    return false;
-  }
-
-  public static boolean generateMainJsp(IntrospectedTable table, String namespace, String targetProject) {
-    // TODO Auto-generated method stub
-    StringBuffer queryCondition = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
-    StringBuffer queryResultTitle = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
-    StringBuffer queryResultData = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
-    String blank7 = "						";
-    String blank2 = "	";
-    String blank9 = blank7 + blank2;
-    for (IntrospectedColumn column : table.getAllColumns()) {
-      String propertyname = column.getJavaProperty();
-      int length = column.getLength();
-      int type = column.getJdbcType();
-      String fieldStr = "<s:textfield name=\"var." + propertyname + "\" id=\"" + propertyname + "\" size=\"" + length + "\" maxlength=\"" + (length + 1) + "\"></s:textfield>";
-      if (type == java.sql.Types.DATE || type == java.sql.Types.TIMESTAMP) {
-        fieldStr = "<sx:datetimepicker displayFormat=\"yyyy-MM-dd\" name=\"var." + propertyname + "\"    cssStyle=\"width:200px\" ></sx:datetimepicker>";
-      }
-      queryCondition.append(blank7).append("<tr class=\"repCnd\">").append("\r\n");
-      queryCondition.append(blank9).append("<td class=\"repCndLb\">").append(column.getActualColumnName()).append(":</td>").append("\r\n");
-      queryCondition.append(blank9).append("<td class=\"repCndEditRight\">").append("\r\n");
-      queryCondition.append(blank9).append(blank2).append(fieldStr).append("\r\n");
-      queryCondition.append(blank9).append("</td>").append("\r\n");
-      queryCondition.append(blank7).append("</tr>").append("\r\n");
-      //query result title
-      queryResultTitle.append(blank9 + blank7).append("<td class=\"editGridHd\" nowrap=\"nowrap\" >").append("\r\n");
-      queryResultTitle.append(blank9 + blank7).append(blank2).append(propertyname).append("\r\n");
-      queryResultTitle.append(blank9 + blank7).append("</td>").append("\r\n");
-      //query result data
-      String format = "";
-      if (column.getJdbcType() >= 91 && column.getJdbcType() <= 93) {
-        format = " format=\"yyyy-MM-dd HH:mm:ss\" ";
-      }
-      queryResultData.append(blank9 + blank7).append("<td class=\"editGrid\"  align=\"left\">").append("\r\n");
-      queryResultData.append(blank9 + blank7).append(blank2).append("<s:property value=\"#list.").append(propertyname).append("\"  " + format + "/>").append("\r\n");
-      queryResultData.append(blank9 + blank7).append("</td>").append("\r\n");
-    }
-    //query result title.operation
-    queryResultTitle.append(blank9 + blank7).append("<td class=\"editGridHd\" nowrap=\"nowrap\" >").append("\r\n");
-    queryResultTitle.append(blank9 + blank7).append(blank2).append("Operation").append("\r\n");
-    queryResultTitle.append(blank9 + blank7).append("</td>").append("\r\n");
-    StringBuffer linkParameters = new StringBuffer();
-    for (IntrospectedColumn column : table.getPrimaryKeyColumns()) {
-      String propertyname = column.getJavaProperty();
-      String format = "";
-      if (column.getJdbcType() >= 91 && column.getJdbcType() <= 93) {
-        format = " format=\"yyyy-MM-dd HH:mm:ss\" ";
-      }
-      linkParameters.append(blank9).append("<s:param name=\"var.").append(propertyname).append("\" value=\"#list.").append(propertyname).append("\"  " + format + "> </s:param>").append("\r\n");
-    }
-    try {
-      //get template
-      InputStream is = getResourceAsStream("template/jsp/main.template");
-      String template = IOUtils.toString(is);
-      template = template.replaceAll("#namespace", namespace);
-      template = template.replaceAll("#queryCondition", queryCondition.toString());
-      template = template.replaceAll("#queryresulttitle", queryResultTitle.toString());
-      template = template.replaceAll("#queryresultdata", queryResultData.toString());
-      template = template.replaceAll("#linkparameters", linkParameters.toString());
-      template = template.replaceAll("#colspancount", String.valueOf(table.getAllColumns().size()));
-      String fileDir = targetProject;
-      if (File.separator.equals("\\")) {
-        fileDir += namespace.replaceAll("/", "\\\\");
-      } else {
-        fileDir += namespace.replaceAll("\\\\", "/");
-      }
-      File dir = new File(fileDir);
-      if (!dir.exists()) {
-        dir.mkdirs();
-      }
-      String file = fileDir + File.separator + "main.jsp";
-      File f = new File(file);
-      if (f.exists()) {
-        System.out.println("Existing file " + file + " was overwritten");
-        f.delete();
-      } else {
-        System.out.println("Generating  file " + file + " was created");
-      }
-      f.createNewFile();
-      writeFile(f, template, "UTF-8");
-      return true;
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    return false;
-  }
 
   public static boolean generateValueObject() throws Exception {
     StringBuffer valueObjectName = new StringBuffer();
@@ -730,7 +161,7 @@ public class FileUtils {
       HashMap<String, String> replace = new HashMap<>();
       replace.put("#VALUEOBJECTNAME#", valueObjectName.toString());
       replace.put("#VALUEOBJECTFIELD#", valueObjectField.toString());
-      autoGenerateHtml("template/valueobject/valueobject.template", replace, tableName + ".java");
+      autoGenerateHtml("template/vo.java.template", replace, tableName + ".java");
       return true;
     } catch (IOException e) {
       // TODO Auto-generated catch block
@@ -792,7 +223,7 @@ public class FileUtils {
       HashMap<String, String> replace = new HashMap<>();
       replace.put("#NAMESPACE#", namespace);
       replace.put("#FORMFIELD#", formfield.toString());
-      autoGenerateHtml("template/html/update.template", replace, "update.html");
+      autoGenerateHtml("template/update.html.template", replace, "update.html");
       return true;
     } catch (IOException e) {
       // TODO Auto-generated catch block
@@ -852,7 +283,7 @@ public class FileUtils {
       HashMap<String, String> replace = new HashMap<>();
       replace.put("#NAMESPACE#", namespace);
       replace.put("#FORMFIELD#", formfield.toString());
-      autoGenerateHtml("template/html/new.template", replace, "new.html");
+      autoGenerateHtml("template/new.html.template", replace, "new.html");
       return true;
     } catch (IOException e) {
       // TODO Auto-generated catch block
@@ -870,7 +301,10 @@ public class FileUtils {
     String blank9 = blank7 + blank2;
     Vector<NamedNodeMap> primarykeys = new Vector<>();
     NamedNodeMap[] args = XmlUtils.parseItem();
+    //更新主键
     String updatestr = "";
+    //请求参数
+    String requstparameters = "";
     for (NamedNodeMap map : args) {
       String id = XmlUtils.getNodeValue(map, "id", true).toLowerCase();
       String lable = XmlUtils.getNodeValue(map, "lable", true).toLowerCase();
@@ -883,6 +317,7 @@ public class FileUtils {
         primarykeys.add(map);
         updatestr += id + "='+data[i]." + id + "+" + "'&";
       }
+      requstparameters += id + "='document.getElementById('" + id + "')" + "'&";
       //query conditions.
       String fieldStr = "<input type=\"text\" name=\"" + id + "\" id=\"" + id + "\" value=\"" + default_ + "\"  maxlength=\"" + (Integer.parseInt(length) + 1) + "\"  style=\"width:" + Integer.parseInt(length) + "px\">";
       if (type.equalsIgnoreCase("date")) {
@@ -933,8 +368,9 @@ public class FileUtils {
       replace.put("#QUERYCONDITION#", queryCondition.toString());
       replace.put("#GRIDHEAD#", queryResultTitle.toString());
       replace.put("#GRIDDATA#", queryResultData.toString());
+      replace.put("#REQUSTPARAMETERS#", requstparameters);
       replace.put("#UPDATESTR#", updatestr.endsWith("&") ? updatestr.substring(0, updatestr.length() - 1) : updatestr);
-      autoGenerateHtml("template/html/main.template", replace, "main.html");
+      autoGenerateHtml("template/main.html.template", replace, "main.html");
       return true;
     } catch (IOException e) {
       // TODO Auto-generated catch block

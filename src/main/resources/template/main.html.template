@@ -124,7 +124,7 @@
     </tr>
   </table>
 </div>
-<form action="#NAMESPACE#/query" enctype="multipart/form-data" method="post">
+<form action="#NAMESPACE#/action" enctype="multipart/form-data" method="post">
   <table border="0" cellpadding="0" cellspacing="0" width="100%">
     <tr height="5">
       <td nowrap="nowrap" width="15">&nbsp;</td>
@@ -143,6 +143,7 @@
           #QUERYCONDITION#
           <tr class="bgLight" height="30">
             <td align="right" class="normalFont" colspan="4">
+              <input type="hidden" id="requestMethod" name="requestMethod" value="query">
               <input type="button" accesskey="s" value="Query(s)" onclick="Query()"> &nbsp;
               <input type="reset" accesskey="c" value="Reset(c)">
               <input type="button" accesskey="n"  name="init" value="New(n)" onclick="window.location.href='#NAMESPACE#/new.html'">&nbsp;&nbsp;&nbsp;&nbsp;
@@ -214,7 +215,8 @@
         }
       }
     }
-    xmlHttpRequest.send('a=9&b=6');
+    let parameters = '#REQUSTPARAMETERS#';
+    xmlHttpRequest.send(parameters);
   }
 
 </script>
