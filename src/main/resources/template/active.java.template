@@ -29,18 +29,18 @@ public class Active extends HttpServlet {
   }
 
   public void query(HttpServletRequest request, HttpServletResponse response) {
-
+        #ACTIVE.QUERY#
   }
 
   public void aNew(HttpServletRequest request, HttpServletResponse response) {
-
+        #ACTIVE.NEW#
   }
 
   public void update(HttpServletRequest request, HttpServletResponse response) {
-
+        #ACTIVE.UPDATE#
   }
 
   public void delete(HttpServletRequest request, HttpServletResponse response) {
-
+        #ACTIVE.DELETE#
   }
 }

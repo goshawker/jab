@@ -77,55 +77,36 @@ public class FileUtils {
     return inputStream;
   }
 
-
-  public static boolean generateAction(IntrospectedTable table, String namespace, String targetProject) {
-    // TODO Auto-generated method stub
-    StringBuffer form = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
-    String blank7 = "						";
-    String blank2 = "	";
-    String blank9 = blank7 + blank2;
-    String _package = "";
-    if (namespace.startsWith("/")) {
-      _package = namespace.substring(1).replaceAll("/", ".");
-    } else {
-      _package = namespace.replaceAll("/", ".");
+  public static boolean generateAction(IntrospectedTable table, String namespace, String targetProject) throws Exception {
+    StringBuffer valueObjectName = new StringBuffer();
+    StringBuffer valueObjectField = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
+    NamedNodeMap[] args = XmlUtils.parseItem();
+    for (NamedNodeMap map : args) {
+      //id
+      String id = XmlUtils.getNodeValue(map, "id", true).toLowerCase();
+      //type of id
+      String type = XmlUtils.getNodeValue(map, "type", true).toLowerCase();
+      //default value
+      String default_ = XmlUtils.getNodeValue(map, "default", true);
+      valueObjectField.append("\t \t private ");
+      if (type.equals("text") || type.equals("select")) {
+        valueObjectField.append("String ");
+      } else if (type.equals("number")) {
+        valueObjectField.append("BigDecimal ");
+      } else if (type.equals("date")) {
+        valueObjectField.append("Date ");
+      }
+      valueObjectField.append(id + " ;\r\n");
     }
-    String classname = "Action";
-    String datetime = DateUtils.newDateTime();
-    String vo = table.getBaseRecordType();
-
-    for (IntrospectedColumn column : table.getAllColumns()) {
-      String propertyname = column.getJavaProperty();
-    }
+    args = XmlUtils.parseItems();
+    namespace = XmlUtils.getNodeValue(args[0], "namespace");
+    String tableName = XmlUtils.getNodeValue(args[0], "tableName");
+    valueObjectName.append(tableName);
     try {
-      //get template
-      InputStream is = getResourceAsStream("template/action/action.template");
-      String template = IOUtils.toString(is);
-      template = template.replaceAll("#package", _package);
-      template = template.replaceAll("#classname", classname);
-      template = template.replaceAll("#datetime", datetime);
-      template = template.replaceAll("#vo", vo);
-
-      String fileDir = targetProject;
-      if (File.separator.equals("\\")) {
-        fileDir += namespace.replaceAll("/", "\\\\");
-      } else {
-        fileDir += namespace.replaceAll("\\\\", "/");
-      }
-      File dir = new File(fileDir);
-      if (!dir.exists()) {
-        dir.mkdirs();
-      }
-      String file = fileDir + File.separator + classname + ".java";
-      File f = new File(file);
-      if (f.exists()) {
-        System.out.println("Existing file " + file + " was overwritten");
-        f.delete();
-      } else {
-        System.out.println("Generating  file " + file + " was created");
-      }
-      f.createNewFile();
-      writeFile(f, template, "UTF-8");
+      HashMap<String, String> replace = new HashMap<>();
+      replace.put("#VALUEOBJECTNAME#", valueObjectName.toString());
+      replace.put("#VALUEOBJECTFIELD#", valueObjectField.toString());
+      autoGenerateHtml("template/vo.java.template", replace, tableName + ".java");
       return true;
     } catch (IOException e) {
       // TODO Auto-generated catch block
