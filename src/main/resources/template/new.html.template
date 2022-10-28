@@ -86,7 +86,7 @@
           #FORMFIELD#
           <tr class="bgLight" height="30">
             <td align="right" class="normalFont" colspan="4">
-              <input type="hidden" id="requestMethod" name="requestMethod" value="anew">
+              <input type="hidden" id="requestMethod" name="requestMethod" value="insert">
               <input type="button"  accesskey="S" value="Submit(S)" onclick="save()"> &nbsp;
               <input type="reset" accesskey="c" value="Reset(c)">
             </td>

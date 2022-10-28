@@ -1,4 +1,4 @@
-package #NAMESPACE#;
+package #PACKAGE#;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,16 +11,20 @@ import java.io.IOException;
 public class Active extends HttpServlet {
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    request.setCharacterEncoding("utf-8");
+    response.setContentType("application/json; charset=utf-8");
+    String returnData = "";
     String method = request.getParameter("requestMethod");
     if (method.indexOf("query") != -1) {
-      query(request, response);
-    } else if (method.indexOf("anew") != -1) {
-      aNew(request, response);
+      returnData = query(request, response);
+    } else if (method.indexOf("insert") != -1) {
+      returnData = insert(request, response);
     } else if (method.indexOf("update") != -1) {
-      update(request, response);
+      returnData = update(request, response);
     } else if (method.indexOf("delete") != -1) {
-      delete(request, response);
+      returnData = delete(request, response);
     }
+    response.getWriter().write(returnData);
   }
 
   @Override
@@ -28,19 +32,19 @@ public class Active extends HttpServlet {
     doGet(request, response);
   }
 
-  public void query(HttpServletRequest request, HttpServletResponse response) {
-        #ACTIVE.QUERY#
+  public String query(HttpServletRequest request) {
+         return com.jab.util.DBUtils.commonQuery(request);
   }
 
-  public void aNew(HttpServletRequest request, HttpServletResponse response) {
-        #ACTIVE.NEW#
+  public String insert(HttpServletRequest request) {
+         return com.jab.util.DBUtils.commonInsert(request);
   }
 
-  public void update(HttpServletRequest request, HttpServletResponse response) {
-        #ACTIVE.UPDATE#
+  public String update(HttpServletRequest request) {
+        return com.jab.util.DBUtils.commonUpdate(request);
   }
 
-  public void delete(HttpServletRequest request, HttpServletResponse response) {
-        #ACTIVE.DELETE#
+  public void delete(HttpServletRequest request) {
+        return com.jab.util.DBUtils.commonUpdate(request);
   }
 }

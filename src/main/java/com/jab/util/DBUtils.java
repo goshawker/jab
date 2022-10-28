@@ -5,13 +5,15 @@ import org.apache.logging.log4j.Logger;
 import org.w3c.dom.NamedNodeMap;
 import org.xml.sax.SAXException;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Vector;
 
 
 /**
@@ -174,5 +176,60 @@ public class DBUtils {
     return connection;
   }
 
+  /**
+  * 通用查询接口
+  * @Author: goshawker@yeah.net
+  * @Description:
+  * @Date: 2022/10/26 20:57
+  * @Version: 1.0
+  */
+  public static ArrayList<Object> commonQuery(HttpServletRequest request){
+    ArrayList returnObj = new ArrayList();
+    String tableName = "";
+    String keys = "";
+    String columns = "";
+
+
+    return returnObj;
+  }
+
+  /**
+  * 通用更新
+  * @Author: goshawker@yeah.net
+  * @Description:
+  * @Date: 2022/10/26 20:59
+  * @Version: 1.0
+  */
+  public static int commonUpdate(HttpServletRequest request){
+    int returnObj = 0;
+
+    return returnObj;
+  }
+
+  /**
+  * 通用删除
+  * @Author: goshawker@yeah.net
+  * @Description:
+  * @Date: 2022/10/26 21:25
+  * @Version: 1.0
+  */
+  public static int commonDelete(HttpServletRequest request){
+    int returnObj = 0;
+
+    return returnObj;
+  }
+
+  /**
+  * 通用新增数据
+  * @Author: goshawker@yeah.net
+  * @Description:
+  * @Date: 2022/10/26 20:59
+  * @Version: 1.0
+  */
+  public static int commonInsert(HttpServletRequest request){
+    int returnObj = 0;
+
+    return returnObj;
+  }
 
 }

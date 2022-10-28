@@ -1,3 +1,5 @@
+package #PACKAGE#;
+
 /**
 *Lambdas annotation
 */

@@ -77,36 +77,34 @@ public class FileUtils {
     return inputStream;
   }
 
-  public static boolean generateAction(IntrospectedTable table, String namespace, String targetProject) throws Exception {
+  public static boolean generateAction() throws Exception {
     StringBuffer valueObjectName = new StringBuffer();
-    StringBuffer valueObjectField = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
+    StringBuffer activeQuery = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
     NamedNodeMap[] args = XmlUtils.parseItem();
     for (NamedNodeMap map : args) {
-      //id
       String id = XmlUtils.getNodeValue(map, "id", true).toLowerCase();
-      //type of id
+      String lable = XmlUtils.getNodeValue(map, "lable", true).toLowerCase();
       String type = XmlUtils.getNodeValue(map, "type", true).toLowerCase();
-      //default value
+      String length = XmlUtils.getNodeValue(map, "length", true).toLowerCase();
       String default_ = XmlUtils.getNodeValue(map, "default", true);
-      valueObjectField.append("\t \t private ");
-      if (type.equals("text") || type.equals("select")) {
-        valueObjectField.append("String ");
-      } else if (type.equals("number")) {
-        valueObjectField.append("BigDecimal ");
-      } else if (type.equals("date")) {
-        valueObjectField.append("Date ");
+      String primarykey = XmlUtils.getNodeValue(map, "primarykey", true).toLowerCase();
+      String options = XmlUtils.getNodeValue(map, "options", true);
+      Vector<String> keys = new Vector();
+      Vector<String> columns = new Vector();
+      columns.add(id);
+      if (!StringUtils.isEmptyOrNull(primarykey)) {
+        keys.add(id);
       }
-      valueObjectField.append(id + " ;\r\n");
     }
     args = XmlUtils.parseItems();
-    namespace = XmlUtils.getNodeValue(args[0], "namespace");
+    String namespace = XmlUtils.getNodeValue(args[0], "namespace");
     String tableName = XmlUtils.getNodeValue(args[0], "tableName");
     valueObjectName.append(tableName);
     try {
       HashMap<String, String> replace = new HashMap<>();
-      replace.put("#VALUEOBJECTNAME#", valueObjectName.toString());
-      replace.put("#VALUEOBJECTFIELD#", valueObjectField.toString());
-      autoGenerateHtml("template/vo.java.template", replace, tableName + ".java");
+      replace.put("#PACKAGE#", namespace.substring(1,namespace.length()).replaceAll("/","."));
+      replace.put("#NAMESPACE#", namespace);
+      autoGenerateHtml("template/active.java.template", replace, "Active.java");
       return true;
     } catch (IOException e) {
       // TODO Auto-generated catch block
@@ -140,6 +138,7 @@ public class FileUtils {
     valueObjectName.append(tableName);
     try {
       HashMap<String, String> replace = new HashMap<>();
+      replace.put("#PACKAGE#", namespace.substring(1,namespace.length()).replaceAll("/","."));
       replace.put("#VALUEOBJECTNAME#", valueObjectName.toString());
       replace.put("#VALUEOBJECTFIELD#", valueObjectField.toString());
       autoGenerateHtml("template/vo.java.template", replace, tableName + ".java");

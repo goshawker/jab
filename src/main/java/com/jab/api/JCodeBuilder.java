@@ -72,38 +72,10 @@ public class JCodeBuilder {
 
     }
 
-
-
-
-//
-//        boolean mainaction = FileUtils.generateAction(table, namespace, targetProject);
-//        if (mainaction) {
-//          log.debug("generate mainaction file success.");
-//        }
-//        boolean queryaction = FileUtils.generateQueryAction(table, namespace, targetProject);
-//        if (queryaction) {
-//          log.debug("generate queryaction file success.");
-//        }
-//        boolean createaction = FileUtils.generateNewAction(table, namespace, targetProject);
-//        if (createaction) {
-//          log.debug("generate createaction file success.");
-//        }
-//        boolean modifyaction = FileUtils.generateUpdateAction(table, namespace, targetProject);
-//        if (modifyaction) {
-//          log.debug("generate modifyaction file success.");
-//        }
-//
-//        boolean deleteaction = FileUtils.generateDeleteAction(table, namespace, targetProject);
-//        if (deleteaction) {
-//          log.debug("generate modifyaction file success.");
-//        }
-//
-//        boolean configaction = FileUtils.generateConfiguration(table, namespace, targetProject);
-//        if (configaction) {
-//          log.debug("generate configaction file success.");
-//        }
-
-
+    boolean action = FileUtils.generateAction();
+    if (action) {
+      log.debug("generate action file success.");
+    }
   }
 
   private File getUniqueFileName(File directory, String fileName) {
