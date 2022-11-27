@@ -76,16 +76,30 @@ public class FileUtils {
 
   public static boolean generateAction() throws Exception {
     StringBuffer valueObjectName = new StringBuffer();
-    String blank7 = "						";
-    String blank2 = "	";
-    String blank9 = blank7 + blank2;
+    String blank7 = "	    ";
 
     StringBuffer queryCode = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
     StringBuffer insertCode = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
     StringBuffer updateCode = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
     StringBuffer deleteCode = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
 
+    NamedNodeMap[] items = XmlUtils.parseItems();
+    String namespace = XmlUtils.getNodeValue(items[0], "namespace");
+    String tableName = XmlUtils.getNodeValue(items[0], "tableName");
+
+    StringBuffer QuerySQL = new StringBuffer("select ");
+    StringBuffer DeleteSQL = new StringBuffer("delete from ").append(tableName);
+    StringBuffer UpdateSQL = new StringBuffer("update ").append(tableName).append(" set ");
+    StringBuffer InsertSQL = new StringBuffer("insert into ").append(tableName).append("(");
+
+    StringBuffer whereCondition = new StringBuffer(" where 1=1 ");
+    StringBuffer whereCondition_query = new StringBuffer(" where 1=1 ");
+    StringBuffer values_insert = new StringBuffer("");
+
     NamedNodeMap[] args = XmlUtils.parseItem();
+    Vector<String> keys_columns = new Vector();
+    Vector<String> nokeys_columns = new Vector();
+    Vector<String> all_columns = new Vector();
     for (NamedNodeMap map : args) {
       String id = XmlUtils.getNodeValue(map, "id", true).toLowerCase();
       String lable = XmlUtils.getNodeValue(map, "lable", true).toLowerCase();
@@ -94,20 +108,110 @@ public class FileUtils {
       String default_ = XmlUtils.getNodeValue(map, "default", true);
       String primarykey = XmlUtils.getNodeValue(map, "primarykey", true).toLowerCase();
       String options = XmlUtils.getNodeValue(map, "options", true);
-      Vector<String> keys = new Vector();
-      Vector<String> columns = new Vector();
-      columns.add(id);
+      InsertSQL.append(id).append(",");
+      QuerySQL.append(id).append(",");
+      all_columns.add(id);
+      whereCondition_query.append(" and ").append(id).append("=? ");
+      values_insert.append("?,");
       if (!StringUtils.isEmptyOrNull(primarykey)) {
-        keys.add(id);
+        keys_columns.add(id);
         deleteCode.append(blank7).append("String ").append(id).append(" = request.getParameter(\"").append(id).append("\"); \r\n");
+        whereCondition.append(" and ").append(id).append("=? ");
+      }else{
+        nokeys_columns.add(id);
+        UpdateSQL.append(id).append(" = ?,");
       }
+
       insertCode.append(blank7).append("String ").append(id).append(" = request.getParameter(\"").append(id).append("\"); \r\n");
       updateCode.append(blank7).append("String ").append(id).append(" = request.getParameter(\"").append(id).append("\"); \r\n");
       queryCode.append(blank7).append("String ").append(id).append(" = request.getParameter(\"").append(id).append("\"); \r\n");
     }
+    //处理列拼接，多余部分
+    if (UpdateSQL.toString().trim().endsWith(",")){
+      String tmp = UpdateSQL.toString().trim().substring(0,UpdateSQL.length()-1);
+      UpdateSQL.setLength(0);
+      UpdateSQL.append(tmp);
+    }
+    //处理列拼接，多余部分
+    if (values_insert.toString().trim().endsWith(",")){
+      String tmp = values_insert.toString().substring(0,values_insert.length()-1);
+      values_insert.setLength(0);
+      values_insert.append(tmp).append(")");
+    }
+
+    //处理列拼接，多余部分
+    if (InsertSQL.toString().trim().endsWith(",")){
+      String tmp = InsertSQL.toString().substring(0,InsertSQL.length()-1);
+      InsertSQL.setLength(0);
+      InsertSQL.append(tmp).append(") values(");
+    }
+
+
+    //处理列拼接，多余部分
+    if (QuerySQL.toString().trim().endsWith(",")){
+      String tmp = QuerySQL.toString().substring(0,QuerySQL.length()-1);
+      QuerySQL.setLength(0);
+      QuerySQL.append(tmp);
+    }
+    QuerySQL.append(" from ").append(tableName);
+
+    //插入SQL
+    insertCode.append(blank7).append("java.sql.PreparedStatement ps = connection.prepareStatement(\"").append(InsertSQL).append(values_insert).append("\");\r\n");
+    //删除SQL
+    deleteCode.append(blank7).append("java.sql.PreparedStatement ps = connection.prepareStatement(\"").append(DeleteSQL).append(whereCondition).append("\");\r\n");
+    //更新SQL
+    updateCode.append(blank7).append("java.sql.PreparedStatement ps = connection.prepareStatement(\"").append(UpdateSQL).append(whereCondition).append(" \");\r\n");
+    //查询SQL
+    queryCode.append(blank7).append("java.sql.PreparedStatement ps = connection.prepareStatement(\"").append(QuerySQL).append(whereCondition_query).append("  \");\r\n");
+
+    if (QuerySQL.length()>0){
+      int i=0;
+      for (String id:all_columns) {
+        i++;
+        queryCode.append(blank7).append("ps.setString(").append(i).append(",").append(id).append(");").append("\r\n");
+      }
+
+    }
+
+
+    if (!UpdateSQL.equals("")){
+      int i=0;
+      for (String id:nokeys_columns) {
+        i++;
+        updateCode.append(blank7).append("ps.setString(").append(i).append(",").append(id).append(");").append("\r\n");
+      }
+      for (String id:keys_columns) {
+        i++;
+        updateCode.append(blank7).append("ps.setString(").append(i).append(",").append(id).append(");").append("\r\n");
+      }
+    }
+
+    if (!DeleteSQL.equals("")){
+      int i=0;
+      for (String id:keys_columns) {
+        i++;
+        deleteCode.append(blank7).append("ps.setString(").append(i).append(",").append(id).append(");").append("\r\n");
+      }
+    }
+
+    if (!InsertSQL.equals("")){
+      int i=0;
+      for (String id:all_columns) {
+        i++;
+        insertCode.append(blank7).append("ps.setString(").append(i).append(",").append(id).append(");").append("\r\n");
+      }
+
+    }
+    deleteCode.append(blank7).append("affected_rows = ps.executeUpdate();").append("\r\n");
+    updateCode.append(blank7).append("affected_rows = ps.executeUpdate();").append("\r\n");
+    insertCode.append(blank7).append("affected_rows = ps.executeUpdate();").append("\r\n");
+    queryCode.append(blank7).append("java.sql.ResultSet rs = ps.executeQuery();").append("\r\n");
+    queryCode.append(blank7).append("//rows= ....").append("\r\n");
+
+
     args = XmlUtils.parseItems();
-    String namespace = XmlUtils.getNodeValue(args[0], "namespace");
-    String tableName = XmlUtils.getNodeValue(args[0], "tableName");
+//    String namespace = XmlUtils.getNodeValue(args[0], "namespace");
+//    String tableName = XmlUtils.getNodeValue(args[0], "tableName");
     valueObjectName.append(tableName);
     try {
       HashMap<String, String> replace = new HashMap<>();

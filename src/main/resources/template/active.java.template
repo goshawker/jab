@@ -62,58 +62,58 @@ public class Active extends HttpServlet {
       connection = java.sql.DriverManager.getConnection(url, user, pwd);
       return connection;
     }
-      /**
-      * query rows
-      * @Author: goshawker@yeah.net
-      * @Description:
-      * @Date: 2022/10/26 20:57
-      * @Version: 1.0
-      */
-      public static ArrayList<Object> commonQuery(HttpServletRequest request){
-        ArrayList rows = new ArrayList();
-        #QUERYCODE#
+  /**
+  * query rows
+  * @Author: goshawker@yeah.net
+  * @Description:
+  * @Date: 2022/10/26 20:57
+  * @Version: 1.0
+  */
+  public static ArrayList<Object> commonQuery(HttpServletRequest request){
+    ArrayList rows = new ArrayList();
+    #QUERYCODE#
 
-        return rows;
-      }
-       /**
-        * update a row
-        * @Author: goshawker@yeah.net
-        * @Description:
-        * @Date: 2022/10/26 20:59
-        * @Version: 1.0
-        */
-        public static int commonUpdate(HttpServletRequest request){
-          int affected_rows = 0;
-          #UPDATECODE#
+    return rows;
+  }
+    /**
+    * update a row
+    * @Author: goshawker@yeah.net
+    * @Description:
+    * @Date: 2022/10/26 20:59
+    * @Version: 1.0
+    */
+    public static int commonUpdate(HttpServletRequest request){
+      int affected_rows = 0;
+      #UPDATECODE#
 
-          return affected_rows;
-        }
+      return affected_rows;
+    }
 
-        /**
-        * delete a row
-        * @Author: goshawker@yeah.net
-        * @Description:
-        * @Date: 2022/10/26 21:25
-        * @Version: 1.0
-        */
-        public static int commonDelete(HttpServletRequest request){
-          int affected_rows = 0;
-          #DELETECODE#
+    /**
+    * delete a row
+    * @Author: goshawker@yeah.net
+    * @Description:
+    * @Date: 2022/10/26 21:25
+    * @Version: 1.0
+    */
+    public static int commonDelete(HttpServletRequest request){
+      int affected_rows = 0;
+      #DELETECODE#
 
-          return affected_rows;
-        }
+      return affected_rows;
+    }
 
-        /**
-        * insert a row
-        * @Author: goshawker@yeah.net
-        * @Description:
-        * @Date: 2022/10/26 20:59
-        * @Version: 1.0
-        */
-        public static int commonInsert(HttpServletRequest request){
-          int affected_rows = 0;
-          #INSERTCODE#
+    /**
+    * insert a row
+    * @Author: goshawker@yeah.net
+    * @Description:
+    * @Date: 2022/10/26 20:59
+    * @Version: 1.0
+    */
+    public static int commonInsert(HttpServletRequest request){
+      int affected_rows = 0;
+      #INSERTCODE#
 
-          return affected_rows;
-        }
+      return affected_rows;
+    }
 }
