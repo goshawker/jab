@@ -176,60 +176,8 @@ public class DBUtils {
     return connection;
   }
 
-  /**
-  * 通用查询接口
-  * @Author: goshawker@yeah.net
-  * @Description:
-  * @Date: 2022/10/26 20:57
-  * @Version: 1.0
-  */
-  public static ArrayList<Object> commonQuery(HttpServletRequest request){
-    ArrayList returnObj = new ArrayList();
-    String tableName = "";
-    String keys = "";
-    String columns = "";
 
 
-    return returnObj;
-  }
 
-  /**
-  * 通用更新
-  * @Author: goshawker@yeah.net
-  * @Description:
-  * @Date: 2022/10/26 20:59
-  * @Version: 1.0
-  */
-  public static int commonUpdate(HttpServletRequest request){
-    int returnObj = 0;
-
-    return returnObj;
-  }
-
-  /**
-  * 通用删除
-  * @Author: goshawker@yeah.net
-  * @Description:
-  * @Date: 2022/10/26 21:25
-  * @Version: 1.0
-  */
-  public static int commonDelete(HttpServletRequest request){
-    int returnObj = 0;
-
-    return returnObj;
-  }
-
-  /**
-  * 通用新增数据
-  * @Author: goshawker@yeah.net
-  * @Description:
-  * @Date: 2022/10/26 20:59
-  * @Version: 1.0
-  */
-  public static int commonInsert(HttpServletRequest request){
-    int returnObj = 0;
-
-    return returnObj;
-  }
 
 }

@@ -3,15 +3,12 @@ package com.jab.util;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.mybatis.generator.api.IntrospectedColumn;
-import org.mybatis.generator.api.IntrospectedTable;
 import org.w3c.dom.NamedNodeMap;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Vector;
 
 
@@ -79,7 +76,15 @@ public class FileUtils {
 
   public static boolean generateAction() throws Exception {
     StringBuffer valueObjectName = new StringBuffer();
-    StringBuffer activeQuery = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
+    String blank7 = "						";
+    String blank2 = "	";
+    String blank9 = blank7 + blank2;
+
+    StringBuffer queryCode = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
+    StringBuffer insertCode = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
+    StringBuffer updateCode = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
+    StringBuffer deleteCode = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
+
     NamedNodeMap[] args = XmlUtils.parseItem();
     for (NamedNodeMap map : args) {
       String id = XmlUtils.getNodeValue(map, "id", true).toLowerCase();
@@ -94,7 +99,11 @@ public class FileUtils {
       columns.add(id);
       if (!StringUtils.isEmptyOrNull(primarykey)) {
         keys.add(id);
+        deleteCode.append(blank7).append("String ").append(id).append(" = request.getParameter(\"").append(id).append("\"); \r\n");
       }
+      insertCode.append(blank7).append("String ").append(id).append(" = request.getParameter(\"").append(id).append("\"); \r\n");
+      updateCode.append(blank7).append("String ").append(id).append(" = request.getParameter(\"").append(id).append("\"); \r\n");
+      queryCode.append(blank7).append("String ").append(id).append(" = request.getParameter(\"").append(id).append("\"); \r\n");
     }
     args = XmlUtils.parseItems();
     String namespace = XmlUtils.getNodeValue(args[0], "namespace");
@@ -104,7 +113,11 @@ public class FileUtils {
       HashMap<String, String> replace = new HashMap<>();
       replace.put("#PACKAGE#", namespace.substring(1,namespace.length()).replaceAll("/","."));
       replace.put("#NAMESPACE#", namespace);
-      autoGenerateHtml("template/active.java.template", replace, "Active.java");
+      replace.put("#INSERTCODE#", insertCode.toString());
+      replace.put("#QUERYCODE#", queryCode.toString());
+      replace.put("#DELETECODE#", deleteCode.toString());
+      replace.put("#UPDATECODE#", updateCode.toString());
+      generateCode("template/active.java.template", replace, "Active.java");
       return true;
     } catch (IOException e) {
       // TODO Auto-generated catch block
@@ -141,7 +154,7 @@ public class FileUtils {
       replace.put("#PACKAGE#", namespace.substring(1,namespace.length()).replaceAll("/","."));
       replace.put("#VALUEOBJECTNAME#", valueObjectName.toString());
       replace.put("#VALUEOBJECTFIELD#", valueObjectField.toString());
-      autoGenerateHtml("template/vo.java.template", replace, tableName + ".java");
+      generateCode("template/vo.java.template", replace, tableName + ".java");
       return true;
     } catch (IOException e) {
       // TODO Auto-generated catch block
@@ -203,7 +216,7 @@ public class FileUtils {
       HashMap<String, String> replace = new HashMap<>();
       replace.put("#NAMESPACE#", namespace);
       replace.put("#FORMFIELD#", formfield.toString());
-      autoGenerateHtml("template/update.html.template", replace, "update.html");
+      generateCode("template/update.html.template", replace, "update.html");
       return true;
     } catch (IOException e) {
       // TODO Auto-generated catch block
@@ -263,7 +276,7 @@ public class FileUtils {
       HashMap<String, String> replace = new HashMap<>();
       replace.put("#NAMESPACE#", namespace);
       replace.put("#FORMFIELD#", formfield.toString());
-      autoGenerateHtml("template/new.html.template", replace, "new.html");
+      generateCode("template/new.html.template", replace, "new.html");
       return true;
     } catch (IOException e) {
       // TODO Auto-generated catch block
@@ -350,7 +363,7 @@ public class FileUtils {
       replace.put("#GRIDDATA#", queryResultData.toString());
       replace.put("#REQUSTPARAMETERS#", requstparameters);
       replace.put("#UPDATESTR#", updatestr.endsWith("&") ? updatestr.substring(0, updatestr.length() - 1) : updatestr);
-      autoGenerateHtml("template/main.html.template", replace, "main.html");
+      generateCode("template/main.html.template", replace, "main.html");
       return true;
     } catch (IOException e) {
       // TODO Auto-generated catch block
@@ -359,7 +372,7 @@ public class FileUtils {
     return false;
   }
 
-  private static void autoGenerateHtml(String templateFile, HashMap<String, String> replace, String newName) throws ParserConfigurationException, IOException, SAXException {
+  private static void generateCode(String templateFile, HashMap<String, String> replace, String newName) throws ParserConfigurationException, IOException, SAXException {
     InputStream is = getResourceAsStream(templateFile);
     String template = IOUtils.toString(is);
     for (String key : replace.keySet()) {
@@ -381,10 +394,10 @@ public class FileUtils {
     String file = fileDir + File.separator + newName;
     File f = new File(file);
     if (f.exists() && overwrite.equals("true")) {
-      System.out.println("Existing file " + file + " was overwritten");
+//      System.out.println("Existing file " + file + " was overwritten");
       f.delete();
     } else {
-      System.out.println("Generating  file " + file + " was created");
+//      System.out.println("Generating  file " + file + " was created");
     }
     f.createNewFile();
     writeFile(f, template, "UTF-8");
@@ -408,6 +421,6 @@ public class FileUtils {
     BufferedWriter bw = new BufferedWriter(osw);
     bw.write(content);
     bw.close();
-    System.out.println("file  " + file + "  created.");
+    //System.out.println("file  " + file + "  created.");
   }
 }

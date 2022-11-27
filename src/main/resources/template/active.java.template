@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.*;
 
 @WebServlet(name = "#NAMESPACE#/active", value = "#NAMESPACE#/active")
 public class Active extends HttpServlet {
@@ -33,18 +34,86 @@ public class Active extends HttpServlet {
   }
 
   public String query(HttpServletRequest request) {
-         return com.jab.util.DBUtils.commonQuery(request);
+         return commonQuery(request);
   }
 
   public String insert(HttpServletRequest request) {
-         return com.jab.util.DBUtils.commonInsert(request);
+         return commonInsert(request);
   }
 
   public String update(HttpServletRequest request) {
-        return com.jab.util.DBUtils.commonUpdate(request);
+        return commonUpdate(request);
   }
 
   public void delete(HttpServletRequest request) {
-        return com.jab.util.DBUtils.commonUpdate(request);
+        return commonUpdate(request);
   }
+
+  private static java.sql.Connection connection = null;
+  private static String driver="com.mysql.cj.jdbc.Driver";
+  private static String user="root";
+  private static String pwd="mysql";
+  private static String url="jdbc:mysql://127.0.0.1:3306/test";
+  public static java.sql.Connection buildConnect() throws ClassNotFoundException, SQLException {
+      if (connection != null && !connection.isClosed()) {
+        return connection;
+      }
+      Class.forName(driver);
+      connection = java.sql.DriverManager.getConnection(url, user, pwd);
+      return connection;
+    }
+      /**
+      * query rows
+      * @Author: goshawker@yeah.net
+      * @Description:
+      * @Date: 2022/10/26 20:57
+      * @Version: 1.0
+      */
+      public static ArrayList<Object> commonQuery(HttpServletRequest request){
+        ArrayList rows = new ArrayList();
+        #QUERYCODE#
+
+        return rows;
+      }
+       /**
+        * update a row
+        * @Author: goshawker@yeah.net
+        * @Description:
+        * @Date: 2022/10/26 20:59
+        * @Version: 1.0
+        */
+        public static int commonUpdate(HttpServletRequest request){
+          int affected_rows = 0;
+          #UPDATECODE#
+
+          return affected_rows;
+        }
+
+        /**
+        * delete a row
+        * @Author: goshawker@yeah.net
+        * @Description:
+        * @Date: 2022/10/26 21:25
+        * @Version: 1.0
+        */
+        public static int commonDelete(HttpServletRequest request){
+          int affected_rows = 0;
+          #DELETECODE#
+
+          return affected_rows;
+        }
+
+        /**
+        * insert a row
+        * @Author: goshawker@yeah.net
+        * @Description:
+        * @Date: 2022/10/26 20:59
+        * @Version: 1.0
+        */
+        public static int commonInsert(HttpServletRequest request){
+          int affected_rows = 0;
+          #INSERTCODE#
+
+          return affected_rows;
+        }
 }

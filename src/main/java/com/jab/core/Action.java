@@ -33,6 +33,5 @@ public interface Action {
   String COPYRIGHT = "";
   String EMAIL = "";
 
-
   String execute() throws Exception;
 }

@@ -68,13 +68,13 @@ public class JCodeBuilder {
     //generate valueObject.java
     boolean valueObject = FileUtils.generateValueObject();
     if (valueObject) {
-      log.debug("generate valueObject.java success.");
+      log.debug("generate vo.java success.");
 
     }
 
     boolean action = FileUtils.generateAction();
     if (action) {
-      log.debug("generate action file success.");
+      log.debug("generate action.java file success.");
     }
   }
 
