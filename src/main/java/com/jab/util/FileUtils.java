@@ -206,7 +206,7 @@ public class FileUtils {
     updateCode.append(blank7).append("affected_rows = ps.executeUpdate();").append("\r\n");
     insertCode.append(blank7).append("affected_rows = ps.executeUpdate();").append("\r\n");
     queryCode.append(blank7).append("java.sql.ResultSet rs = ps.executeQuery();").append("\r\n");
-    queryCode.append(blank7).append("//rows= ....").append("\r\n");
+    queryCode.append(blank7).append("JSONString = toJSONArray(rs).toString();").append("\r\n");
 
 
     args = XmlUtils.parseItems();
@@ -221,6 +221,11 @@ public class FileUtils {
       replace.put("#QUERYCODE#", queryCode.toString());
       replace.put("#DELETECODE#", deleteCode.toString());
       replace.put("#UPDATECODE#", updateCode.toString());
+      DBUtils.init();
+      replace.put("#DRIVER#", DBUtils.driver);
+      replace.put("#USER#", DBUtils.user);
+      replace.put("#PWD#", DBUtils.pwd);
+      replace.put("#URL#", DBUtils.url);
       generateCode("template/active.java.template", replace, "Active.java");
       return true;
     } catch (IOException e) {

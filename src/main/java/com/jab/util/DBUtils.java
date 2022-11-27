@@ -59,10 +59,10 @@ public class DBUtils {
      */
     static Logger log = LogManager.getLogger(DBUtils.class);
     private static Connection connection = null;
-    private static String driver;
-    private static String user;
-    private static String pwd;
-    private static String url;
+    public static String driver;
+    public static String user;
+    public static String pwd;
+    public static String url;
 
     public static void init() {
         NamedNodeMap[] vector = new NamedNodeMap[0];

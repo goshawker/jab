@@ -7,6 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 
 @WebServlet(name = "#NAMESPACE#/active", value = "#NAMESPACE#/active")
 public class Active extends HttpServlet {
@@ -50,10 +53,10 @@ public class Active extends HttpServlet {
   }
 
   private static java.sql.Connection connection = null;
-  private static String driver="com.mysql.cj.jdbc.Driver";
-  private static String user="root";
-  private static String pwd="mysql";
-  private static String url="jdbc:mysql://127.0.0.1:3306/test";
+  private static String driver="#DRIVER#";
+  private static String user="#USER#";
+  private static String pwd="#PWD#";
+  private static String url="#URL#";
   public static java.sql.Connection buildConnect() throws ClassNotFoundException, SQLException {
       if (connection != null && !connection.isClosed()) {
         return connection;
@@ -69,11 +72,11 @@ public class Active extends HttpServlet {
   * @Date: 2022/10/26 20:57
   * @Version: 1.0
   */
-  public static ArrayList<Object> commonQuery(HttpServletRequest request){
-    ArrayList rows = new ArrayList();
+  public static String commonQuery(HttpServletRequest request){
+    String JSONString = new String();
     #QUERYCODE#
 
-    return rows;
+    return JSONString;
   }
     /**
     * update a row
@@ -82,11 +85,11 @@ public class Active extends HttpServlet {
     * @Date: 2022/10/26 20:59
     * @Version: 1.0
     */
-    public static int commonUpdate(HttpServletRequest request){
+    public static String commonUpdate(HttpServletRequest request){
       int affected_rows = 0;
       #UPDATECODE#
 
-      return affected_rows;
+      return String.valueOf(affected_rows);
     }
 
     /**
@@ -96,11 +99,11 @@ public class Active extends HttpServlet {
     * @Date: 2022/10/26 21:25
     * @Version: 1.0
     */
-    public static int commonDelete(HttpServletRequest request){
+    public static String commonDelete(HttpServletRequest request){
       int affected_rows = 0;
       #DELETECODE#
 
-      return affected_rows;
+      return String.valueOf(affected_rows);
     }
 
     /**
@@ -110,10 +113,25 @@ public class Active extends HttpServlet {
     * @Date: 2022/10/26 20:59
     * @Version: 1.0
     */
-    public static int commonInsert(HttpServletRequest request){
+    public static String commonInsert(HttpServletRequest request){
       int affected_rows = 0;
       #INSERTCODE#
 
-      return affected_rows;
+      return String.valueOf(affected_rows);
+    }
+    public static JSONArray toJSONArray(ResultSet rs) throws SQLException, JSONException {
+        JSONArray array = new JSONArray();
+        ResultSetMetaData metaData = rs.getMetaData();
+        int columnCount = metaData.getColumnCount();
+        while (rs.next()) {
+            JSONObject jsonObj = new JSONObject();
+            for (int i = 1; i <= columnCount; i++) {
+                String columnName = metaData.getColumnLabel(i);
+                String value = rs.getString(columnName);
+                jsonObj.put(columnName, value);
+            }
+            array.add(jsonObj);
+        }
+        return array;
     }
 }
