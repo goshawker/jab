@@ -98,7 +98,7 @@
       .normalFont {
           background: #f7f7f7;
           font-size: 10pt;
-          font-family: arial, ËÎÌå, verdana, helvetica;
+          font-family: arial, å®‹ä½“, verdana, helvetica;
           line-height: 130%;
       }
 
@@ -200,7 +200,6 @@
           const data = JSON.parse(string);
           let count = data.length;
           let trHtml="";
-
           for (let i = 0; i < count; i++) {
             trHtml +="<tr  class=\"editGrid\" nowrap=\"nowrap\">";
             #GRIDDATA#

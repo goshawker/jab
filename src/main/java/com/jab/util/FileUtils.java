@@ -226,7 +226,7 @@ public class FileUtils {
       replace.put("#USER#", DBUtils.user);
       replace.put("#PWD#", DBUtils.pwd);
       replace.put("#URL#", DBUtils.url);
-      generateCode("template/active.java.template", replace, "Active.java");
+      generateCode("template/active.java.template", replace, "JABActive.java");
       return true;
     } catch (IOException e) {
       // TODO Auto-generated catch block
@@ -238,7 +238,7 @@ public class FileUtils {
 
   public static boolean generateValueObject() throws Exception {
     StringBuffer valueObjectName = new StringBuffer();
-    StringBuffer valueObjectField = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
+    StringBuffer valueObjectField = new StringBuffer("/** // TODO Auto-generated  */").append("\r\n");
     NamedNodeMap[] args = XmlUtils.parseItem();
     for (NamedNodeMap map : args) {
       String id = XmlUtils.getNodeValue(map, "id", true).toLowerCase();
@@ -323,7 +323,7 @@ public class FileUtils {
     String namespace = XmlUtils.getNodeValue(items[0], "namespace");
     try {
       HashMap<String, String> replace = new HashMap<>();
-      replace.put("#NAMESPACE#", namespace);
+      replace.put("#NAMESPACE#", namespace.substring(1));
       replace.put("#FORMFIELD#", formfield.toString());
       generateCode("template/update.html.template", replace, "update.html");
       return true;
@@ -383,7 +383,7 @@ public class FileUtils {
     String namespace = XmlUtils.getNodeValue(items[0], "namespace");
     try {
       HashMap<String, String> replace = new HashMap<>();
-      replace.put("#NAMESPACE#", namespace);
+      replace.put("#NAMESPACE#", namespace.substring(1));
       replace.put("#FORMFIELD#", formfield.toString());
       generateCode("template/new.html.template", replace, "new.html");
       return true;
@@ -397,7 +397,7 @@ public class FileUtils {
   public static boolean generateMainHtml() throws Exception {
     StringBuffer queryCondition = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
     StringBuffer queryResultTitle = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
-    StringBuffer queryResultData = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
+    StringBuffer queryResultData = new StringBuffer(" //TODO Auto-generated ").append("\r\n");
     String blank7 = "						";
     String blank2 = "	";
     String blank9 = blank7 + blank2;
@@ -419,7 +419,7 @@ public class FileUtils {
         primarykeys.add(map);
         updatestr += id + "='+data[i]." + id + "+" + "'&";
       }
-      requstparameters += id + "='document.getElementById('" + id + "')" + "'&";
+      requstparameters += id + "='+document.getElementById('" + id + "')+" + "'&";
       //query conditions.
       String fieldStr = "<input type=\"text\" name=\"" + id + "\" id=\"" + id + "\" value=\"" + default_ + "\"  maxlength=\"" + (Integer.parseInt(length) + 1) + "\"  style=\"width:" + Integer.parseInt(length) + "px\">";
       if (type.equalsIgnoreCase("date")) {
@@ -465,7 +465,7 @@ public class FileUtils {
     String namespace = XmlUtils.getNodeValue(items[0], "namespace");
     try {
       HashMap<String, String> replace = new HashMap<>();
-      replace.put("#NAMESPACE#", namespace.concat(""));
+      replace.put("#NAMESPACE#", namespace.concat("").substring(1));
       replace.put("#DONEW#", namespace.concat(""));
       replace.put("#QUERYCONDITION#", queryCondition.toString());
       replace.put("#GRIDHEAD#", queryResultTitle.toString());
@@ -503,10 +503,8 @@ public class FileUtils {
     String file = fileDir + File.separator + newName;
     File f = new File(file);
     if (f.exists() && overwrite.equals("true")) {
-//      System.out.println("Existing file " + file + " was overwritten");
       f.delete();
     } else {
-//      System.out.println("Generating  file " + file + " was created");
     }
     f.createNewFile();
     writeFile(f, template, "UTF-8");

@@ -14,14 +14,18 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
-@WebServlet(name = "#NAMESPACE#/active", value = "#NAMESPACE#/active")
-public class Active extends HttpServlet {
+@WebServlet(name = "#NAMESPACE#/action", value = "#NAMESPACE#/action")
+public class JABActive extends HttpServlet {
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     request.setCharacterEncoding("utf-8");
     response.setContentType("application/json; charset=utf-8");
     String returnData = "";
     String method = request.getParameter("requestMethod");
+    if(method == null){
+        returnData = "-1";
+        method = "";
+    }
     if (method.indexOf("query") != -1) {
       returnData = query(request);
     } else if (method.indexOf("insert") != -1) {
@@ -30,6 +34,8 @@ public class Active extends HttpServlet {
       returnData = update(request);
     } else if (method.indexOf("delete") != -1) {
       returnData = delete(request);
+    }else{
+       returnData="-1";
     }
     response.getWriter().write(returnData);
   }
