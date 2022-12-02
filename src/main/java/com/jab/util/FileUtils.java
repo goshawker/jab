@@ -78,10 +78,10 @@ public class FileUtils {
     StringBuffer valueObjectName = new StringBuffer();
     String blank7 = "	    ";
 
-    StringBuffer queryCode = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
-    StringBuffer insertCode = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
-    StringBuffer updateCode = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
-    StringBuffer deleteCode = new StringBuffer("<!-- // TODO Auto-generated  -->").append("\r\n");
+    StringBuffer queryCode = new StringBuffer("/** // TODO Auto-generated  */").append("\r\n");
+    StringBuffer insertCode = new StringBuffer("/** // TODO Auto-generated  */").append("\r\n");
+    StringBuffer updateCode = new StringBuffer("/** // TODO Auto-generated  */").append("\r\n");
+    StringBuffer deleteCode = new StringBuffer("/** // TODO Auto-generated  */").append("\r\n");
 
     NamedNodeMap[] items = XmlUtils.parseItems();
     String namespace = XmlUtils.getNodeValue(items[0], "namespace");

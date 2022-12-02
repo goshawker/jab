@@ -1,12 +1,15 @@
 package #PACKAGE#;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONException;
+import com.alibaba.fastjson.JSONObject;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.*;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -20,13 +23,13 @@ public class Active extends HttpServlet {
     String returnData = "";
     String method = request.getParameter("requestMethod");
     if (method.indexOf("query") != -1) {
-      returnData = query(request, response);
+      returnData = query(request);
     } else if (method.indexOf("insert") != -1) {
-      returnData = insert(request, response);
+      returnData = insert(request);
     } else if (method.indexOf("update") != -1) {
-      returnData = update(request, response);
+      returnData = update(request);
     } else if (method.indexOf("delete") != -1) {
-      returnData = delete(request, response);
+      returnData = delete(request);
     }
     response.getWriter().write(returnData);
   }
@@ -48,7 +51,7 @@ public class Active extends HttpServlet {
         return commonUpdate(request);
   }
 
-  public void delete(HttpServletRequest request) {
+  public String delete(HttpServletRequest request) {
         return commonUpdate(request);
   }
 
@@ -74,8 +77,11 @@ public class Active extends HttpServlet {
   */
   public static String commonQuery(HttpServletRequest request){
     String JSONString = new String();
-    #QUERYCODE#
-
+     try {
+        #QUERYCODE#
+     } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     return JSONString;
   }
     /**
@@ -87,8 +93,11 @@ public class Active extends HttpServlet {
     */
     public static String commonUpdate(HttpServletRequest request){
       int affected_rows = 0;
-      #UPDATECODE#
-
+       try {
+         #UPDATECODE#
+       } catch (SQLException e) {
+             throw new RuntimeException(e);
+       }
       return String.valueOf(affected_rows);
     }
 
@@ -101,8 +110,11 @@ public class Active extends HttpServlet {
     */
     public static String commonDelete(HttpServletRequest request){
       int affected_rows = 0;
-      #DELETECODE#
-
+       try {
+         #DELETECODE#
+       } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
       return String.valueOf(affected_rows);
     }
 
@@ -115,8 +127,11 @@ public class Active extends HttpServlet {
     */
     public static String commonInsert(HttpServletRequest request){
       int affected_rows = 0;
-      #INSERTCODE#
-
+       try {
+        #INSERTCODE#
+       } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
       return String.valueOf(affected_rows);
     }
     public static JSONArray toJSONArray(ResultSet rs) throws SQLException, JSONException {
