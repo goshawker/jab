@@ -77,6 +77,7 @@ public class FileUtils {
   public static boolean generateAction() throws Exception {
     StringBuffer valueObjectName = new StringBuffer();
     String blank7 = "	    ";
+    String blank9 = "	      ";
 
     StringBuffer queryCode = new StringBuffer("/** // TODO Auto-generated  */").append("\r\n");
     StringBuffer insertCode = new StringBuffer("/** // TODO Auto-generated  */").append("\r\n");
@@ -111,7 +112,7 @@ public class FileUtils {
       InsertSQL.append(id).append(",");
       QuerySQL.append(id).append(",");
       all_columns.add(id);
-      whereCondition_query.append(" and ").append(id).append("=? ");
+     // whereCondition_query.append(" and ").append(id).append("=? ");
       values_insert.append("?,");
       if (!StringUtils.isEmptyOrNull(primarykey)) {
         keys_columns.add(id);
@@ -156,21 +157,44 @@ public class FileUtils {
     QuerySQL.append(" from ").append(tableName);
 
     //插入SQL
-    insertCode.append(blank7).append("java.sql.PreparedStatement ps = connection.prepareStatement(\"").append(InsertSQL).append(values_insert).append("\");\r\n");
+    insertCode.append(blank7).append("java.sql.PreparedStatement ps = buildConnect().prepareStatement(\"").append(InsertSQL).append(values_insert).append("\");\r\n");
     //删除SQL
-    deleteCode.append(blank7).append("java.sql.PreparedStatement ps = connection.prepareStatement(\"").append(DeleteSQL).append(whereCondition).append("\");\r\n");
+    deleteCode.append(blank7).append("java.sql.PreparedStatement ps =  buildConnect().prepareStatement(\"").append(DeleteSQL).append(whereCondition).append("\");\r\n");
     //更新SQL
-    updateCode.append(blank7).append("java.sql.PreparedStatement ps = connection.prepareStatement(\"").append(UpdateSQL).append(whereCondition).append(" \");\r\n");
+    updateCode.append(blank7).append("java.sql.PreparedStatement ps =  buildConnect().prepareStatement(\"").append(UpdateSQL).append(whereCondition).append(" \");\r\n");
     //查询SQL
-    queryCode.append(blank7).append("java.sql.PreparedStatement ps = connection.prepareStatement(\"").append(QuerySQL).append(whereCondition_query).append("  \");\r\n");
+    queryCode.append(blank7).append("java.sql.PreparedStatement ps =  null;\r\n");
+
 
     if (QuerySQL.length()>0){
+      whereCondition_query.setLength(0);
+      queryCode.append(blank7).append("java.util.Vector<String> lst_value = new java.util.Vector();").append("\r\n");
+      queryCode.append(blank7).append("java.util.Vector<String> lst_key = new java.util.Vector();").append("\r\n");
       int i=0;
       for (String id:all_columns) {
         i++;
-        queryCode.append(blank7).append("ps.setString(").append(i).append(",").append(id).append(");").append("\r\n");
-      }
+        //queryCode.append(blank7).append("ps.setString(").append(i).append(",").append(id).append(");").append("\r\n");
+        //处理查询条件
 
+        queryCode.append(blank7).append("if(").append(id).append(".length() > 0){").append("\r\n");
+        queryCode.append(blank9).append("lst_value.add(").append(id).append("); \r\n");
+        queryCode.append(blank9).append("lst_key.add(\"").append(id).append("\"); \r\n");
+        //queryCode.append(blank7).append("todoSql += \"").append(id).append("=?,\";").append("\r\n");
+        //queryCode.append(blank7).append(blank7).append("ps.setString(").append(i).append(",").append(id).append(");").append("\r\n");
+        queryCode.append(blank7).append("}").append("\r\n");
+      }
+      queryCode.append(blank7).append("for(int i=0;i<lst_key.size();i++){").append("\r\n");
+      queryCode.append(blank9).append("todoSql += \" and \" + lst_key.get(i) +\"=?\" ;").append("\r\n");
+     // queryCode.append(blank9).append("ps.setString(i+1,lst_value.get(i));").append("\r\n");
+      queryCode.append(blank7).append("}").append("\r\n");
+
+      queryCode.append(blank7).append("todoSql =\" ").append(QuerySQL).append(" where 1=1 \" + todoSql; ").append("\r\n");
+      queryCode.append(blank7).append("ps =  buildConnect().prepareStatement(todoSql);").append("\r\n");;
+
+      queryCode.append(blank7).append("for(int i=0;i<lst_value.size();i++){").append("\r\n");
+     // queryCode.append(blank9).append("todoSql += \" and \" + lst_key.get(i) +\"=?\" ;").append("\r\n");
+      queryCode.append(blank9).append("ps.setString(i+1,lst_value.get(i));").append("\r\n");
+      queryCode.append(blank7).append("}").append("\r\n");
     }
 
 
@@ -298,12 +322,12 @@ public class FileUtils {
       }
       String fieldStr = "<input type=\"text\" name=\"" + id + "\" id=\"" + id + "\" value=\"" + default_ + "\"  maxlength=\"" + (Integer.parseInt(length) + 1) + "\"  style=\"width:" + Integer.parseInt(length) + "px\"   " + readOnly + ">";
       if (type.equalsIgnoreCase("date")) {
-        fieldStr = "<input type=\"date\"  name=\"" + id + "\" value=\"" + default_ + "\"  placeholder=\"Only date\"  style=\"width:" + (Integer.parseInt(length) + 5) + "px\" >";
+        fieldStr = "<input type=\"date\"  name=\"" + id +  "\" id=\"" + id + "\" value=\"" + default_ + "\"  placeholder=\"Only date\"  style=\"width:" + (Integer.parseInt(length) + 5) + "px\" >";
       } else if (type.equalsIgnoreCase("number")) {
         fieldStr = "<input type=\"number\"    id=\"" + id + "\"  name=\"" + id + "\" value=\"" + default_ + "\" placeholder=\"Only numbers\"  min=\"0\" max=\"120\" step=\"1\" style=\"width:" + Integer.parseInt(length) + "px\"   \"+readOnly+\">";
       } else if (type.equalsIgnoreCase("select")) {
         String html = "";
-        html += "<select  id=\"" + id + "\"    name=\"" + id + "\" value=\"" + default_ + "\"  style=\"width:" + Integer.parseInt(length) + "px\"   \"+readOnly+\"> \r\t";
+        html += "<select  id=\"" + id + "\"    name=\"" + id +  "\" id=\"" + id + "\" value=\"" + default_ + "\"  style=\"width:" + Integer.parseInt(length) + "px\"   \"+readOnly+\"> \r\t";
         String[] optons_ = options.split("\\|");
         html += "<option value=\"\"></option> \r\t";
         for (int i = 0; i < optons_.length; i++) {
@@ -323,7 +347,7 @@ public class FileUtils {
     String namespace = XmlUtils.getNodeValue(items[0], "namespace");
     try {
       HashMap<String, String> replace = new HashMap<>();
-      replace.put("#NAMESPACE#", namespace.substring(1));
+      replace.put("#NAMESPACE#", namespace);
       replace.put("#FORMFIELD#", formfield.toString());
       generateCode("template/update.html.template", replace, "update.html");
       return true;
@@ -358,12 +382,12 @@ public class FileUtils {
       }
       String fieldStr = "<input type=\"text\" name=\"" + id + "\" id=\"" + id + "\" value=\"" + default_ + "\"  maxlength=\"" + (Integer.parseInt(length) + 1) + "\"  style=\"width:" + Integer.parseInt(length) + "px\">";
       if (type.equalsIgnoreCase("date")) {
-        fieldStr = "<input type=\"date\"  name=\"" + id + "\" value=\"" + default_ + "\"  placeholder=\"Only date\"  style=\"width:" + (Integer.parseInt(length) + 5) + "px\" >";
+        fieldStr = "<input type=\"date\"  name=\"" + id +  "\" id=\"" + id + "\" value=\"" + default_ + "\"  placeholder=\"Only date\"  style=\"width:" + (Integer.parseInt(length) + 5) + "px\" >";
       } else if (type.equalsIgnoreCase("number")) {
         fieldStr = "<input type=\"number\"    id=\"" + id + "\"  name=\"" + id + "\" value=\"" + default_ + "\" placeholder=\"Only numbers\"  min=\"0\" max=\"120\" step=\"1\" style=\"width:" + Integer.parseInt(length) + "px\" >";
       } else if (type.equalsIgnoreCase("select")) {
         String html = "";
-        html += "<select  id=\"" + id + "\"    name=\"" + id + "\" value=\"" + default_ + "\"  style=\"width:" + Integer.parseInt(length) + "px\" > \r\t";
+        html += "<select  id=\"" + id + "\"    name=\"" + id +  "\" id=\"" + id + "\" value=\"" + default_ + "\"  style=\"width:" + Integer.parseInt(length) + "px\" > \r\t";
         String[] optons_ = options.split("\\|");
         html += "<option value=\"\"></option> \r\t";
         for (int i = 0; i < optons_.length; i++) {
@@ -383,7 +407,7 @@ public class FileUtils {
     String namespace = XmlUtils.getNodeValue(items[0], "namespace");
     try {
       HashMap<String, String> replace = new HashMap<>();
-      replace.put("#NAMESPACE#", namespace.substring(1));
+      replace.put("#NAMESPACE#", namespace);
       replace.put("#FORMFIELD#", formfield.toString());
       generateCode("template/new.html.template", replace, "new.html");
       return true;
@@ -419,16 +443,16 @@ public class FileUtils {
         primarykeys.add(map);
         updatestr += id + "='+data[i]." + id + "+" + "'&";
       }
-      requstparameters += id + "='+document.getElementById('" + id + "')+" + "'&";
+      requstparameters += id + "='+document.getElementById('" + id + "').value+" + "'&";
       //query conditions.
       String fieldStr = "<input type=\"text\" name=\"" + id + "\" id=\"" + id + "\" value=\"" + default_ + "\"  maxlength=\"" + (Integer.parseInt(length) + 1) + "\"  style=\"width:" + Integer.parseInt(length) + "px\">";
       if (type.equalsIgnoreCase("date")) {
-        fieldStr = "<input type=\"date\"  name=\"" + id + "\" value=\"" + default_ + "\"  placeholder=\"Only date\"  style=\"width:" + (Integer.parseInt(length) + 5) + "px\" >";
+        fieldStr = "<input type=\"date\"  name=\"" + id +  "\" id=\"" + id + "\" value=\"" + default_ + "\"  placeholder=\"Only date\"  style=\"width:" + (Integer.parseInt(length) + 5) + "px\" >";
       } else if (type.equalsIgnoreCase("number")) {
         fieldStr = "<input type=\"number\"    id=\"" + id + "\"  name=\"" + id + "\" value=\"" + default_ + "\" placeholder=\"Only numbers\"  min=\"0\" max=\"120\" step=\"1\" style=\"width:" + Integer.parseInt(length) + "px\" >";
       } else if (type.equalsIgnoreCase("select")) {
         String html = "";
-        html += "<select  id=\"" + id + "\"    name=\"" + id + "\" value=\"" + default_ + "\"  style=\"width:" + Integer.parseInt(length) + "px\" > \r\t";
+        html += "<select  id=\"" + id + "\"    name=\"" + id +  "\" id=\"" + id + "\" value=\"" + default_ + "\"  style=\"width:" + Integer.parseInt(length) + "px\" > \r\t";
         String[] optons_ = options.split("\\|");
         html += "<option value=\"\"></option> \r\t";
         for (int i = 0; i < optons_.length; i++) {
@@ -465,12 +489,12 @@ public class FileUtils {
     String namespace = XmlUtils.getNodeValue(items[0], "namespace");
     try {
       HashMap<String, String> replace = new HashMap<>();
-      replace.put("#NAMESPACE#", namespace.concat("").substring(1));
+      replace.put("#NAMESPACE#", namespace.concat(""));
       replace.put("#DONEW#", namespace.concat(""));
       replace.put("#QUERYCONDITION#", queryCondition.toString());
       replace.put("#GRIDHEAD#", queryResultTitle.toString());
       replace.put("#GRIDDATA#", queryResultData.toString());
-      replace.put("#REQUSTPARAMETERS#", requstparameters);
+      replace.put("#REQUSTPARAMETERS#", requstparameters.concat("requestMethod=query"));
       replace.put("#UPDATESTR#", updatestr.endsWith("&") ? updatestr.substring(0, updatestr.length() - 1) : updatestr);
       generateCode("template/main.html.template", replace, "main.html");
       return true;

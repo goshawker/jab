@@ -61,18 +61,24 @@ public class JABActive extends HttpServlet {
         return commonUpdate(request);
   }
 
+  private String todoSql = "";
   private static java.sql.Connection connection = null;
   private static String driver="#DRIVER#";
   private static String user="#USER#";
   private static String pwd="#PWD#";
   private static String url="#URL#";
-  public static java.sql.Connection buildConnect() throws ClassNotFoundException, SQLException {
-      if (connection != null && !connection.isClosed()) {
-        return connection;
+    public static java.sql.Connection buildConnect() {
+      try {
+          if (connection != null && !connection.isClosed()) {
+              return connection;
+          }
+          Class.forName(driver);
+          connection = java.sql.DriverManager.getConnection(url, user, pwd);
+          return connection;
+      }catch (ClassNotFoundException | SQLException e){
+          e.printStackTrace();
       }
-      Class.forName(driver);
-      connection = java.sql.DriverManager.getConnection(url, user, pwd);
-      return connection;
+      throw  new RuntimeException("Get Connect Failed. ");
     }
   /**
   * query rows
@@ -81,8 +87,9 @@ public class JABActive extends HttpServlet {
   * @Date: 2022/10/26 20:57
   * @Version: 1.0
   */
-  public static String commonQuery(HttpServletRequest request){
+  public String commonQuery(HttpServletRequest request){
     String JSONString = new String();
+    todoSql="";
      try {
         #QUERYCODE#
      } catch (SQLException e) {
@@ -97,7 +104,7 @@ public class JABActive extends HttpServlet {
     * @Date: 2022/10/26 20:59
     * @Version: 1.0
     */
-    public static String commonUpdate(HttpServletRequest request){
+    public String commonUpdate(HttpServletRequest request){
       int affected_rows = 0;
        try {
          #UPDATECODE#
@@ -114,7 +121,7 @@ public class JABActive extends HttpServlet {
     * @Date: 2022/10/26 21:25
     * @Version: 1.0
     */
-    public static String commonDelete(HttpServletRequest request){
+    public String commonDelete(HttpServletRequest request){
       int affected_rows = 0;
        try {
          #DELETECODE#
@@ -131,7 +138,7 @@ public class JABActive extends HttpServlet {
     * @Date: 2022/10/26 20:59
     * @Version: 1.0
     */
-    public static String commonInsert(HttpServletRequest request){
+    public String commonInsert(HttpServletRequest request){
       int affected_rows = 0;
        try {
         #INSERTCODE#

@@ -124,7 +124,7 @@
     </tr>
   </table>
 </div>
-<form action="#NAMESPACE#/action" enctype="multipart/form-data" method="post">
+<form id="mainform">
   <table border="0" cellpadding="0" cellspacing="0" width="100%">
     <tr height="5">
       <td nowrap="nowrap" width="15">&nbsp;</td>
@@ -143,7 +143,6 @@
           #QUERYCONDITION#
           <tr class="bgLight" height="30">
             <td align="right" class="normalFont" colspan="4">
-              <input type="hidden" id="requestMethod" name="requestMethod" value="query">
               <input type="button" accesskey="s" value="Query(s)" onclick="Query()"> &nbsp;
               <input type="reset" accesskey="c" value="Reset(c)">
               <input type="button" accesskey="n"  name="init" value="New(n)" onclick="window.location.href='#NAMESPACE#/new.html'">&nbsp;&nbsp;&nbsp;&nbsp;
@@ -184,15 +183,32 @@
 </form>
 <script type="text/javascript">
   function Query(){
+      //删除所有数据
+      let rowCount = document.getElementsByName("tdata").length;
+      for (let i = 0; i < rowCount; i++) {
+          let tr = document.getElementsByName("tdata")[i];
+          if(tr){
+              tr.remove();
+          }
+      }
+      //创建一个锚点
+      let ctr =  document.createElement("tr");
+      ctr.setAttribute("id","tdata");
+      ctr.setAttribute("name","tdata");
+      document.getElementById("sortTbl").appendChild(ctr);
+
     let form = document.getElementsByTagName('FORM')[0];
-    let requestUrl = form.action;
+    let requestUrl =  getContextPath()+"#NAMESPACE#/action";
     let xmlHttpRequest;
     if (window.XMLHttpRequest) {
       xmlHttpRequest = new XMLHttpRequest();
     } else {
       xmlHttpRequest = new ActiveXObject("Microsoft.XMLHTTP");
     }
-    xmlHttpRequest.open('GET',requestUrl);
+    xmlHttpRequest.open('POST',requestUrl);
+    xmlHttpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    let parameters = '#REQUSTPARAMETERS#';
+    xmlHttpRequest.send(parameters);
     xmlHttpRequest.onreadystatechange = ()=>{
       if(xmlHttpRequest.readyState === 4){
         if(xmlHttpRequest.status >= 200 && xmlHttpRequest.status < 300){
@@ -201,12 +217,12 @@
           let count = data.length;
           let trHtml="";
           for (let i = 0; i < count; i++) {
-            trHtml +="<tr  class=\"editGrid\" nowrap=\"nowrap\">";
+            trHtml +="<tr  class=\"editGrid\" nowrap=\"nowrap\"   name=\"tdata\" id=\"tdata\">";
             #GRIDDATA#
             trHtml+="<td class='editGrid'  align='left'><a href='#NAMESPACE#/edit?#UPDATESTR#'>Edit</a><a href='#NAMESPACE#/delete?#UPDATESTR#'>Delete</a></td>";
             trHtml +="</tr>";
           }
-          document.getElementById("tdata").innerHTML = trHtml;
+          document.getElementById("tdata").outerHTML = trHtml;
 
 
         } else if(xmlHttpRequest.status >= 400){
@@ -214,10 +230,12 @@
         }
       }
     }
-    let parameters = '#REQUSTPARAMETERS#';
-    xmlHttpRequest.send(parameters);
-  }
 
+  }
+    function getContextPath(){
+        let contextPath = document.location.pathname;
+        return contextPath.substring(0,contextPath.length-1);
+    }
 </script>
 </body>
 </html>
