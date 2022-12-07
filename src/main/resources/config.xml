@@ -3,7 +3,7 @@
     <file saveDir="d:\jad" overwrite="true"></file>
     <items namespace="/myapp/student" tableName="stu">
         <item id="id" lable="id" type="text" length="100" default="" primarykey="true"></item>
-        <item id="Name" lable="Name" type="text" length="200" default=""  primarykey="true"></item>
+        <item id="Name" lable="Name" type="text" length="200" default=""  primarykey="false"></item>
         <item id="Age" lable="Age" type="number" length="100" default=""></item>
         <item id="Sex" lable="Sex" type="select" length="100"  default="" options="man|woman"></item>
         <item id="BirthDate" lable="Birth Date" type="date" length="100" default=""></item>

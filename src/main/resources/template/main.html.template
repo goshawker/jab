@@ -183,7 +183,7 @@
 </form>
 <script type="text/javascript">
   function Query(){
-      //删除所有数据
+      //删除所有查询结果数据
       let rowCount = document.getElementsByName("tdata").length;
       for (let i = 0; i < rowCount; i++) {
           let tr = document.getElementsByName("tdata")[i];
@@ -191,13 +191,14 @@
               tr.remove();
           }
       }
-      //创建一个锚点
+      //重新创建一个锚点，用于加载查询数据集
       let ctr =  document.createElement("tr");
       ctr.setAttribute("id","tdata");
       ctr.setAttribute("name","tdata");
       document.getElementById("sortTbl").appendChild(ctr);
-
+    //获取form对象
     let form = document.getElementsByTagName('FORM')[0];
+    //动态action请求url地址
     let requestUrl =  getContextPath()+"#NAMESPACE#/action";
     let xmlHttpRequest;
     if (window.XMLHttpRequest) {
@@ -205,6 +206,7 @@
     } else {
       xmlHttpRequest = new ActiveXObject("Microsoft.XMLHTTP");
     }
+    //发送Post请求
     xmlHttpRequest.open('POST',requestUrl);
     xmlHttpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     let parameters = '#REQUSTPARAMETERS#';
@@ -219,7 +221,7 @@
           for (let i = 0; i < count; i++) {
             trHtml +="<tr  class=\"editGrid\" nowrap=\"nowrap\"   name=\"tdata\" id=\"tdata\">";
             #GRIDDATA#
-            trHtml+="<td class='editGrid'  align='left'><a href='#NAMESPACE#/edit?#UPDATESTR#'>Edit</a><a href='#NAMESPACE#/delete?#UPDATESTR#'>Delete</a></td>";
+           // trHtml+="<td class='editGrid'  align='left'><a href='#NAMESPACE#/edit?#UPDATESTR#'>Edit</a> &nbsp;&nbsp; <a href='#NAMESPACE#/delete?#UPDATESTR#'>Delete</a></td>";
             trHtml +="</tr>";
           }
           document.getElementById("tdata").outerHTML = trHtml;
@@ -235,6 +237,12 @@
     function getContextPath(){
         let contextPath = document.location.pathname;
         return contextPath.substring(0,contextPath.length-1);
+    }
+    function jabEdit(args){
+        alert(args);
+    }
+    function jabDel(args){
+        alert(args);
     }
 </script>
 </body>
