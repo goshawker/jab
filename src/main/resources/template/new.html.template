@@ -69,7 +69,7 @@
     </tr>
   </table>
 </div>
-<form action="#NAMESPACE#/action" enctype="multipart/form-data" method="post">
+<form id="newform">
   <table border="0" cellpadding="0" cellspacing="0" width="100%">
     <tr height="5">
       <td nowrap="nowrap" width="15">&nbsp;</td>
@@ -87,7 +87,7 @@
           <tr class="bgLight" height="30">
             <td align="right" class="normalFont" colspan="4">
               <input type="hidden" id="requestMethod" name="requestMethod" value="insert">
-              <input type="button"  accesskey="S" value="Submit(S)" onclick="save()"> &nbsp;
+              <input type="button"  accesskey="S" value="Submit(S)" onclick="jadNew()"> &nbsp;
               <input type="reset" accesskey="c" value="Reset(c)">
             </td>
           </tr>
@@ -97,5 +97,17 @@
     </tr>
   </table>
 </form>
+<script type="text/javascript">
+    function jadNew(){
+       let requestUrl =  getContextPath()+"#NAMESPACE#/action";
+        //获取form对象
+        let form = document.getElementById('newform');
+        form.action=requestUrl;
+        form.submit();
+    }
+    function getContextPath(){
+        return document.location.pathname.substring(0,document.location.pathname.indexOf("/",1));
+    }
+</script>
 </body>
 </html>

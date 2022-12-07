@@ -145,7 +145,7 @@
             <td align="right" class="normalFont" colspan="4">
               <input type="button" accesskey="s" value="Query(s)" onclick="Query()"> &nbsp;
               <input type="reset" accesskey="c" value="Reset(c)">
-              <input type="button" accesskey="n"  name="init" value="New(n)" onclick="window.location.href='#NAMESPACE#/new.html'">&nbsp;&nbsp;&nbsp;&nbsp;
+              <input type="button" accesskey="n"  name="init" value="New(n)" onclick="jabNew()">&nbsp;&nbsp;&nbsp;&nbsp;
             </td>
           </tr>
         </table>
@@ -197,20 +197,12 @@
       ctr.setAttribute("name","tdata");
       document.getElementById("sortTbl").appendChild(ctr);
     //获取form对象
-    let form = document.getElementsByTagName('FORM')[0];
+    let form = document.getElementById('mainform');
     //动态action请求url地址
     let requestUrl =  getContextPath()+"#NAMESPACE#/action";
-    let xmlHttpRequest;
-    if (window.XMLHttpRequest) {
-      xmlHttpRequest = new XMLHttpRequest();
-    } else {
-      xmlHttpRequest = new ActiveXObject("Microsoft.XMLHTTP");
-    }
-    //发送Post请求
-    xmlHttpRequest.open('POST',requestUrl);
-    xmlHttpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    //请求参数
     let parameters = '#REQUSTPARAMETERS#';
-    xmlHttpRequest.send(parameters);
+    let xmlHttpRequest = sendAjaxRequest(requestUrl,parameters);
     xmlHttpRequest.onreadystatechange = ()=>{
       if(xmlHttpRequest.readyState === 4){
         if(xmlHttpRequest.status >= 200 && xmlHttpRequest.status < 300){
@@ -235,14 +227,44 @@
 
   }
     function getContextPath(){
-        let contextPath = document.location.pathname;
-        return contextPath.substring(0,contextPath.length-1);
+        return document.location.pathname.substring(0,document.location.pathname.indexOf("/",1));
+    }
+    function sendAjaxRequest(url,args){
+            let xmlHttpRequest;
+            if (window.XMLHttpRequest) {
+                xmlHttpRequest = new XMLHttpRequest();
+            } else {
+                xmlHttpRequest = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            //发送Post请求
+            xmlHttpRequest.open('POST',url);
+            xmlHttpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xmlHttpRequest.send(args);
+            return xmlHttpRequest;
     }
     function jabEdit(args){
-        alert(args);
+        window.open('update.html?'+args,"_self");
     }
+     function jabNew(){
+            window.open('new.html?',"_self");
+        }
     function jabDel(args){
-        alert(args);
+        //动态action请求url地址
+        let requestUrl =  getContextPath()+"#NAMESPACE#/action";
+        let parameters = '#DELETEPARAMETERS#&'+args;
+        let xmlHttpRequest = sendAjaxRequest(requestUrl,parameters);
+        xmlHttpRequest.onreadystatechange = ()=>{
+          if(xmlHttpRequest.readyState === 4){
+            if(xmlHttpRequest.status >= 200 && xmlHttpRequest.status < 300){
+              let string = xmlHttpRequest.responseText;
+              const data = JSON.parse(string);
+              //刷新数据
+              Query();
+            } else if(xmlHttpRequest.status >= 400){
+              alert('the request has failed. please try again later. error info:['+xmlHttpRequest.responseText+']');
+            }
+          }
+       }
     }
 </script>
 </body>

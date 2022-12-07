@@ -147,7 +147,6 @@ public class FileUtils {
             InsertSQL.append(tmp).append(") values(");
         }
 
-
         //处理列拼接，多余部分
         if (QuerySQL.toString().trim().endsWith(",")) {
             String tmp = QuerySQL.toString().substring(0, QuerySQL.length() - 1);
@@ -157,67 +156,70 @@ public class FileUtils {
         QuerySQL.append(" from ").append(tableName);
 
         //插入SQL
-        insertCode.append(blank7).append("java.sql.PreparedStatement ps = buildConnect().prepareStatement(\"").append(InsertSQL).append(values_insert).append("\");\r\n");
+        insertCode.append(blank7).append("java.sql.PreparedStatement ps =  buildConnect().prepareStatement(\"").append(InsertSQL).append(values_insert).append("\");\r\n");
         //删除SQL
-        deleteCode.append(blank7).append("java.sql.PreparedStatement ps =  buildConnect().prepareStatement(\"").append(DeleteSQL).append(whereCondition).append("\");\r\n");
+        //deleteCode.append(blank7).append("java.sql.PreparedStatement ps =  buildConnect().prepareStatement(\"").append(DeleteSQL).append(whereCondition).append("\");\r\n");
+        deleteCode.append(blank7).append("java.sql.PreparedStatement ps =  null;\r\n");
         //更新SQL
-        updateCode.append(blank7).append("java.sql.PreparedStatement ps =  buildConnect().prepareStatement(\"").append(UpdateSQL).append(whereCondition).append(" \");\r\n");
+        updateCode.append(blank7).append("java.sql.PreparedStatement ps =  null;\r\n");
         //查询SQL
         queryCode.append(blank7).append("java.sql.PreparedStatement ps =  null;\r\n");
 
 
-        if (QuerySQL.length() > 0) {
-            whereCondition_query.setLength(0);
-            queryCode.append(blank7).append("java.util.Vector<String> lst_value = new java.util.Vector();").append("\r\n");
-            queryCode.append(blank7).append("java.util.Vector<String> lst_key = new java.util.Vector();").append("\r\n");
-            int i = 0;
-            for (String id : all_columns) {
-                i++;
-                //queryCode.append(blank7).append("ps.setString(").append(i).append(",").append(id).append(");").append("\r\n");
-                //处理查询条件
-
-                queryCode.append(blank7).append("if(").append(id).append(".length() > 0){").append("\r\n");
-                queryCode.append(blank9).append("lst_value.add(").append(id).append("); \r\n");
-                queryCode.append(blank9).append("lst_key.add(\"").append(id).append("\"); \r\n");
-                //queryCode.append(blank7).append("todoSql += \"").append(id).append("=?,\";").append("\r\n");
-                //queryCode.append(blank7).append(blank7).append("ps.setString(").append(i).append(",").append(id).append(");").append("\r\n");
-                queryCode.append(blank7).append("}").append("\r\n");
-            }
-            queryCode.append(blank7).append("for(int i=0;i<lst_key.size();i++){").append("\r\n");
-            queryCode.append(blank9).append("todoSql += \" and \" + lst_key.get(i) +\"=?\" ;").append("\r\n");
-            // queryCode.append(blank9).append("ps.setString(i+1,lst_value.get(i));").append("\r\n");
-            queryCode.append(blank7).append("}").append("\r\n");
-
-            queryCode.append(blank7).append("todoSql =\" ").append(QuerySQL).append(" where 1=1 \" + todoSql; ").append("\r\n");
-            queryCode.append(blank7).append("ps =  buildConnect().prepareStatement(todoSql);").append("\r\n");
-
-            queryCode.append(blank7).append("for(int i=0;i<lst_value.size();i++){").append("\r\n");
-            // queryCode.append(blank9).append("todoSql += \" and \" + lst_key.get(i) +\"=?\" ;").append("\r\n");
-            queryCode.append(blank9).append("ps.setString(i+1,lst_value.get(i));").append("\r\n");
-            queryCode.append(blank7).append("}").append("\r\n");
-        }
-
-
-        if (!UpdateSQL.equals("")) {
-            int i = 0;
-            for (String id : nokeys_columns) {
-                i++;
-                updateCode.append(blank7).append("ps.setString(").append(i).append(",").append(id).append(");").append("\r\n");
-            }
-            for (String id : keys_columns) {
-                i++;
-                updateCode.append(blank7).append("ps.setString(").append(i).append(",").append(id).append(");").append("\r\n");
-            }
-        }
-
-        if (!DeleteSQL.equals("")) {
-            int i = 0;
-            for (String id : keys_columns) {
-                i++;
-                deleteCode.append(blank7).append("ps.setString(").append(i).append(",").append(id).append(");").append("\r\n");
-            }
-        }
-
+        /*处理动态查询SQL*/
+        buildDynamicConditions(QuerySQL.toString(),all_columns,queryCode);
+//        if (QuerySQL.length() > 0) {
+//            whereCondition_query.setLength(0);
+//            queryCode.append(blank7).append("java.util.Vector<String> lst_value = new java.util.Vector();").append("\r\n");
+//            queryCode.append(blank7).append("java.util.Vector<String> lst_key = new java.util.Vector();").append("\r\n");
+//            int i = 0;
+//            for (String id : all_columns) {
+//                i++;
+//                //处理查询条件
+//                queryCode.append(blank7).append("if(").append(id).append(".length() > 0){").append("\r\n");
+//                queryCode.append(blank9).append("lst_value.add(").append(id).append("); \r\n");
+//                queryCode.append(blank9).append("lst_key.add(\"").append(id).append("\"); \r\n");
+//                //queryCode.append(blank7).append("todoSql += \"").append(id).append("=?,\";").append("\r\n");
+//                //queryCode.append(blank7).append(blank7).append("ps.setString(").append(i).append(",").append(id).append(");").append("\r\n");
+//                queryCode.append(blank7).append("}").append("\r\n");
+//            }
+//            queryCode.append(blank7).append("for(int i=0;i<lst_key.size();i++){").append("\r\n");
+//            queryCode.append(blank9).append("todoSql += \" and \" + lst_key.get(i) +\"=?\" ;").append("\r\n");
+//            // queryCode.append(blank9).append("ps.setString(i+1,lst_value.get(i));").append("\r\n");
+//            queryCode.append(blank7).append("}").append("\r\n");
+//
+//            queryCode.append(blank7).append("todoSql =\" ").append(QuerySQL).append(" where 1=1 \" + todoSql; ").append("\r\n");
+//            queryCode.append(blank7).append("ps =  buildConnect().prepareStatement(todoSql);").append("\r\n");
+//
+//            queryCode.append(blank7).append("for(int i=0;i<lst_value.size();i++){").append("\r\n");
+//            // queryCode.append(blank9).append("todoSql += \" and \" + lst_key.get(i) +\"=?\" ;").append("\r\n");
+//            queryCode.append(blank9).append("ps.setString(i+1,lst_value.get(i));").append("\r\n");
+//            queryCode.append(blank7).append("}").append("\r\n");
+//        }
+        /*处理动态更新SQL*/
+        buildDynamicConditions(UpdateSQL.toString(),nokeys_columns,updateCode);
+//        if (!UpdateSQL.equals("")) {
+//            int i = 0;
+//            for (String id : nokeys_columns) {
+//                i++;
+//                updateCode.append(blank7).append("ps.setString(").append(i).append(",").append(id).append(");").append("\r\n");
+//            }
+//            for (String id : keys_columns) {
+//                i++;
+//                updateCode.append(blank7).append("ps.setString(").append(i).append(",").append(id).append(");").append("\r\n");
+//            }
+//        }
+        /*处理动态删除SQL*/
+        buildDynamicConditions(DeleteSQL.toString(),keys_columns,deleteCode);
+//        if (!DeleteSQL.equals("")) {
+//            int i = 0;
+//            for (String id : keys_columns) {
+//                i++;
+//                deleteCode.append(blank7).append("ps.setString(").append(i).append(",").append(id).append(");").append("\r\n");
+//            }
+//        }
+        /*处理动态新增SQL*/
+//        buildDynamicConditions(InsertSQL.toString(),all_columns,insertCode);
         if (!InsertSQL.equals("")) {
             int i = 0;
             for (String id : all_columns) {
@@ -257,6 +259,47 @@ public class FileUtils {
             e.printStackTrace();
         }
         return false;
+    }
+
+    /**
+     * 生成动态SQL,where后面部分
+     * @param resultSQL select * from xxx
+     * @param parameters 请求的参数
+     * @param javaCode 返回的java代码
+     * @return
+     */
+    public static StringBuffer buildDynamicConditions(String resultSQL,Vector<String> parameters,StringBuffer javaCode){
+       // StringBuffer javaCode = new StringBuffer("");
+        String blank7 = "	    ";
+        String blank9 = "	      ";
+        if (resultSQL.length() > 0) {
+            javaCode.append(blank7).append("java.util.Vector<String> lst_value = new java.util.Vector();").append("\r\n");
+            javaCode.append(blank7).append("java.util.Vector<String> lst_key = new java.util.Vector();").append("\r\n");
+            int i = 0;
+            for (String id : parameters) {
+                i++;
+                //处理查询条件
+                javaCode.append(blank7).append("if(").append(id).append(".length() > 0){").append("\r\n");
+                javaCode.append(blank9).append("lst_value.add(").append(id).append("); \r\n");
+                javaCode.append(blank9).append("lst_key.add(\"").append(id).append("\"); \r\n");
+                //queryCode.append(blank7).append("todoSql += \"").append(id).append("=?,\";").append("\r\n");
+                //queryCode.append(blank7).append(blank7).append("ps.setString(").append(i).append(",").append(id).append(");").append("\r\n");
+                javaCode.append(blank7).append("}").append("\r\n");
+            }
+            javaCode.append(blank7).append("for(int i=0;i<lst_key.size();i++){").append("\r\n");
+            javaCode.append(blank9).append("todoSql += \" and \" + lst_key.get(i) +\"=?\" ;").append("\r\n");
+            // queryCode.append(blank9).append("ps.setString(i+1,lst_value.get(i));").append("\r\n");
+            javaCode.append(blank7).append("}").append("\r\n");
+
+            javaCode.append(blank7).append("todoSql =\" ").append(resultSQL).append(" where 1=1 \" + todoSql; ").append("\r\n");
+            javaCode.append(blank7).append("ps =  buildConnect().prepareStatement(todoSql);").append("\r\n");
+
+            javaCode.append(blank7).append("for(int i=0;i<lst_value.size();i++){").append("\r\n");
+            // queryCode.append(blank9).append("todoSql += \" and \" + lst_key.get(i) +\"=?\" ;").append("\r\n");
+            javaCode.append(blank9).append("ps.setString(i+1,lst_value.get(i));").append("\r\n");
+            javaCode.append(blank7).append("}").append("\r\n");
+        }
+        return javaCode;
     }
 
 
@@ -524,6 +567,7 @@ public class FileUtils {
             replace.put("#GRIDHEAD#", queryResultTitle.toString());
             replace.put("#GRIDDATA#", queryResultData.toString());
             replace.put("#REQUSTPARAMETERS#", requstparameters.concat("requestMethod=query"));
+            replace.put("#DELETEPARAMETERS#", "requestMethod=delete");
             replace.put("#UPDATESTR#", updatestr.endsWith("&") ? updatestr.substring(0, updatestr.length() - 1) : updatestr);
             generateCode("template/main.html.template", replace, "main.html");
             return true;
