@@ -27,13 +27,13 @@ public class JABActive extends HttpServlet {
         method = "";
     }
     if (method.indexOf("query") != -1) {
-      returnData = query(request);
+      returnData = commonQuery(request);
     } else if (method.indexOf("insert") != -1) {
-      returnData = insert(request);
+      returnData = commonInsert(request);
     } else if (method.indexOf("update") != -1) {
-      returnData = update(request);
+      returnData = commonUpdate(request);
     } else if (method.indexOf("delete") != -1) {
-      returnData = delete(request);
+      returnData = commonUpdate(request);
     }else{
        returnData="-1";
     }
@@ -43,22 +43,6 @@ public class JABActive extends HttpServlet {
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     doGet(request, response);
-  }
-
-  public String query(HttpServletRequest request) {
-         return commonQuery(request);
-  }
-
-  public String insert(HttpServletRequest request) {
-         return commonInsert(request);
-  }
-
-  public String update(HttpServletRequest request) {
-        return commonUpdate(request);
-  }
-
-  public String delete(HttpServletRequest request) {
-        return commonUpdate(request);
   }
 
   private String todoSql = "";

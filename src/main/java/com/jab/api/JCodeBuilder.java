@@ -30,76 +30,64 @@ import static org.mybatis.generator.internal.util.messages.Messages.getString;
  * @Version: 1.0
  */
 public class JCodeBuilder {
-  private final Logger log = LogManager.getLogger(JCodeBuilder.class);
+    private final Logger log = LogManager.getLogger(JCodeBuilder.class);
 
-  public JCodeBuilder() {
-  }
-
-  public static void main(String[] args) {
-    JCodeBuilder jCodeBuilder = new JCodeBuilder();
-    jCodeBuilder.build();
-  }
-
-  public void build() {
-    try {
-      generate();
-    } catch (Exception e) {
-      throw new RuntimeException(e);
+    public JCodeBuilder() {
     }
-  }
 
+    public static void main(String[] args) {
+        JCodeBuilder jCodeBuilder = new JCodeBuilder();
+        jCodeBuilder.build();
+    }
+
+    public void build() {
+        try {
+            generate();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+  /**
+   * 生产功能入口页面html、新建页面html、更新页面html、vo对象、action对象java代码
+   * @throws Exception
+   */
   public void generate() throws Exception {
-    //generate main.html
-    boolean mainHtml = FileUtils.generateMainHtml();
-    if (mainHtml) {
-      log.debug("generate main.html success.");
-
-    }
-    //generate new.html
-    boolean newHtml = FileUtils.generateNewHtml();
-    if (newHtml) {
-      log.debug("generate new.html success.");
-    }
-    //generate update.html
-    boolean updateHtml = FileUtils.generateUpdateHtml();
-    if (updateHtml) {
-      log.debug("generate update.html success.");
-    }
-    //generate valueObject.java
-    boolean valueObject = FileUtils.generateValueObject();
-    if (valueObject) {
-      log.debug("generate vo.java success.");
+        //generate main.html
+        FileUtils.generateMainHtml();
+        //generate new.html
+        FileUtils.generateNewHtml();
+        //generate update.html
+        FileUtils.generateUpdateHtml();
+        //generate valueObject.java
+        FileUtils.generateValueObject();
+        //generate Action.java
+        FileUtils.generateAction();
 
     }
 
-    boolean action = FileUtils.generateAction();
-    if (action) {
-      log.debug("generate action.java file success.");
+    private File getUniqueFileName(File directory, String fileName) {
+        File answer = null;
+
+        // try up to 1000 times to generate a unique file name
+        StringBuilder sb = new StringBuilder();
+        for (int i = 1; i < 1000; i++) {
+            sb.setLength(0);
+            sb.append(fileName);
+            sb.append('.');
+            sb.append(i);
+
+            File testFile = new File(directory, sb.toString());
+            if (!testFile.exists()) {
+                answer = testFile;
+                break;
+            }
+        }
+
+        if (answer == null) {
+            throw new RuntimeException(getString(
+                    "RuntimeError.3", directory.getAbsolutePath())); //$NON-NLS-1$
+        }
+        return answer;
     }
-  }
-
-  private File getUniqueFileName(File directory, String fileName) {
-    File answer = null;
-
-    // try up to 1000 times to generate a unique file name
-    StringBuilder sb = new StringBuilder();
-    for (int i = 1; i < 1000; i++) {
-      sb.setLength(0);
-      sb.append(fileName);
-      sb.append('.');
-      sb.append(i);
-
-      File testFile = new File(directory, sb.toString());
-      if (!testFile.exists()) {
-        answer = testFile;
-        break;
-      }
-    }
-
-    if (answer == null) {
-      throw new RuntimeException(getString(
-              "RuntimeError.3", directory.getAbsolutePath())); //$NON-NLS-1$
-    }
-    return answer;
-  }
 }

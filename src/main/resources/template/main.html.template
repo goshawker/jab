@@ -143,7 +143,7 @@
           #QUERYCONDITION#
           <tr class="bgLight" height="30">
             <td align="right" class="normalFont" colspan="4">
-              <input type="button" accesskey="s" value="Query(s)" onclick="Query()"> &nbsp;
+              <input type="button" accesskey="s" value="Query(s)" onclick="jabQuery()"> &nbsp;
               <input type="reset" accesskey="c" value="Reset(c)">
               <input type="button" accesskey="n"  name="init" value="New(n)" onclick="jabNew()">&nbsp;&nbsp;&nbsp;&nbsp;
             </td>
@@ -182,7 +182,7 @@
   </table>
 </form>
 <script type="text/javascript">
-  function Query(){
+  function jabQuery(){
       //删除所有查询结果数据
       let rowCount = document.getElementsByName("tdata").length;
       for (let i = 0; i < rowCount; i++) {
@@ -243,11 +243,13 @@
             return xmlHttpRequest;
     }
     function jabEdit(args){
-        window.open('update.html?'+args,"_self");
+        let url =  getContextPath()+"#NAMESPACE#/update.html?"+args;
+        window.open(url,"_blank");
     }
      function jabNew(){
-            window.open('new.html?',"_self");
-        }
+        let url =  getContextPath()+"#NAMESPACE#/new.html";
+        window.open(url,"_blank");
+     }
     function jabDel(args){
         //动态action请求url地址
         let requestUrl =  getContextPath()+"#NAMESPACE#/action";
