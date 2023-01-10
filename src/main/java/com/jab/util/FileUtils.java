@@ -95,7 +95,7 @@ public class FileUtils {
         StringBuffer QuerySQL = new StringBuffer("select ");
         StringBuffer DeleteSQL = new StringBuffer("delete from ").append(tableName);
         StringBuffer UpdateSQL = new StringBuffer("update ").append(tableName).append(" set ");
-        StringBuffer InsertSQL = new StringBuffer("insert into ").append(tableName).append("(");
+        StringBuffer InsertSQL = new StringBuffer("insert into ").append(tableName);
 
         StringBuffer whereCondition = new StringBuffer(" where 1=1 ");
         StringBuffer whereCondition_query = new StringBuffer(" where 1=1 ");
@@ -178,14 +178,14 @@ public class FileUtils {
         /*处理动态删除SQL*/
         buildDynamicWhereConditions(DeleteSQL.toString(),keys_columns,deleteCode);
         /*处理动态新增SQL*/
-        if (!InsertSQL.equals("")) {
+       /* if (!InsertSQL.equals("")) {
             int i = 0;
             for (String id : all_columns) {
                 i++;
                 insertCode.append(blank7).append("ps.setString(").append(i).append(",").append(id).append(");").append("\r\n");
             }
 
-        }
+        }*/
         deleteCode.append(blank7).append("affected_rows = ps.executeUpdate();").append("\r\n");
         updateCode.append(blank7).append("affected_rows = ps.executeUpdate();").append("\r\n");
         insertCode.append(blank7).append("affected_rows = ps.executeUpdate();").append("\r\n");
@@ -209,7 +209,7 @@ public class FileUtils {
             replace.put("#USER#", DBUtils.user);
             replace.put("#PWD#", DBUtils.pwd);
             replace.put("#URL#", DBUtils.url);
-            generateCode("template/active.java.template", replace, "JABActive.java");
+            generateCode("template/active.java.template", replace, "JabActive.java");
             return true;
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -236,7 +236,7 @@ public class FileUtils {
             for (String id : parameters) {
                 i++;
                 //处理查询条件
-                javaCode.append(blank7).append("if(").append(id).append(".length() > 0){").append("\r\n");
+                javaCode.append(blank7).append("if(").append(id).append("!=null && ").append(id).append(".length() > 0){").append("\r\n");
                 javaCode.append(blank9).append("lst_value.add(").append(id).append("); \r\n");
                 javaCode.append(blank9).append("lst_key.add(\"").append(id).append("\"); \r\n");
                 //queryCode.append(blank7).append("todoSql += \"").append(id).append("=?,\";").append("\r\n");
@@ -260,6 +260,15 @@ public class FileUtils {
     }
 
 
+    /**
+     *
+     * 生产insert语句
+     * @param resultSQL 前缀SQL
+     * @param keys_columns 主键列
+     * @param all_columns   所有列
+     * @param javaCode  生成的java代码
+     * @return
+     */
     public static StringBuffer buildDynamicInsertSQL(String resultSQL, Vector<String> keys_columns, Vector<String> all_columns,StringBuffer javaCode){
         // StringBuffer javaCode = new StringBuffer("");
         String blank7 = "	    ";
@@ -288,14 +297,14 @@ public class FileUtils {
             //拼接字段
             javaCode.append(blank7).append("for(int i=0;i<lst_key.size();i++){").append("\r\n");
             javaCode.append(blank9).append("todoSql +=  lst_key.get(i)  ;").append("\r\n");
-            javaCode.append(blank9).append("if(i<lst_key.size()){ todoSql +=  \",\"; };").append("\r\n");
+            javaCode.append(blank9).append("if(i<lst_key.size()-1){ todoSql +=  \",\"; };").append("\r\n");
             javaCode.append(blank7).append("}").append("\r\n");
 
             //拼接?
             javaCode.append(blank7).append("todoSql = \"(\" +todoSql+ \") values(\" ;").append("\r\n");
             javaCode.append(blank7).append("for(int i=0;i<lst_key.size();i++){").append("\r\n");
             javaCode.append(blank9).append("todoSql +=  \"?\" ;").append("\r\n");
-            javaCode.append(blank9).append("if(i<lst_key.size()){todoSql +=  \",\"; };").append("\r\n");
+            javaCode.append(blank9).append("if(i<lst_key.size()-1){todoSql +=  \",\"; };").append("\r\n");
             javaCode.append(blank7).append("}").append("\r\n");
 
             javaCode.append(blank7).append("todoSql =\" ").append(resultSQL).append(" \" +todoSql+\")\"; ").append("\r\n");

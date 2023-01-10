@@ -183,14 +183,16 @@
 </form>
 <script type="text/javascript">
   function jabQuery(){
-      //删除所有查询结果数据
-      let rowCount = document.getElementsByName("tdata").length;
-      for (let i = 0; i < rowCount; i++) {
-          let tr = document.getElementsByName("tdata")[i];
-          if(tr){
-              tr.remove();
-          }
-      }
+        //删除所有查询结果数据
+        let tdateRow = document.getElementsByName("tdata");
+        let rowCount = tdateRow.length;
+        while (rowCount>0) {
+            let tr = tdateRow[0];
+            if(tr){
+                tr.remove();
+            }
+            rowCount = tdateRow.length;
+        }
       //重新创建一个锚点，用于加载查询数据集
       let ctr =  document.createElement("tr");
       ctr.setAttribute("id","tdata");
@@ -261,7 +263,7 @@
               let string = xmlHttpRequest.responseText;
               const data = JSON.parse(string);
               //刷新数据
-              Query();
+              jabQuery();
             } else if(xmlHttpRequest.status >= 400){
               alert('the request has failed. please try again later. error info:['+xmlHttpRequest.responseText+']');
             }

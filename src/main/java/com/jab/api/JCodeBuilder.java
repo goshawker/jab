@@ -60,7 +60,7 @@ public class JCodeBuilder {
         //generate update.html
         FileUtils.generateUpdateHtml();
         //generate valueObject.java
-        FileUtils.generateValueObject();
+        //FileUtils.generateValueObject();
         //generate Action.java
         FileUtils.generateAction();
 
