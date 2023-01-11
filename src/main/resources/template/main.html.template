@@ -5,6 +5,7 @@
   <meta content="no-cache" http-equiv="pragma">
   <meta content="no-cache" http-equiv="cache-control">
   <meta content="0" http-equiv="expires">
+  <meta http-equiv="content-Type" content="text/html;charset=utf-8">
   <style type="text/css">
       div.topBar {
           width: 100%;
@@ -197,7 +198,7 @@
       let ctr =  document.createElement("tr");
       ctr.setAttribute("id","tdata");
       ctr.setAttribute("name","tdata");
-      document.getElementById("sortTbl").appendChild(ctr);
+      document.getElementById("sortTbl").tBodies[0].appendChild(ctr);
     //获取form对象
     let form = document.getElementById('mainform');
     //动态action请求url地址
@@ -253,6 +254,9 @@
         window.open(url,"_blank");
      }
     function jabDel(args){
+        if(!window.confirm("您确定要删除此条记录吗?")){
+            return;
+        }
         //动态action请求url地址
         let requestUrl =  getContextPath()+"#NAMESPACE#/action";
         let parameters = '#DELETEPARAMETERS#&'+args;

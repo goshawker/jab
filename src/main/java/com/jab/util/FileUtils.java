@@ -119,10 +119,12 @@ public class FileUtils {
             // whereCondition_query.append(" and ").append(id).append("=? ");
             values_insert.append("?,");
             if (!StringUtils.isEmptyOrNull(primarykey)) {
+                /*主键部分*/
                 keys_columns.add(id);
                 deleteCode.append(blank7).append("String ").append(id).append(" = request.getParameter(\"").append(id).append("\"); \r\n");
                 whereCondition.append(" and ").append(id).append("=? ");
             } else {
+                /*非主键部分*/
                 nokeys_columns.add(id);
                 UpdateSQL.append(id).append(" = ?,");
             }
@@ -143,13 +145,6 @@ public class FileUtils {
             values_insert.setLength(0);
             values_insert.append(tmp).append(")");
         }
-
-        //处理列拼接，多余部分
-//        if (InsertSQL.toString().trim().endsWith(",")) {
-//            String tmp = InsertSQL.toString().substring(0, InsertSQL.length() - 1);
-//            InsertSQL.setLength(0);
-//            InsertSQL.append(tmp).append(") values(");
-//        }
 
         //处理列拼接，多余部分
         if (QuerySQL.toString().trim().endsWith(",")) {
@@ -174,7 +169,8 @@ public class FileUtils {
         /*处理动态查询SQL*/
         buildDynamicWhereConditions(QuerySQL.toString(),all_columns,queryCode);
         /*处理动态更新SQL*/
-        buildDynamicWhereConditions(UpdateSQL.toString(),nokeys_columns,updateCode);
+        buildDynamicUpdateSQL(UpdateSQL.toString(),keys_columns,nokeys_columns,updateCode);
+        //buildDynamicWhereConditions(UpdateSQL.toString(),nokeys_columns,updateCode);
         /*处理动态删除SQL*/
         buildDynamicWhereConditions(DeleteSQL.toString(),keys_columns,deleteCode);
         /*处理动态新增SQL*/
@@ -258,22 +254,68 @@ public class FileUtils {
         }
         return javaCode;
     }
-
-
     /**
      *
      * 生产insert语句
-     * @param resultSQL 前缀SQL
+     * @param prefixSQL 前缀SQL
+     * @param keys_columns 主键列
+     * @param nokeys_columns   非主键列
+     * @param javaCode  生成的java代码
+     * @return
+     */
+    public static StringBuffer buildDynamicUpdateSQL(String prefixSQL, Vector<String> keys_columns, Vector<String> nokeys_columns,StringBuffer javaCode){
+        // StringBuffer javaCode = new StringBuffer("");
+        String blank7 = "	    ";
+        String blank9 = "	      ";
+        if (prefixSQL.length() > 0) {
+            javaCode.append(blank7).append("java.util.Vector<String> lst_value = new java.util.Vector();").append("\r\n");
+            javaCode.append(blank7).append("java.util.Vector<String> lst_key = new java.util.Vector();").append("\r\n");
+            int i = 0;
+            /*处理非key*/
+            for (String id : nokeys_columns) {
+                i++;
+                /*处理非主键字段，为null改为”“*/
+                javaCode.append(blank9).append("/**处理非主键*/ \r\n");
+                javaCode.append(blank7).append("if(").append(id).append("==null){").append("\r\n");
+                javaCode.append(blank9).append(id).append("=\"\"; \r\n");
+                javaCode.append(blank7).append("}").append("\r\n");
+                javaCode.append(blank9).append("lst_value.add(").append(id).append("); \r\n");
+                javaCode.append(blank9).append("lst_key.add(\"").append(id).append("\"); \r\n");
+            }
+            /*处理key*/
+            for (String id : keys_columns) {
+                i++;
+                //处理查询条件
+                javaCode.append(blank9).append("/**处理主键*/ \r\n");
+                javaCode.append(blank9).append("lst_value.add(").append(id).append("); \r\n");
+                javaCode.append(blank9).append("lst_key.add(\"").append(id).append("\"); \r\n");
+                javaCode.append(blank9).append("todoSql += \" and ").append(id).append("=?\" ;").append("\r\n");
+            }
+
+            javaCode.append(blank7).append("todoSql =\" ").append(prefixSQL).append(" where 1=1 \" + todoSql; ").append("\r\n");
+            javaCode.append(blank7).append("ps =  buildConnect().prepareStatement(todoSql);").append("\r\n");
+
+            javaCode.append(blank7).append("for(int i=0;i<lst_value.size();i++){").append("\r\n");
+            // queryCode.append(blank9).append("todoSql += \" and \" + lst_key.get(i) +\"=?\" ;").append("\r\n");
+            javaCode.append(blank9).append("ps.setString(i+1,lst_value.get(i));").append("\r\n");
+            javaCode.append(blank7).append("}").append("\r\n");
+        }
+        return javaCode;
+    }
+    /**
+     *
+     * 生产insert语句
+     * @param prefixSQL 前缀SQL
      * @param keys_columns 主键列
      * @param all_columns   所有列
      * @param javaCode  生成的java代码
      * @return
      */
-    public static StringBuffer buildDynamicInsertSQL(String resultSQL, Vector<String> keys_columns, Vector<String> all_columns,StringBuffer javaCode){
+    public static StringBuffer buildDynamicInsertSQL(String prefixSQL, Vector<String> keys_columns, Vector<String> all_columns,StringBuffer javaCode){
         // StringBuffer javaCode = new StringBuffer("");
         String blank7 = "	    ";
         String blank9 = "	      ";
-        if (resultSQL.length() > 0) {
+        if (prefixSQL.length() > 0) {
             javaCode.append(blank7).append("java.util.Vector<String> lst_value = new java.util.Vector();").append("\r\n");
             javaCode.append(blank7).append("java.util.Vector<String> lst_key = new java.util.Vector();").append("\r\n");
             int i = 0;
@@ -307,7 +349,7 @@ public class FileUtils {
             javaCode.append(blank9).append("if(i<lst_key.size()-1){todoSql +=  \",\"; };").append("\r\n");
             javaCode.append(blank7).append("}").append("\r\n");
 
-            javaCode.append(blank7).append("todoSql =\" ").append(resultSQL).append(" \" +todoSql+\")\"; ").append("\r\n");
+            javaCode.append(blank7).append("todoSql =\" ").append(prefixSQL).append(" \" +todoSql+\")\"; ").append("\r\n");
             javaCode.append(blank7).append("ps =  buildConnect().prepareStatement(todoSql);").append("\r\n");
 
             javaCode.append(blank7).append("for(int i=0;i<lst_value.size();i++){").append("\r\n");
@@ -363,6 +405,7 @@ public class FileUtils {
         Vector<NamedNodeMap> primarykeys = new Vector<>();
         NamedNodeMap[] args = XmlUtils.parseItem();
         String updatestr = "";
+        StringBuffer script = new StringBuffer("\r\n");
         for (NamedNodeMap map : args) {
             String id = XmlUtils.getNodeValue(map, "id", true).toLowerCase();
             String lable = XmlUtils.getNodeValue(map, "lable", true).toLowerCase();
@@ -372,20 +415,22 @@ public class FileUtils {
             String primarykey = XmlUtils.getNodeValue(map, "primarykey", true).toLowerCase();
             String options = XmlUtils.getNodeValue(map, "options", true);
             String readOnly = "";
-            if (!StringUtils.isEmptyOrNull(primarykey)) {
+
+            if (!StringUtils.isEmptyOrNull(primarykey) && primarykey.equalsIgnoreCase("true")) {
                 readOnly = "readonly";
                 lable = "<font style=\"color:red\">" + lable + "</font>";
                 primarykeys.add(map);
                 updatestr += id + "='+data[i]." + id + "+" + "'&";
             }
+            script.append(blank2).append("document.getElementById('").append(id).append("').value= getParameter('").append(id).append("');\r\n");
             String fieldStr = "<input type=\"text\" name=\"" + id + "\" id=\"" + id + "\" value=\"" + default_ + "\"  maxlength=\"" + (Integer.parseInt(length) + 1) + "\"  style=\"width:" + Integer.parseInt(length) + "px\"   " + readOnly + ">";
             if (type.equalsIgnoreCase("date")) {
                 fieldStr = "<input type=\"date\"  name=\"" + id + "\" id=\"" + id + "\" value=\"" + default_ + "\"  placeholder=\"Only date\"  style=\"width:" + (Integer.parseInt(length) + 5) + "px\" >";
             } else if (type.equalsIgnoreCase("number")) {
-                fieldStr = "<input type=\"number\"    id=\"" + id + "\"  name=\"" + id + "\" value=\"" + default_ + "\" placeholder=\"Only numbers\"  min=\"0\" max=\"120\" step=\"1\" style=\"width:" + Integer.parseInt(length) + "px\"   \"+readOnly+\">";
+                fieldStr = "<input type=\"number\"    id=\"" + id + "\"  name=\"" + id + "\" value=\"" + default_ + "\" placeholder=\"Only numbers\"  min=\"0\" max=\"120\" step=\"1\" style=\"width:" + Integer.parseInt(length) + "px\"   "+readOnly+">";
             } else if (type.equalsIgnoreCase("select")) {
                 String html = "";
-                html += "<select  id=\"" + id + "\"    name=\"" + id + "\" id=\"" + id + "\" value=\"" + default_ + "\"  style=\"width:" + Integer.parseInt(length) + "px\"   \"+readOnly+\"> \r\t";
+                html += "<select  id=\"" + id + "\"    name=\"" + id + "\" id=\"" + id + "\" value=\"" + default_ + "\"  style=\"width:" + Integer.parseInt(length) + "px\"   "+readOnly+"> \r\t";
                 String[] optons_ = options.split("\\|");
                 html += "<option value=\"\"></option> \r\t";
                 for (int i = 0; i < optons_.length; i++) {
@@ -407,6 +452,7 @@ public class FileUtils {
             HashMap<String, String> replace = new HashMap<>();
             replace.put("#NAMESPACE#", namespace);
             replace.put("#FORMFIELD#", formfield.toString());
+            replace.put("#INITDATA#", script.toString());
             generateCode("template/update.html.template", replace, "update.html");
             return true;
         } catch (IOException e) {
@@ -508,8 +554,11 @@ public class FileUtils {
             if (!StringUtils.isEmptyOrNull(primarykey) && primarykey.equalsIgnoreCase("true")) {
                 primarykeys.add(map);
                 /*记录更新关键字，用于修改、删除等操作*/
-                updatestr += id + "='+data[i]." + id + "+" + "'&";
+                //updatestr += id + "='+data[i]." + id + "+" + "'&";
+                //System.out.println(updatestr);
             }
+            /*记录更新关键字，用于修改、删除等操作*/
+            updatestr += id + "='+data[i]." + id + "+" + "'&";
             /*生成javascript脚本*/
             requstparameters += id + "='+document.getElementById('" + id + "').value+" + "'&";
             /*查询字段，默认为文本输入类型*/
