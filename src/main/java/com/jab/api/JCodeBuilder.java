@@ -46,6 +46,5 @@ public class JCodeBuilder {
         FileUtils.generateNewHtml();
         FileUtils.generateUpdateHtml();
         FileUtils.generateAction();
-
     }
 }
