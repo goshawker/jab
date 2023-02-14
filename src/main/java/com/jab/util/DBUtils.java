@@ -9,63 +9,24 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 
 /**
- * @Author: goshawker@yeah.net
- * @Description:
- * @Date: 2022/9/12 11:04
- * @Version: 1.0
+ * @Description :
+ * @Author : goshawker@yeah.net
+ * @Date : 2023-02-14 11:43
  */
-public class DBUtils {
-//
-//  /**
-//   * The Constant DB_TYPE_ORACLE.
-//   */
-//  public static final String DB_TYPE_ORACLE = "oracle";
-//  /**
-//   * The Constant DB_TYPE_MYSQL.
-//   */
-//  public static final String DB_TYPE_MYSQL = "mysql";
-//  /**
-//   * The Constant DB_TYPE_SQLSERVER.
-//   */
-//  public static final String DB_TYPE_SQLSERVER = "sqlserver";
-//  /**
-//   * The Constant DB_TYPE_DB2.
-//   */
-//  public static final String DB_TYPE_DB2 = "db2";
-//  /**
-//   * The Constant DB_TYPE_SYBASE.
-//   */
-//  public static final String DB_TYPE_SYBASE = "sybase";
-//  /**
-//   * The Constant DATE_FORMAT_JAVA.
-//   */
-//  private static final String DATE_FORMAT_JAVA = "yyyy-MM-dd HH:mm:ss";
-//  /**
-//   * The Constant ORACLE_DATE_FORMAT_DB.
-//   */
-//  private static final String ORACLE_DATE_FORMAT_DB = "yyyy-mm-dd hh24:mi:ss";
-//  /**
-//   * The Constant MYSQL_DATE_FORMAT_DB.
-//   */
-//  private static final String MYSQL_DATE_FORMAT_DB = "%Y-%m-%d %H:%i:%s";
 
-    /**
-     * The __log.
-     */
-    static Logger log = LogManager.getLogger(DBUtils.class);
-    private static Connection connection = null;
+public class DBUtils {
     public static String driver;
     public static String user;
     public static String pwd;
     public static String url;
+    static Logger log = LogManager.getLogger(DBUtils.class);
+    private static Connection connection = null;
 
     public static void init() {
-        NamedNodeMap[] vector = new NamedNodeMap[0];
+        NamedNodeMap[] vector;
         try {
             vector = XmlUtils.parseDatabase();
             String driver = XmlUtils.getNodeValue(vector[0], "driver");
@@ -76,6 +37,7 @@ public class DBUtils {
             String pwd = XmlUtils.getNodeValue(vector[0], "pwd");
             if (driver == null || ip == null || port == null || instance == null || user == null || pwd == null) {
                 log.error("reading config.xml error.");
+                return;
             }
 
             String url = buildURL(driver, ip, port, instance);
@@ -86,49 +48,6 @@ public class DBUtils {
         } catch (ParserConfigurationException | IOException | SAXException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    /**
-     * To sql string.
-     *
-     * @param value  the value
-     * @param dbType the db type
-     * @return the string
-     */
-    public static String toSqlString(Object value, String dbType) {
-        String valStr = "''";
-        if ((value instanceof Date)) {
-            if ("mysql".equals(dbType)) {
-                valStr = "STR_TO_DATE('" + dateToStr((Date) value) + "','"
-                        + "%Y-%m-%d %H:%i:%s" + "')";
-            } else {
-                valStr = "to_date('" + dateToStr((Date) value) + "','"
-                        + "yyyy-mm-dd hh24:mi:ss" + "')";
-            }
-
-        } else if ((value instanceof Long)) {
-            valStr = String.valueOf(value);
-        } else if ((value instanceof Integer)) {
-            valStr = String.valueOf(value);
-        } else if ((value instanceof Double)) {
-            valStr = String.valueOf(value);
-        } else if (((String) value).equalsIgnoreCase("sysdate")) {
-            valStr = (String) value;
-        } else {
-            valStr = "'" + value + "'";
-        }
-        return valStr;
-    }
-
-    /**
-     * Date to str.
-     *
-     * @param d the d
-     * @return the string
-     */
-    private static String dateToStr(Date d) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return format.format(d);
     }
 
 
@@ -144,25 +63,19 @@ public class DBUtils {
     private static String buildURL(String driver, String addr, String port,
                                    String dbName) {
         String str = driver.toLowerCase();
-        if (str.indexOf("oracle") >= 0) {
+        if (str.contains("oracle")) {
             return "jdbc:oracle:thin:@" + addr + ":" + port + ":" + dbName;
         }
-        if (str.indexOf("sqlserver") >= 0) {
+        if (str.contains("sqlserver")) {
             return "jdbc:sqlserver://" + addr + ":" + port + ";DatabaseName=" + dbName;
         }
-        if (str.indexOf("mysql") >= 0) {
+        if (str.contains("mysql")) {
             return "jdbc:mysql://" + addr + ":" + port + "/" + dbName;
         }
         return "";
     }
 
-    /**
-     * Title:  _buildConnect
-     * Description:
-     *
-     * @param
-     * @return Connection
-     */
+
     public static Connection buildConnect() throws ClassNotFoundException, SQLException {
         if (connection != null && !connection.isClosed()) {
             return connection;
@@ -172,12 +85,4 @@ public class DBUtils {
         connection = java.sql.DriverManager.getConnection(url, user, pwd);
         return connection;
     }
-    public static void execute() throws SQLException {
-      java.sql.PreparedStatement ps = connection.prepareStatement("");
-      ps.setString(1,"");
-      int rs = ps.executeUpdate();
-
-    }
-
-
 }
