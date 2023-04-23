@@ -8,11 +8,6 @@ package com.jab.common;
 * @Version: 1.0
 */
 public class Test {
-
-
   public static void main(String[] args){
-    String str = "man|woman";
-    String[] s = str.split("\\|");
-    System.out.printf("============="+s.length);
   }
 }
