@@ -42,9 +42,13 @@ public class JCodeBuilder {
    * 生产功能入口页面html、新建页面html、更新页面html、vo对象、action对象java代码
    */
   public void generate() throws Exception {
+        //building main.html
         FileUtils.generateMainHtml();
+        //building new.html
         FileUtils.generateNewHtml();
+        //building update.html
         FileUtils.generateUpdateHtml();
+        //building action.java
         FileUtils.generateAction();
     }
 }

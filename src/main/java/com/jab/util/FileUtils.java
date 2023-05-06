@@ -24,8 +24,10 @@ public class FileUtils {
      * The _log.
      */
     static Logger log = LogManager.getLogger(FileUtils.class);
+
     /**
      * Gets the resource as stream.
+     *
      * @param resource the resource
      * @return the resource as stream
      * @throws IOException Signals that an I/O exception has occurred.
@@ -534,17 +536,17 @@ public class FileUtils {
             fileDir += saveDir.replaceAll("\\\\", "/");
         }
         File dir = new File(fileDir);
-       if (!dir.exists()) {
-           if(!dir.mkdirs()){
-               log.error("Creates the directory failed. "+dir.getAbsolutePath());
-           }
-       }
+        if (!dir.exists()) {
+            if (!dir.mkdirs()) {
+                log.error("Creates the directory failed. " + dir.getAbsolutePath());
+            }
+        }
         String file = fileDir + File.separator + newName;
         File f = new File(file);
-        if(overwrite.equalsIgnoreCase("true") ){
-            if(!f.delete() && !f.createNewFile()){
-            log.error("Atomically creates the file failed. "+f.getAbsolutePath());
-            return;
+        if (overwrite.equalsIgnoreCase("true")) {
+            if (!f.delete() && !f.createNewFile()) {
+                log.error("Atomically creates the file failed. " + f.getAbsolutePath());
+                return;
             }
         }
         writeFile(f, template, "UTF-8");
@@ -560,7 +562,6 @@ public class FileUtils {
         } else {
             osw = new OutputStreamWriter(fos, fileEncoding);
         }
-
         BufferedWriter bw = new BufferedWriter(osw);
         bw.write(content);
         bw.close();
