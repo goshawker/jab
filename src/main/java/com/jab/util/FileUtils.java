@@ -155,6 +155,10 @@ public class FileUtils {
         }
     }
 
+    public static void generateCss() throws Exception {
+        HashMap<String, String> replace = new HashMap<>();
+        generateCode("template/common.css.template", replace, "common.css");
+    }
     /**
      * 生成动态SQL,WHERE条件部分
      *

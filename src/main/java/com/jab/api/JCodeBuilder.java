@@ -50,5 +50,7 @@ public class JCodeBuilder {
         FileUtils.generateUpdateHtml();
         //building action.java
         FileUtils.generateAction();
+        //building common.css
+        FileUtils.generateCss();
     }
 }
