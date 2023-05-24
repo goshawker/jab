@@ -1,0 +1,117 @@
+
+function getContextPath(){
+    return document.location.pathname.substring(0,document.location.pathname.indexOf("/",1));
+}
+
+function getParameter(name) {
+    return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;
+}
+function sendAjaxRequest(url,args){
+    let xmlHttpRequest;
+    if (window.XMLHttpRequest) {
+        xmlHttpRequest = new XMLHttpRequest();
+    } else {
+        xmlHttpRequest = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    //发送Post请求
+    xmlHttpRequest.open('POST',url);
+    xmlHttpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xmlHttpRequest.send(args);
+    return xmlHttpRequest;
+}
+
+function jabQuery(){
+        //删除所有查询结果数据
+        let tdateRow = document.getElementsByName("tdata");
+        let rowCount = tdateRow.length;
+        while (rowCount>0) {
+            let tr = tdateRow[0];
+            if(tr){
+                tr.remove();
+            }
+            rowCount = tdateRow.length;
+        }
+      //重新创建一个锚点，用于加载查询数据集
+      let ctr =  document.createElement("tr");
+      ctr.setAttribute("id","tdata");
+      ctr.setAttribute("name","tdata");
+      document.getElementById("sortTbl").tBodies[0].appendChild(ctr);
+    //获取form对象
+    let form = document.getElementById('mainform');
+    //动态action请求url地址
+    let requestUrl =  getContextPath()+"#NAMESPACE#/action";
+    //请求参数
+    let parameters = '#REQUSTPARAMETERS#';
+    let xmlHttpRequest = sendAjaxRequest(requestUrl,parameters);
+    xmlHttpRequest.onreadystatechange = ()=>{
+      if(xmlHttpRequest.readyState === 4){
+        if(xmlHttpRequest.status >= 200 && xmlHttpRequest.status < 300){
+          let string = xmlHttpRequest.responseText;
+          const data = JSON.parse(string);
+          let count = data.length;
+          let trHtml="";
+          for (let i = 0; i < count; i++) {
+            trHtml +="<tr  class=\"editGrid\" nowrap=\"nowrap\"   name=\"tdata\" id=\"tdata\">";
+            #GRIDDATA#
+           // trHtml+="<td class='editGrid'  align='left'><a href='#NAMESPACE#/edit?#UPDATESTR#'>Edit</a> &nbsp;&nbsp; <a href='#NAMESPACE#/delete?#UPDATESTR#'>Delete</a></td>";
+            trHtml +="</tr>";
+          }
+          document.getElementById("tdata").outerHTML = trHtml;
+
+
+        } else if(xmlHttpRequest.status >= 400){
+          alert('the request has failed. please try again later. error info:['+xmlHttpRequest.responseText+']');
+        }
+      }
+    }
+
+  }
+
+function jabEdit(args){
+    let url =  getContextPath()+"#NAMESPACE#/update.html?"+args;
+    window.open(url,"_blank");
+}
+function jabNew(){
+    let url =  getContextPath()+"#NAMESPACE#/new.html";
+    window.open(url,"_blank");
+}
+function jabDel(args){
+        if(!window.confirm("Confirm the deletion of records?")){
+            return;
+        }
+        //动态action请求url地址
+        let requestUrl =  getContextPath()+"#NAMESPACE#/action";
+        let parameters = '#DELETEPARAMETERS#&'+args;
+        let xmlHttpRequest = sendAjaxRequest(requestUrl,parameters);
+        xmlHttpRequest.onreadystatechange = ()=>{
+          if(xmlHttpRequest.readyState === 4){
+            if(xmlHttpRequest.status >= 200 && xmlHttpRequest.status < 300){
+              let string = xmlHttpRequest.responseText;
+              const data = JSON.parse(string);
+              //刷新数据
+              jabQuery();
+            } else if(xmlHttpRequest.status >= 400){
+              alert('the request has failed. please try again later. error info:['+xmlHttpRequest.responseText+']');
+            }
+          }
+       }
+}
+function jadNew(){
+       let requestUrl =  getContextPath()+"#NAMESPACE#/action";
+        //获取form对象
+        let form = document.getElementById('newform');
+        form.action=requestUrl;
+        form.submit();
+}
+
+function jadUpdate(){
+    let requestUrl =  getContextPath()+"#NAMESPACE#/action";
+    //获取form对象
+    let form = document.getElementById('updateform');
+    form.action=requestUrl;
+    form.submit();
+}
+
+function init() {
+    #INITDATA#
+}

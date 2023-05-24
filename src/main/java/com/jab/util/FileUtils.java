@@ -24,6 +24,7 @@ public class FileUtils {
      * The _log.
      */
     static Logger log = LogManager.getLogger(FileUtils.class);
+    static HashMap scripts = new HashMap<String,String>();
 
     /**
      * Gets the resource as stream.
@@ -158,6 +159,10 @@ public class FileUtils {
     public static void generateCss() throws Exception {
         HashMap<String, String> replace = new HashMap<>();
         generateCode("template/common.css.template", replace, "common.css");
+    }
+
+    public static void generateJavascript() throws Exception {
+        generateCode("template/common.js.template", scripts, "common.js");
     }
     /**
      * 生成动态SQL,WHERE条件部分
@@ -352,7 +357,8 @@ public class FileUtils {
             HashMap<String, String> replace = new HashMap<>();
             replace.put("#NAMESPACE#", namespace);
             replace.put("#FORMFIELD#", formField.toString());
-            replace.put("#INITDATA#", script.toString());
+           // replace.put("#INITDATA#", script.toString());
+            scripts.put("#INITDATA#", script.toString());
             generateCode("template/update.html.template", replace, "update.html");
             //return true;
         } catch (IOException e) {
@@ -398,6 +404,7 @@ public class FileUtils {
             HashMap<String, String> replace = new HashMap<>();
             replace.put("#NAMESPACE#", namespace);
             replace.put("#FORMFIELD#", formField.toString());
+            scripts.put("#NAMESPACE#", namespace);
             generateCode("template/new.html.template", replace, "new.html");
             // return true;
         } catch (IOException e) {
@@ -496,13 +503,18 @@ public class FileUtils {
         try {
             HashMap<String, String> replace = new HashMap<>();
             replace.put("#NAMESPACE#", namespace.concat(""));
-            replace.put("#DONEW#", namespace.concat(""));
+            //replace.put("#DONEW#", namespace.concat(""));
             replace.put("#QUERYCONDITION#", queryCondition.toString());
             replace.put("#GRIDHEAD#", queryResultTitle.toString());
             replace.put("#GRIDDATA#", queryResultData.toString());
-            replace.put("#REQUSTPARAMETERS#", requstString.toString().concat("requestMethod=query"));
-            replace.put("#DELETEPARAMETERS#", "requestMethod=delete");
-            replace.put("#UPDATESTR#", updateStr.endsWith("&") ? updateStr.substring(0, updateStr.length() - 1) : updateStr);
+            //replace.put("#REQUSTPARAMETERS#", requstString.toString().concat("requestMethod=query"));
+            //replace.put("#DELETEPARAMETERS#", "requestMethod=delete");
+            //replace.put("#UPDATESTR#", updateStr.endsWith("&") ? updateStr.substring(0, updateStr.length() - 1) : updateStr);
+            scripts.put("#GRIDDATA#", queryResultData.toString());
+            scripts.put("#NAMESPACE#", namespace.concat(""));
+            scripts.put("#REQUSTPARAMETERS#", requstString.toString().concat("requestMethod=query"));
+            scripts.put("#DELETEPARAMETERS#", "requestMethod=delete");
+            scripts.put("#UPDATESTR#", updateStr.endsWith("&") ? updateStr.substring(0, updateStr.length() - 1) : updateStr);
             generateCode("template/main.html.template", replace, "main.html");
             // return true;
         } catch (IOException e) {

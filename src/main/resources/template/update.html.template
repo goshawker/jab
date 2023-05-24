@@ -7,9 +7,9 @@
   <meta content="0" http-equiv="expires">
   <meta http-equiv="content-Type" content="text/html;charset=utf-8">
   <link rel="stylesheet" type="text/css" href="./common.css">
-  </style>
+  <script type="application/javascript" src="./common.js"></script>
 </head>
-<body>
+<body onload="init()">
 <div class="topBar">
   <table border="0" cellpadding="0" cellspacing="0" height="98%" width="98%">
     <tr>
@@ -46,21 +46,5 @@
     </tr>
   </table>
 </form>
-<script type="text/javascript">
-    function jadUpdate(){
-        let requestUrl =  getContextPath()+"/myapp/student/action";
-        //获取form对象
-        let form = document.getElementById('updateform');
-        form.action=requestUrl;
-        form.submit();
-    }
-    function getContextPath(){
-        return document.location.pathname.substring(0,document.location.pathname.indexOf("/",1));
-    }
-    function getParameter(name) {
-        return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;
-    }
-    #INITDATA#
-</script>
 </body>
 </html>

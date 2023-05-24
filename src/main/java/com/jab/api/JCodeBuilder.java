@@ -52,5 +52,7 @@ public class JCodeBuilder {
         FileUtils.generateAction();
         //building common.css
         FileUtils.generateCss();
+        //building script.js
+        FileUtils.generateJavascript();
     }
 }
