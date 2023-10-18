@@ -7,8 +7,6 @@ import java.text.DecimalFormat;
  */
 
 public class StringUtils {
-
-
     /**
      * Checks if is empty or null.
      *
@@ -18,30 +16,4 @@ public class StringUtils {
     public static boolean isNotEmptyAndNull(String str) {
         return (str != null) && (str.length() != 0);
     }
-
-    /**
-     * _format.
-     *
-     * @param number  the number
-     * @param pattern the pattern
-     * @return the string
-     */
-    public static String format(String number, String pattern) {
-        double d = Double.parseDouble(number);
-        return format(d, pattern);
-    }
-
-    /**
-     * _format.
-     *
-     * @param number  the number
-     * @param pattern the pattern
-     * @return the string
-     */
-    public static String format(double number, String pattern) {
-        DecimalFormat df = new DecimalFormat(pattern);
-        return df.format(number);
-    }
-
-
 }

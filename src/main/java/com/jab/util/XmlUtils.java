@@ -76,16 +76,6 @@ public class XmlUtils {
                 .parse(is);
     }
 
-
-
-    public static String getNodeValue(NamedNodeMap map, String nodeName, boolean toEmptyString) {
-        if (map.getNamedItem(nodeName) == null) {
-            return null;
-        } else {
-            return getNodeValue(map, nodeName);
-        }
-    }
-
     public static String getNodeValue(NamedNodeMap map, String nodeName) {
         if (map == null || map.getNamedItem(nodeName) == null) {
             return "";
