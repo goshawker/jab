@@ -468,7 +468,7 @@ public class FileUtils {
             /*生成查询结果表的数据部分表头*/
             queryResultTitle.append(blank9).append(blank7).append("<td class=\"editGridHd\" nowrap=\"nowrap\" >")
                     .append("\r\n")
-                    .append(blank9).append(blank7).append(blank2).append(id)
+                    .append(blank9).append(blank7).append(blank2).append(lable)
                     .append("\r\n")
                     .append(blank9 + blank7).append("</td>").append("\r\n");
             /*生成查询结果数据，灌装数据*/
@@ -485,14 +485,14 @@ public class FileUtils {
                 }
                 queryResultData.append(blank7).append("let jabUpdateStr='").append(updateStr).append("';\r\n")
                         .append(blank7).append("trHtml +=\"<td class='editGrid'  align='left'>")
-                        .append("<a href=\\\\\"javascript:jabEdit('\"+jabUpdateStr+\"')\\\\\">Edit</a> &nbsp;&nbsp;  <a href=\\\\\"javascript:jabDel('\"+jabUpdateStr+\"')\\\\\">Delete</a> ")
+                        .append("<a href=\\\\\"javascript:jabEdit('\"+jabUpdateStr+\"')\\\\\">修改</a> &nbsp;&nbsp;  <a href=\\\\\"javascript:jabDel('\"+jabUpdateStr+\"')\\\\\">删除</a> ")
                         .append("</td>\"").append(";\r\n");
             }
 
         }
         /*生成查询结果表的操作部分表头*/
         queryResultTitle.append(blank9 + blank7).append("<td class=\"editGridHd\" nowrap=\"nowrap\" >").append("\r\n")
-                .append(blank9 + blank7).append(blank2).append("Operation").append("\r\n")
+                .append(blank9 + blank7).append(blank2).append("操作").append("\r\n")
                 .append(blank9)
                 .append(blank7)
                 .append("</td>")

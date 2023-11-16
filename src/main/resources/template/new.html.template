@@ -6,14 +6,14 @@
   <meta content="no-cache" http-equiv="cache-control">
   <meta content="0" http-equiv="expires">
   <meta http-equiv="content-Type" content="text/html;charset=utf-8">
-  <link rel="stylesheet" type="text/css" href="./common.css">
-    <script type="application/javascript" src="./common.js"></script>
+  <link rel="stylesheet" type="text/css" href="common.css">
+    <script type="application/javascript" src="common.js"></script>
 </head>
 <body>
 <div class="topBar">
   <table border="0" cellpadding="0" cellspacing="0" height="98%" width="98%">
     <tr>
-      <td class="topTitle">&nbsp;&nbsp;Auto Generate - new.html </td>
+      <td class="topTitle">&nbsp;&nbsp;自动生成的新建功能 </td>
     </tr>
   </table>
 </div>
@@ -29,14 +29,14 @@
       <td width="50%">
         <table class="editGrid">
           <tr height="30">
-            <td class="highLightNormal" colspan="4" nowrap="nowrap" width="15%"><b>Input Area:</b></td>
+            <td class="highLightNormal" colspan="4" nowrap="nowrap" width="15%"><b>数据录入:</b></td>
           </tr>
           #FORMFIELD#
           <tr class="bgLight" height="30">
             <td align="right" class="normalFont" colspan="4">
               <input type="hidden" id="requestMethod" name="requestMethod" value="insert">
-              <input type="button"  accesskey="S" value="Submit(S)" onclick="jadNew()"> &nbsp;
-              <input type="reset" accesskey="c" value="Reset(c)">
+              <input type="button"  accesskey="S" value="保存(S)" onclick="jadNew()"> &nbsp;
+              <input type="reset" accesskey="c" value="重置(c)">
             </td>
           </tr>
         </table>

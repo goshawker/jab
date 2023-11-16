@@ -76,7 +76,7 @@ function jabNew(){
     window.open(url,"_blank");
 }
 function jabDel(args){
-        if(!window.confirm("Confirm the deletion of records?")){
+        if(!window.confirm("删除数据后将不可恢复, 确认要删除吗?")){
             return;
         }
         //动态action请求url地址
