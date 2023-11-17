@@ -188,16 +188,14 @@ public class FileUtils {
                 javaCode.append(blank7).append("}").append("\r\n");
             }
             javaCode.append(blank7).append("for(String s : lst_key){").append("\r\n");
-            javaCode.append(blank9).append("todoSql += \" and \" + s +\"=?\" ;").append("\r\n");
-            // queryCode.append(blank9).append("ps.setString(i+1,lst_value.get(i));").append("\r\n");
+            javaCode.append(blank9).append("todoSql += \" and \" + s +\" like ?\" ;").append("\r\n");
             javaCode.append(blank7).append("}").append("\r\n");
 
             javaCode.append(blank7).append("todoSql =\" ").append(resultSQL).append(" where 1=1 \" + todoSql; ").append("\r\n");
             javaCode.append(blank7).append("ps =  buildConnect().prepareStatement(todoSql);").append("\r\n");
 
             javaCode.append(blank7).append("for(int i=0;i<lst_value.size();i++){").append("\r\n");
-            // queryCode.append(blank9).append("todoSql += \" and \" + lst_key.get(i) +\"=?\" ;").append("\r\n");
-            javaCode.append(blank9).append("ps.setString(i+1,lst_value.get(i));").append("\r\n");
+            javaCode.append(blank9).append("ps.setString(i+1,\"%\"+lst_value.get(i)+\"%\");").append("\r\n");
             javaCode.append(blank7).append("}").append("\r\n");
         }
         // return javaCode;
@@ -545,7 +543,11 @@ public class FileUtils {
         NamedNodeMap[] args = XmlUtils.parseConfigXml("file");
         String saveDir = XmlUtils.getNodeValue(args[0], "saveDir");
         String overwrite = XmlUtils.getNodeValue(args[0], "overwrite");
+        NamedNodeMap[] items = XmlUtils.parseItems();
+        String namespace = XmlUtils.getNodeValue(items[0], "namespace");
+
         String fileDir = "";
+        saveDir = saveDir.concat(namespace);
         if (File.separator.equals("\\")) {
             fileDir += saveDir.replaceAll("/", "\\\\");
         } else {
