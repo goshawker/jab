@@ -16,6 +16,11 @@
 package com.jab.api;
 
 import com.jab.util.FileUtils;
+import com.jab.util.XmlUtils;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+
+import java.util.ArrayList;
 
 
 /**
@@ -42,17 +47,44 @@ public class JCodeBuilder {
    * 生产功能入口页面html、新建页面html、更新页面html、vo对象、action对象java代码
    */
   public void generate() throws Exception {
-        //building main.html
-        FileUtils.generateMainHtml();
-        //building new.html
-        FileUtils.generateNewHtml();
-        //building update.html
-        FileUtils.generateUpdateHtml();
-        //building action.java
-        FileUtils.generateAction();
-        //building common.css
-        FileUtils.generateCss();
-        //building script.js
-        FileUtils.generateJavascript();
+        //FileUtils.generateMainHtml();
+//        FileUtils.generateNewHtml();
+
+//        FileUtils.generateUpdateHtml();
+
+//        FileUtils.generateAction();
+
+
+
+
+      try {
+          ArrayList<Node> arrayList = XmlUtils.getNodesByTagName("items");
+          for (int i = 0; i < arrayList.size(); i++) {
+              Node node = arrayList.get(i);
+              NamedNodeMap namedNodeMaps = node.getAttributes();
+              String namespace = XmlUtils.getNodeValue(namedNodeMaps, "namespace").toLowerCase();
+              String tableName = XmlUtils.getNodeValue(namedNodeMaps, "tableName").toLowerCase();
+              System.out.printf("\n namespace:%s tableName:%s \n",namespace,tableName);
+
+              ArrayList<Node> itemNodes = XmlUtils.getChildNodes(node.getChildNodes(),"item");
+              //item node  attributes
+              NamedNodeMap[] itemsAttributes  = new NamedNodeMap[itemNodes.size()];
+              for (int j = 0; j < itemNodes.size(); j++) {
+                  Node child = itemNodes.get(j);
+                  itemsAttributes[j] = child.getAttributes();
+              }
+              FileUtils.clearScripts();
+              FileUtils.generateMainHtml(namespace,itemsAttributes);
+              FileUtils.generateNewHtml(namespace,itemsAttributes);
+              FileUtils.generateUpdateHtml(namespace,itemsAttributes);
+              FileUtils.generateAction(namespace,tableName,itemsAttributes);
+              FileUtils.generateCss(namespace);
+              FileUtils.generateJavascript(namespace);
+
+          }
+      } catch (Exception e) {
+          e.printStackTrace();
+      }
+
     }
 }

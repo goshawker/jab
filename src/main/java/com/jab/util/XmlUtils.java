@@ -140,6 +140,9 @@ public class XmlUtils {
         return arrayList;
     }
 
+    /**
+     * print content for config.xml
+     */
     public static void print(){
         try {
             ArrayList<Node> arrayList = XmlUtils.getNodesByTagName("items");
@@ -173,7 +176,6 @@ public class XmlUtils {
     public static void main(String[] args) {
         try {
             print();
-
 //            saveDir = saveDir.concat(namespace);
 //            String fileDir = "";
 //            if (File.separator.equals("\\")) {
@@ -181,9 +183,7 @@ public class XmlUtils {
 //            } else {
 //                fileDir += saveDir.replaceAll("\\\\", "/");
 //            }
-//
 //            String file = fileDir + File.separator + "file";
-//
 //            System.out.printf(file);
         } catch (Exception e) {
             e.printStackTrace();
