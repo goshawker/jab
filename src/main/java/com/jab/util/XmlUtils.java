@@ -164,6 +164,10 @@ public class XmlUtils {
 
                     String default2 = XmlUtils.getNodeValue(child.getAttributes(), "default").toLowerCase();
                     String primarykey = XmlUtils.getNodeValue(child.getAttributes(), "primarykey").toLowerCase();
+                    String options = XmlUtils.getNodeValue(child.getAttributes(), "options");
+//                    if (options.startsWith("#") && options.endsWith("#")){
+//                        System.out.printf("dmMap.put(\"DM#"+id+"\",\""+options.substring(1,options.length()-1)+"\" \r\n");
+//                    }
                     System.out.printf("\t id:%s lable:%s type:%s length:%s default:%s primarykey:%s  \n",id,lable,type,length,default2,primarykey);
                 }
             }

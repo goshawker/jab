@@ -115,3 +115,29 @@ function jadUpdate(){
 function init() {
     #INITDATA#
 }
+function initData(){
+   #INITDM#
+}
+function initDM(obj,dm){
+    let requestUrl =  getContextPath()+"#NAMESPACE#/action";
+    //请求参数
+    let parameters = 'requestMethod=initDm&dm='+dm;
+    let xmlHttpRequest = sendAjaxRequest(requestUrl,parameters);
+    xmlHttpRequest.onreadystatechange = ()=>{
+        if(xmlHttpRequest.readyState === 4){
+            if(xmlHttpRequest.status >= 200 && xmlHttpRequest.status < 300){
+                let string = xmlHttpRequest.responseText;
+                const data = JSON.parse(string);
+                let count = data.length;
+                let optionHtml="";
+                for (let i = 0; i < count; i++) {
+                    optionHtml +="<option value="+data[i].dm+"'"+data[i].mc+"</option>";
+                }
+                this.innHTML = optionHtml;
+            } else if(xmlHttpRequest.status >= 400){
+                alert('the request has failed. please try again later. error info:['+xmlHttpRequest.responseText+']');
+            }
+        }
+    }
+
+}

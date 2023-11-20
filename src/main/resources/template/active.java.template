@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.HashMap;
 
 @WebServlet(name = "#NAMESPACE#/action", value = "#NAMESPACE#/action")
 public class JabActive extends HttpServlet {
@@ -42,7 +43,11 @@ public class JabActive extends HttpServlet {
               returnData = commonUpdate(request);
               String html = responseHtml(returnData, null, true);
               response.getWriter().write(html);
-          } else if (method.contains("delete")) {
+          } else if (method.contains("initDm")) {
+              response.setContentType("text/html; charset=UTF-8");
+              returnData = initDm(request);
+              response.getWriter().write(returnData);
+          }else if (method.contains("delete")) {
               returnData = commonDelete(request);
               response.getWriter().write(returnData);
           }
@@ -171,6 +176,29 @@ public class JabActive extends HttpServlet {
             throw new RuntimeException(e);
         }
       return String.valueOf(affected_rows);
+    }
+
+    /**
+     * 生成初始化代码
+     * @param request
+     * @return
+     */
+    public String initDm(HttpServletRequest request){
+        HashMap<String,String> dmMap = new HashMap<>();
+        #INITDMCODE#
+        String JSONString = new String();
+        String sql="";
+        try {
+            sql = dmMap.get(request.getParameter("dm"));
+            /** TODO Auto-generated  */
+            java.sql.PreparedStatement ps =  null;
+            ps =  buildConnect().prepareStatement(sql);
+            java.sql.ResultSet rs = ps.executeQuery();
+            JSONString = toJSONArray(rs).toString();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return JSONString;
     }
     public static JSONArray toJSONArray(ResultSet rs) throws SQLException, JSONException {
         JSONArray array = new JSONArray();
