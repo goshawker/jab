@@ -113,6 +113,7 @@ function jadUpdate(){
 }
 
 function init() {
+    initData();
     #INITDATA#
 }
 function initData(){
@@ -131,9 +132,9 @@ function initDM(obj,dm){
                 let count = data.length;
                 let optionHtml="";
                 for (let i = 0; i < count; i++) {
-                    optionHtml +="<option value="+data[i].dm+"'"+data[i].mc+"</option>";
+                    var opt = new Option(data[i].MC,data[i].DM);
+                    obj.options.add(opt);
                 }
-                this.innHTML = optionHtml;
             } else if(xmlHttpRequest.status >= 400){
                 alert('the request has failed. please try again later. error info:['+xmlHttpRequest.responseText+']');
             }
