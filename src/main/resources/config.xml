@@ -14,20 +14,17 @@
         <item id="bh" lable="编号" type="text" length="300" default=""></item>
         <item id="mc" lable="名称" type="text" length="200" default=""  primarykey="true"></item>
         <item id="fj" lable="方剂" type="text" length="300" default=""></item>
-        <item id="lrrq" lable="录入日期" type="date" length="100" default=""></item>
     </items>
 
     <items namespace="/ck/zz" tableName="ck_zz">
         <item id="bh" lable="编号" type="text" length="300" default=""></item>
         <item id="mc" lable="名称" type="text" length="200" default=""  primarykey="true"></item>
-        <item id="lrrq" lable="录入日期" type="date" length="100" default=""></item>
     </items>
 
 
-    <items namespace="/ck/fjzzglb" tableName="ck_fjzzglb">
+    <items namespace="/ck/fjzzglb" tableName="ck_fjzzglb" page="main|update|new">
         <item id="fjbh" lable="方剂名称"  type="select" length="100"  default="" options="#SELECT BH AS DM,MC FROM ck_fj WHERE YXBZ='Y'#"  primarykey="true"></item>
-        <item id="zzbh" lable="症状名称"  type="select" length="100"  default="" options="#SELECT BH AS DM,MC FROM ck_zz WHERE YXBZ='Y'#"  primarykey="true"></item>
-        <item id="lrrq" lable="录入日期" type="date" length="100" default=""></item>
+        <item id="zzbh" lable="症状名称"  type="checkbox" length="100" size="10" default="" options="#SELECT BH AS DM,MC FROM ck_zz WHERE YXBZ='Y'#"  primarykey="true"></item>
     </items>
 
 

@@ -119,7 +119,7 @@ function init() {
 function initData(){
    #INITDM#
 }
-function initDM(obj,dm){
+function initSelectDOM(obj,dm){
     let requestUrl =  getContextPath()+"#NAMESPACE#/action";
     //请求参数
     let parameters = 'requestMethod=initDm&dm='+dm;
@@ -132,6 +132,9 @@ function initDM(obj,dm){
                 let count = data.length;
                 let optionHtml="";
                 for (let i = 0; i < count; i++) {
+                    if(data[i].DM != getParameter(obj.id)){
+                        continue;
+                    }
                     var opt = new Option(data[i].MC,data[i].DM);
                     obj.options.add(opt);
                 }
@@ -140,5 +143,40 @@ function initDM(obj,dm){
             }
         }
     }
+}
 
+function initCheckBoxDOM(obj,dm){
+    let checkboxname = obj.name;
+    obj = obj.parentNode;
+    obj.innerHTML="";
+    let requestUrl =  getContextPath()+"#NAMESPACE#/action";
+    //请求参数
+    let parameters = 'requestMethod=initDm&dm='+dm;
+    let xmlHttpRequest = sendAjaxRequest(requestUrl,parameters);
+    xmlHttpRequest.onreadystatechange = ()=>{
+        if(xmlHttpRequest.readyState === 4){
+            if(xmlHttpRequest.status >= 200 && xmlHttpRequest.status < 300){
+                let string = xmlHttpRequest.responseText;
+                const data = JSON.parse(string);
+                let count = data.length;
+                let optionHtml="";
+                for (let i = 0; i < count; i++) {
+                    const label = document.createElement("label");
+                    const checkbox = document.createElement("input");
+                    checkbox.type="checkbox";
+                    checkbox.id=data[i].DM;
+                    checkbox.name=data[i].DM;
+                    if(data[i].DM==getParameter(checkboxname)){
+                        checkbox.checked=true;
+                    }
+                    const textContent = document.createTextNode(data[i].MC);
+                    label.appendChild(checkbox);
+                    label.appendChild(textContent);
+                    obj.appendChild(label);
+                }
+            } else if(xmlHttpRequest.status >= 400){
+                alert('the request has failed. please try again later. error info:['+xmlHttpRequest.responseText+']');
+            }
+        }
+    }
 }

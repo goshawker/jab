@@ -27,14 +27,16 @@ import java.util.ArrayList;
  * @Description :
  * @Author : goshawker@yeah.net
  * @Date : 2023-02-14 10:35
-*/
+ */
 public class JCodeBuilder {
     public JCodeBuilder() {
     }
+
     public static void main(String[] args) {
         JCodeBuilder jCodeBuilder = new JCodeBuilder();
         jCodeBuilder.build();
     }
+
     public void build() {
         try {
             generate();
@@ -43,10 +45,10 @@ public class JCodeBuilder {
         }
     }
 
-  /**
-   * 生产功能入口页面html、新建页面html、更新页面html、vo对象、action对象java代码
-   */
-  public void generate() throws Exception {
+    /**
+     * 生产功能入口页面html、新建页面html、更新页面html、vo对象、action对象java代码
+     */
+    public void generate() throws Exception {
         //FileUtils.generateMainHtml();
 //        FileUtils.generateNewHtml();
 
@@ -55,36 +57,41 @@ public class JCodeBuilder {
 //        FileUtils.generateAction();
 
 
+        try {
+            ArrayList<Node> arrayList = XmlUtils.getNodesByTagName("items");
+            for (int i = 0; i < arrayList.size(); i++) {
+                Node node = arrayList.get(i);
+                NamedNodeMap namedNodeMaps = node.getAttributes();
+                String namespace = XmlUtils.getNodeValue(namedNodeMaps, "namespace").toLowerCase();
+                String tableName = XmlUtils.getNodeValue(namedNodeMaps, "tableName").toLowerCase();
+                String page = XmlUtils.getNodeValue(namedNodeMaps, "page").toLowerCase();
+                System.out.printf("\n namespace:%s tableName:%s \n", namespace, tableName);
 
+                ArrayList<Node> itemNodes = XmlUtils.getChildNodes(node.getChildNodes(), "item");
+                //item node  attributes
+                NamedNodeMap[] itemsAttributes = new NamedNodeMap[itemNodes.size()];
+                for (int j = 0; j < itemNodes.size(); j++) {
+                    Node child = itemNodes.get(j);
+                    itemsAttributes[j] = child.getAttributes();
+                }
+                FileUtils.clearScripts();
+                if ("".equals(page) || page.contains("main")) {
+                    FileUtils.generateMainHtml(namespace, itemsAttributes);
+                }
+                if ("".equals(page) || page.contains("new")) {
+                    FileUtils.generateNewHtml(namespace, itemsAttributes);
+                }
+                if ("".equals(page) || page.contains("update")) {
+                    FileUtils.generateUpdateHtml(namespace, itemsAttributes);
+                }
+                FileUtils.generateAction(namespace, tableName, itemsAttributes);
+                FileUtils.generateCss(namespace);
+                FileUtils.generateJavascript(namespace);
 
-      try {
-          ArrayList<Node> arrayList = XmlUtils.getNodesByTagName("items");
-          for (int i = 0; i < arrayList.size(); i++) {
-              Node node = arrayList.get(i);
-              NamedNodeMap namedNodeMaps = node.getAttributes();
-              String namespace = XmlUtils.getNodeValue(namedNodeMaps, "namespace").toLowerCase();
-              String tableName = XmlUtils.getNodeValue(namedNodeMaps, "tableName").toLowerCase();
-              System.out.printf("\n namespace:%s tableName:%s \n",namespace,tableName);
-
-              ArrayList<Node> itemNodes = XmlUtils.getChildNodes(node.getChildNodes(),"item");
-              //item node  attributes
-              NamedNodeMap[] itemsAttributes  = new NamedNodeMap[itemNodes.size()];
-              for (int j = 0; j < itemNodes.size(); j++) {
-                  Node child = itemNodes.get(j);
-                  itemsAttributes[j] = child.getAttributes();
-              }
-              FileUtils.clearScripts();
-              FileUtils.generateMainHtml(namespace,itemsAttributes);
-              FileUtils.generateNewHtml(namespace,itemsAttributes);
-              FileUtils.generateUpdateHtml(namespace,itemsAttributes);
-              FileUtils.generateAction(namespace,tableName,itemsAttributes);
-              FileUtils.generateCss(namespace);
-              FileUtils.generateJavascript(namespace);
-
-          }
-      } catch (Exception e) {
-          e.printStackTrace();
-      }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 }

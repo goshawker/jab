@@ -440,27 +440,41 @@ public class FileUtils {
             String default_ = XmlUtils.getNodeValue(map, "default");
             String primarykey = XmlUtils.getNodeValue(map, "primarykey").toLowerCase();
             String options = XmlUtils.getNodeValue(map, "options");
+            String size = XmlUtils.getNodeValue(map, "size");
             String readOnly = "";
 
             if (StringUtils.isNotEmptyAndNull(primarykey) && primarykey.equalsIgnoreCase("true")) {
                 readOnly = "readonly";
                 lable = "<font style=\"color:red\">" + lable + "</font>";
             }
-            script.append(blank2).append("document.getElementById('").append(id).append("').innerHTML=\"\";\r\n");
-            script.append(blank2).append("document.getElementById('").append(id).append("').value= getParameter('").append(id).append("');\r\n");
+            if (type.equals("select") || type.equals("checkbox")) {
+            }else {
+                script.append(blank2).append("document.getElementById('").append(id).append("').innerHTML=\"\";\r\n");
+                script.append(blank2).append("document.getElementById('").append(id).append("').value= getParameter('").append(id).append("');\r\n");
+            }
             String fieldStr = "<input type=\"text\" name=\"" + id + "\" id=\"" + id + "\" value=\"" + default_ + "\"  maxlength=\"" + (Integer.parseInt(length) + 1) + "\"  style=\"width:" + Integer.parseInt(length) + "px\"   " + readOnly + ">";
-            if (type.equalsIgnoreCase("date")) {
+            if (type.equalsIgnoreCase("checkbox")) {
+                fieldStr = "<input type=\"checkbox\"  name=\"" + id + "\" id=\"" + id + "\" value=\"" + default_ + "\"  placeholder=\"Only date\"  style=\"width:" + (Integer.parseInt(length) + 5) + "px\" >";
+            } else if (type.equalsIgnoreCase("date")) {
                 fieldStr = "<input type=\"date\"  name=\"" + id + "\" id=\"" + id + "\" value=\"" + default_ + "\"  placeholder=\"Only date\"  style=\"width:" + (Integer.parseInt(length) + 5) + "px\" >";
             } else if (type.equalsIgnoreCase("number")) {
                 fieldStr = "<input type=\"number\"    id=\"" + id + "\"  name=\"" + id + "\" value=\"" + default_ + "\" placeholder=\"Only numbers\"  min=\"0\" max=\"120\" step=\"1\" style=\"width:" + Integer.parseInt(length) + "px\"   " + readOnly + ">";
             } else if (type.equalsIgnoreCase("select")) {
                 StringBuilder html = new StringBuilder();
-                html.append("<select  id=\"").append(id).append("\"    name=\"").append(id).append("\" id=\"").append(id).append("\" value=\"").append(default_).append("\"  style=\"width:").append(Integer.parseInt(length)).append("px\"   ").append(readOnly).append("> \r\t");
+                String sizeArg = "";
+                if (size != null) {
+                    sizeArg = " size=\"" + size + "\" ";
+                }
+                html.append("<select  id=\"").append(id).append("\"    name=\"").append(id).append("\" id=\"").append(id).append("\" value=\"").append(default_).append("\"  style=\"width:").append(Integer.parseInt(length)).append("px\"   ").append(readOnly).append(sizeArg).append("> \r\t");
                 assert options != null;
-                String[] optons_ = options.split("\\|");
-                html.append("<option value=\"\"></option> \r\t");
-                for (String s : optons_) {
-                    html.append("<option value=\"").append(s).append("\">").append(s).append("</option> \r\t");
+                if (options.startsWith("#") && options.endsWith("#")) {
+
+                } else {
+                    String[] optons_ = options.split("\\|");
+                    html.append("<option value=\"\"></option> \r\t");
+                    for (String s : optons_) {
+                        html.append("<option value=\"").append(s).append("\">").append(s).append("</option> \r\t");
+                    }
                 }
                 html.append("</select>");
                 fieldStr = html.toString();
@@ -478,7 +492,6 @@ public class FileUtils {
             HashMap<String, String> replace = new HashMap<>();
             replace.put("#NAMESPACE#", namespace);
             replace.put("#FORMFIELD#", formField.toString());
-            // replace.put("#INITDATA#", script.toString());
             scripts.put("#INITDATA#", script.toString());
             generateCode("template/update.html.template", replace, "update.html", namespace);
             //return true;
@@ -513,7 +526,11 @@ public class FileUtils {
                 readOnly = "readonly";
                 lable = "<font style=\"color:red\">" + lable + "</font>";
             }
-            script.append(blank2).append("document.getElementById('").append(id).append("').value= getParameter('").append(id).append("');\r\n");
+
+            if (type.equals("select") || type.equals("checkbox")) {
+            }else{
+                script.append(blank2).append("document.getElementById('").append(id).append("').value= getParameter('").append(id).append("');\r\n");
+            }
             String fieldStr = "<input type=\"text\" name=\"" + id + "\" id=\"" + id + "\" value=\"" + default_ + "\"  maxlength=\"" + (Integer.parseInt(length) + 1) + "\"  style=\"width:" + Integer.parseInt(length) + "px\"   " + readOnly + ">";
             if (type.equalsIgnoreCase("date")) {
                 fieldStr = "<input type=\"date\"  name=\"" + id + "\" id=\"" + id + "\" value=\"" + default_ + "\"  placeholder=\"Only date\"  style=\"width:" + (Integer.parseInt(length) + 5) + "px\" >";
@@ -544,7 +561,6 @@ public class FileUtils {
             HashMap<String, String> replace = new HashMap<>();
             replace.put("#NAMESPACE#", namespace);
             replace.put("#FORMFIELD#", formField.toString());
-            // replace.put("#INITDATA#", script.toString());
             scripts.put("#INITDATA#", script.toString());
             generateCode("template/update.html.template", replace, "update.html", namespace);
             //return true;
@@ -571,7 +587,9 @@ public class FileUtils {
             String options = XmlUtils.getNodeValue(map, "options");
 
             String fieldStr = "<input type=\"text\" name=\"" + id + "\" id=\"" + id + "\" value=\"" + default_ + "\"  maxlength=\"" + (Integer.parseInt(length) + 1) + "\"  style=\"width:" + Integer.parseInt(length) + "px\">";
-            if (type.equalsIgnoreCase("date")) {
+            if (type.equalsIgnoreCase("checkbox")) {
+                fieldStr = "<input type=\"checkbox\"  name=\"" + id + "\" id=\"" + id + "\" value=\"" + default_ + "\"  placeholder=\"Only date\"  style=\"width:" + (Integer.parseInt(length) + 5) + "px\" >";
+            } else if (type.equalsIgnoreCase("date")) {
                 fieldStr = "<input type=\"date\"  name=\"" + id + "\" id=\"" + id + "\" value=\"" + default_ + "\"  placeholder=\"Only date\"  style=\"width:" + (Integer.parseInt(length) + 5) + "px\" >";
             } else if (type.equalsIgnoreCase("number")) {
                 fieldStr = "<input type=\"number\"    id=\"" + id + "\"  name=\"" + id + "\" value=\"" + default_ + "\" placeholder=\"Only numbers\"  min=\"0\" max=\"120\" step=\"1\" style=\"width:" + Integer.parseInt(length) + "px\" >";
@@ -792,9 +810,12 @@ public class FileUtils {
             String default_ = XmlUtils.getNodeValue(map, "default");
             // String primarykey = XmlUtils.getNodeValue(map, "primarykey", true).toLowerCase();
             String options = XmlUtils.getNodeValue(map, "options");
-            if (options != null && options.startsWith("#") && options.endsWith("#"))
-                initDm.append("initDM(document.getElementById(\"" + id + "\"),\"DM#" + id + "\");\r\n");
-
+            if (options != null && options.startsWith("#") && options.endsWith("#")) {
+                if (type.equals("select"))
+                    initDm.append("initSelectDOM(document.getElementById(\"" + id + "\"),\"DM#" + id + "\");\r\n");
+                else
+                    initDm.append("initCheckBoxDOM(document.getElementById(\"" + id + "\"),\"DM#" + id + "\");\r\n");
+            }
             /*记录更新关键字，用于修改、删除等操作*/
             updateStr += id + "='+data[i]." + id + "+" + "'&";
             /*生成javascript脚本*/
