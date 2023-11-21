@@ -164,8 +164,9 @@ function initCheckBoxDOM(obj,dm){
                     const label = document.createElement("label");
                     const checkbox = document.createElement("input");
                     checkbox.type="checkbox";
-                    checkbox.id=data[i].DM;
-                    checkbox.name=data[i].DM;
+                    checkbox.id=checkboxname;
+                    checkbox.name=checkboxname;
+                    checkbox.value=data[i].DM;
                     if(data[i].DM==getParameter(checkboxname)){
                         checkbox.checked=true;
                     }
