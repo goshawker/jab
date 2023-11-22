@@ -447,8 +447,7 @@ public class FileUtils {
                 readOnly = "readonly";
                 lable = "<font style=\"color:red\">" + lable + "</font>";
             }
-            if (type.equals("select") || type.equals("checkbox")) {
-            }else {
+            if (!type.equals("select") && !type.equals("checkbox")) {
                 script.append(blank2).append("document.getElementById('").append(id).append("').innerHTML=\"\";\r\n");
                 script.append(blank2).append("document.getElementById('").append(id).append("').value= getParameter('").append(id).append("');\r\n");
             }
