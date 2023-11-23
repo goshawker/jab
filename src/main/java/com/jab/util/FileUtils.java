@@ -447,10 +447,12 @@ public class FileUtils {
                 readOnly = "readonly";
                 lable = "<font style=\"color:red\">" + lable + "</font>";
             }
+
             if (!type.equals("select") && !type.equals("checkbox")) {
                 script.append(blank2).append("document.getElementById('").append(id).append("').innerHTML=\"\";\r\n");
                 script.append(blank2).append("document.getElementById('").append(id).append("').value= getParameter('").append(id).append("');\r\n");
             }
+
             String fieldStr = "<input type=\"text\" name=\"" + id + "\" id=\"" + id + "\" value=\"" + default_ + "\"  maxlength=\"" + (Integer.parseInt(length) + 1) + "\"  style=\"width:" + Integer.parseInt(length) + "px\"   " + readOnly + ">";
             if (type.equalsIgnoreCase("checkbox")) {
                 fieldStr = "<input type=\"checkbox\"  name=\"" + id + "\" id=\"" + id + "\" value=\"" + default_ + "\"  placeholder=\"Only date\"  style=\"width:" + (Integer.parseInt(length) + 5) + "px\" >";
@@ -527,7 +529,7 @@ public class FileUtils {
             }
 
             if (type.equals("select") || type.equals("checkbox")) {
-            }else{
+            } else {
                 script.append(blank2).append("document.getElementById('").append(id).append("').value= getParameter('").append(id).append("');\r\n");
             }
             String fieldStr = "<input type=\"text\" name=\"" + id + "\" id=\"" + id + "\" value=\"" + default_ + "\"  maxlength=\"" + (Integer.parseInt(length) + 1) + "\"  style=\"width:" + Integer.parseInt(length) + "px\"   " + readOnly + ">";
