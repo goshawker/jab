@@ -26,7 +26,7 @@ public class JabActive extends HttpServlet {
           if (method == null) {
               returnData = "-1";
               method = "";
-              String html = responseHtml(returnData, "不规范的请求！", true);
+              String html = responseHtml(returnData, "不规范的请求,确少请求方法！", true);
               response.getWriter().write(html);
               return;
           }
