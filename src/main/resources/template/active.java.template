@@ -51,7 +51,6 @@ public class JabActive extends HttpServlet {
               returnData = commonDelete(request);
               response.getWriter().write(returnData);
           }
-
       }
 
   /**
@@ -109,6 +108,7 @@ public class JabActive extends HttpServlet {
       }
       throw  new RuntimeException("Get Connect Failed. ");
     }
+
   /**
   * query rows
   * @Author: goshawker@yeah.net
@@ -126,6 +126,7 @@ public class JabActive extends HttpServlet {
         }
     return JSONString;
   }
+
     /**
     * update a row
     * @Author: goshawker@yeah.net
@@ -200,6 +201,7 @@ public class JabActive extends HttpServlet {
         }
         return JSONString;
     }
+
     public static JSONArray toJSONArray(ResultSet rs) throws SQLException, JSONException {
         JSONArray array = new JSONArray();
         ResultSetMetaData metaData = rs.getMetaData();
