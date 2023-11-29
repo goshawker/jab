@@ -493,7 +493,7 @@ public class FileUtils {
             HashMap<String, String> replace = new HashMap<>();
             replace.put("#NAMESPACE#", namespace);
             replace.put("#FORMFIELD#", formField.toString());
-            scripts.put("#INITDATA#", script.toString());
+            replace.put("#INITDATA#", script.toString());
             generateCode("template/update.html.template", replace, "update.html", namespace);
             //return true;
         } catch (IOException e) {
@@ -562,7 +562,7 @@ public class FileUtils {
             HashMap<String, String> replace = new HashMap<>();
             replace.put("#NAMESPACE#", namespace);
             replace.put("#FORMFIELD#", formField.toString());
-            scripts.put("#INITDATA#", script.toString());
+            replace.put("#INITDATA#", script.toString());
             generateCode("template/update.html.template", replace, "update.html", namespace);
             //return true;
         } catch (IOException e) {
@@ -794,6 +794,8 @@ public class FileUtils {
         StringBuilder queryResultData = new StringBuilder(" //TODO Auto-generated ").append("\r\n");
 
         StringBuilder initDm = new StringBuilder(" //TODO Auto-generated ").append("\r\n");
+
+        StringBuilder INITDATA = new StringBuilder("\r\n");
         String blank7 = "						";
         String blank2 = "	";
         String blank9 = blank7 + blank2;
@@ -816,6 +818,10 @@ public class FileUtils {
                     initDm.append("initSelectDOM(document.getElementById(\"" + id + "\"),\"DM#" + id + "\");\r\n");
                 else
                     initDm.append("initCheckBoxDOM(document.getElementById(\"" + id + "\"),\"DM#" + id + "\");\r\n");
+            }
+            if (!type.equals("select") && !type.equals("checkbox")) {
+                INITDATA.append(blank2).append("document.getElementById('").append(id).append("').innerHTML=\"\";\r\n");
+                INITDATA.append(blank2).append("document.getElementById('").append(id).append("').value= getParameter('").append(id).append("');\r\n");
             }
             /*记录更新关键字，用于修改、删除等操作*/
             updateStr += id + "='+data[i]." + id + "+" + "'&";
@@ -883,10 +889,12 @@ public class FileUtils {
             replace.put("#QUERYCONDITION#", queryCondition.toString());
             replace.put("#GRIDHEAD#", queryResultTitle.toString());
             replace.put("#GRIDDATA#", queryResultData.toString());
+            scripts.put("#INITDATA#", INITDATA.toString());
             //replace.put("#REQUSTPARAMETERS#", requstString.toString().concat("requestMethod=query"));
             //replace.put("#DELETEPARAMETERS#", "requestMethod=delete");
             //replace.put("#UPDATESTR#", updateStr.endsWith("&") ? updateStr.substring(0, updateStr.length() - 1) : updateStr);
             scripts.put("#INITDM#", initDm.toString());
+
             scripts.put("#GRIDDATA#", queryResultData.toString());
             scripts.put("#NAMESPACE#", namespace.concat(""));
             scripts.put("#REQUSTPARAMETERS#", requstString.toString().concat("requestMethod=query"));
