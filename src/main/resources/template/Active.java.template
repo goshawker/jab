@@ -1,0 +1,65 @@
+package #PACKAGE#;
+
+import core.ActiveServlet;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Vector;
+
+@WebServlet(name = "#NAMESPACE#/action", value = "#NAMESPACE#/action")
+public class Active extends ActiveServlet {
+  @Override
+   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+          request.setCharacterEncoding("UTF-8");
+          response.setContentType("text/html; charset=UTF-8");
+          String returnData;
+          String method = request.getParameter("requestMethod");
+          if (method == null) {
+              returnData = "-1";
+              String html = responseHtml(returnData, "不规范的请求,确少请求方法！", true,false);
+              response.getWriter().write(html);
+              return;
+          }
+          if (method.contains("query")) {
+                #QUERYCODE#
+                response.getWriter().write(returnData);
+
+
+          } else if (method.contains("insert")) {
+              response.setContentType("text/html; charset=UTF-8");
+              #INSERTCODE#
+              String html = responseHtml(returnData, null, true,false);
+              response.getWriter().write(html);
+
+          } else if (method.contains("update")) {
+              response.setContentType("text/html; charset=UTF-8");
+              #UPDATECODE#
+              String html = responseHtml(returnData, null, true,false);
+              response.getWriter().write(html);
+
+          } else if (method.contains("initDm")) {
+              response.setContentType("text/html; charset=UTF-8");
+              #INITDMCODE#
+              response.getWriter().write(returnData);
+
+          }else if (method.contains("getNextBh")) {
+             response.setContentType("text/html; charset=UTF-8");
+             #GETNEXTBHCODE#
+             response.getWriter().write(returnData);
+
+          }else if (method.contains("delete")) {
+              #DELETECODE#
+              response.getWriter().write(returnData);
+          }
+      }
+
+
+
+  @Override
+  protected void doPost(HttpServletRequest request, HttpServletResponse response) throws  IOException {
+    doGet(request, response);
+  }
+}

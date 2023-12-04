@@ -20,6 +20,91 @@ function sendAjaxRequest(url,args){
     return xmlHttpRequest;
 }
 
+
+function createBrElement(){
+    const br = document.createElement("br");
+    br.innerHTML = "</br>";
+}
+function createSpanElement(html,data){
+    const span = document.createElement("span", );
+    span.innerHTML = html;
+    span.style.width = 'auto';
+    span.style.height = '15px';
+    span.style.padding = "8px";
+    span.style.backgroundColor = "#d4e3e5";
+    span.style.display = "inline-block";
+    span.style.border = "1px #a9c6c9 solid";
+    span.style.marginLeft = "4px";
+    span.style.marginTop = "2px";
+    span.style.whiteSpace = "normal";
+    span.style.wordBreak = "break-all";
+    span.onmouseover = spanMouseover;
+    span.onmouseout = spanMouseout;
+    span.onclick = spanClick;
+    span.setAttribute("data-value", data;
+    return span;
+}
+
+function spanMouseover() {
+    let c = this.style.backgroundColor;
+    if (c == 'red') {
+        return;
+    }
+    this.style.backgroundColor = '#ffff66';
+}
+
+function spanMouseout() {
+    let c = this.style.backgroundColor;
+    if (c == 'red') {
+        return;
+    }
+    this.style.backgroundColor = '#d4e3e5';
+}
+function spanClick() {
+    let c = this.style.backgroundColor;
+    if (c == 'red') {
+        this.style.backgroundColor = '#d4e3e5';
+    } else {
+        this.style.backgroundColor = 'red';
+    }
+    let lst = document.getElementsByTagName("span", );
+    let checkedValue = '';
+    for (let i = 0; i < lst.length; i++) {
+        if (lst[i].style.backgroundColor=='red' && lst[i].getAttribute("data-value")!='') {
+            checkedValue += lst[i].getAttribute("data-value") + ',';
+        }
+    }
+    queryFj(checkedValue);
+}
+
+function queryFj(obj) {
+    let requestUrl = getContextPath() + "/ck/main/action";
+    //请求参数
+    let parameters = 'requestMethod=query&data=' + obj;
+    let xmlHttpRequest = sendAjaxRequest(requestUrl, parameters);
+    xmlHttpRequest.onreadystatechange = () => {
+        if (xmlHttpRequest.readyState === 4) {
+            if (xmlHttpRequest.status >= 200 && xmlHttpRequest.status < 300) {
+                let string = xmlHttpRequest.responseText;
+                const data = JSON.parse(string);
+                let count = data.length;
+                let divHtml = "";
+                document.getElementById("dinfo").innerHTML="<h4>查询到方剂："+count+"方</h4>";
+                for (let i = 0; i < count; i++) {
+                    divHtml += "<h4>"+(i+1)+".【" + data[i].mc + "】</h4>";
+                    divHtml += "<p>&nbsp;&nbsp;" + data[i].fj + "</p>";
+                    divHtml += "<h4>【制作方法】</h4>";
+                    divHtml += "<p>&nbsp;&nbsp;" + data[i].zzff + "</p><br>";
+                }
+                document.getElementById("dfjmc").innerHTML = divHtml;
+            } else if (xmlHttpRequest.status >= 400) {
+                alert('the request has failed. please try again later. error info:[' + xmlHttpRequest.responseText + ']');
+            }
+        }
+    }
+}
+
+
 function jabQuery(){
         //删除所有查询结果数据
         let tdateRow = document.getElementsByName("tdata");

@@ -1,0 +1,280 @@
+package core;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONException;
+import com.alibaba.fastjson.JSONObject;
+import javax.servlet.http.HttpServlet;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Vector;
+
+public class ActiveServlet extends HttpServlet {
+    String driver="#DRIVER#";
+    String user="#USER#";
+    String pwd="#PWD#";
+    String url="#URL#";
+
+    public java.sql.Connection buildConnect() {
+        java.sql.Connection connection = null;
+          try {
+              if (connection != null && !connection.isClosed()) {
+                  return connection;
+              }
+              Class.forName(driver);
+              connection = java.sql.DriverManager.getConnection(url, user, pwd);
+              return connection;
+          }catch (ClassNotFoundException | SQLException e){
+              e.printStackTrace();
+          }
+          throw  new RuntimeException("Get Connect Failed. ");
+    }
+
+
+
+    /**
+     * 更新数据
+     *
+     * @param table 表面
+     * @param data  需要更新的字段
+     * @param where 主键
+     * @return
+     */
+    public int updateTableData(String table, HashMap data, HashMap where) throws SQLException {
+        int affectedRows = 0;
+        if (table == null || data.isEmpty()) {
+            throw new IllegalArgumentException("参数table、data不能为空");
+        }
+        StringBuffer sql = new StringBuffer("update ").append(table);
+        Iterator iterator = data.keySet().iterator();
+        String k = null;
+        String v = null;
+        while (iterator.hasNext()) {
+            k = iterator.next().toString();
+            v = data.get(k).toString();
+            sql.append(" set ").append(k).append("=").append(v).append(",");
+        }
+        if (sql.toString().endsWith(",")) {
+            String subSequence = sql.toString().substring(0, sql.length()-1);
+            sql.setLength(0);
+            sql.append(subSequence);
+        }
+
+        if (where != null) {
+            iterator = where.keySet().iterator();
+            if (!where.keySet().isEmpty()) {
+                sql.append(" where 1=1 ");
+            }
+            while (iterator.hasNext()) {
+                k = iterator.next().toString();
+                v = where.get(k).toString();
+                sql.append(" and ").append(k).append("= '").append(v).append("'");
+            }
+        }
+        affectedRows = buildConnect().createStatement().executeUpdate(sql.toString());
+        return affectedRows;
+    }
+
+
+    /**
+     * 写入数据
+     *
+     * @param table 表面
+     * @param data  需要更新的字段
+     * @return
+     */
+    public int insertTableData(String table, HashMap data) throws SQLException {
+        int affectedRows = 0;
+        if (table == null || data.isEmpty()) {
+            throw new IllegalArgumentException("参数table、data不能为空");
+        }
+        StringBuffer sql = new StringBuffer("insert ").append(table).append("(");
+        StringBuffer value = new StringBuffer(" values(");
+        Iterator iterator = data.keySet().iterator();
+        String k = null;
+        String v = null;
+        while (iterator.hasNext()) {
+            k = iterator.next().toString();
+            v = data.get(k).toString();
+            sql.append(k).append(",");
+            value.append(v).append(",");
+        }
+        if (sql.toString().endsWith(",")) {
+            String subSequence = sql.toString().substring(0, sql.length()-1);
+            sql.setLength(0);
+            sql.append(subSequence).append(")");
+
+            subSequence = value.toString().substring(0, value.length());
+            value.setLength(0);
+            value.append(subSequence).append(")");
+        }
+        affectedRows = buildConnect().createStatement().executeUpdate(sql.toString());
+        return affectedRows;
+    }
+
+
+    /**
+     * 删除数据
+     *
+     * @param table 表面
+     * @param where where条件
+     * @return
+     * @throws SQLException
+     */
+    public int deleteTableData(String table, HashMap where) throws SQLException {
+        int affectedRows = 0;
+        if (table == null || where.isEmpty()) {
+            throw new IllegalArgumentException("参数table、key不能为空");
+        }
+        StringBuffer sql = new StringBuffer("delete from ").append(table).append(" where 1=1 ");
+
+        Iterator iterator = where.keySet().iterator();
+        String k = null;
+        String v = null;
+        while (iterator.hasNext()) {
+            k = iterator.next().toString();
+            v = where.get(k).toString();
+            sql.append(" and ").append(k).append(" = '").append(v).append("'");
+
+        }
+        affectedRows = buildConnect().createStatement().executeUpdate(sql.toString());
+        return affectedRows;
+    }
+
+    /**
+     * 查询表数据
+     *
+     * @param table  表名
+     * @param colume 列名称，如果为null则查询全部列
+     * @param where  where条件
+     * @param order  排序
+     * @param isLike 是否模糊查询
+     * @return JSONString
+     */
+    public String queryTableData(String table, Vector<String> colume, HashMap where, String order, boolean isLike) {
+        /** TODO Auto-generated  */
+        if (table == null) {
+            throw new IllegalArgumentException("参数table不能为空");
+        }
+        StringBuffer sql = new StringBuffer("select ");
+        String JSONString = new String();
+        try {
+            if (colume != null) {
+                for (String c : colume) {
+                    sql.append(c).append(",");
+                }
+                if (sql.toString().endsWith(",")) {
+                    String subSequence = sql.toString().substring(0, sql.length()-1);
+                    sql.setLength(0);
+                    sql.append(subSequence);
+                }
+            } else {
+                sql.append(" * ");
+            }
+
+            sql.append(" from ").append(table);
+
+            if (where != null) {
+                Iterator iterator = where.keySet().iterator();
+                if (!where.keySet().isEmpty()) {
+                    sql.append(" where 1=1 ");
+                }
+                String k = null;
+                String v = null;
+                while (iterator.hasNext()) {
+                    k = iterator.next().toString();
+                    v = where.get(k).toString();
+                    //where 不包含空值
+                    if (!v.isEmpty()) {
+                        if (isLike) {
+                            sql.append(" and ").append(k).append(" like '%").append(v).append("%'");
+                        } else {
+                            sql.append(" and ").append(k).append("= '").append(v).append("' ");
+                        }
+                    }
+
+                }
+            }
+            if (order != null && !order.isEmpty()) {
+                sql.append(" order by ").append(order);
+            }
+            java.sql.PreparedStatement ps = buildConnect().prepareStatement(sql.toString());
+            ResultSet rs = ps.executeQuery();
+            JSONString = toJSONArray(rs).toString();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return JSONString;
+    }
+
+    /**
+     * 获取下一个编号
+     *
+     * @param tableName  表名称
+     * @param primaryCol 主键名称，如果为空默认为bh
+     * @return JSONString
+     */
+    public String getNextBh(String tableName, String primaryCol) {
+        /** TODO Auto-generated  */
+        String JSONString = new String();
+        if (primaryCol == null || primaryCol.equals("")) {
+            primaryCol = "bh";
+        }
+        String sql = "";
+        try {
+            sql = "select CONVERT(max(" + primaryCol + ")+1,char) as bh from " + tableName;
+            java.sql.PreparedStatement ps = null;
+            ps = buildConnect().prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            JSONString = toJSONArray(rs).toString();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return JSONString;
+    }
+
+    public String responseHtml(String returnCode, String message, boolean autoCloseWindow, boolean goBack) {
+        StringBuffer html = new StringBuffer("");
+        html.append("<!DOCTYPE html>\n");
+        html.append("<html>\n");
+        html.append("<body>\n");
+        html.append("<script>\n");
+        if (null == message) {
+            if (Integer.valueOf(returnCode) >= 1) {
+                html.append("alert('操作成功！');\n");
+            } else {
+                html.append("alert('操作失败！');\n");
+            }
+        } else {
+            html.append("alert('").append(message).append("');\n");
+        }
+        if (autoCloseWindow) {
+            html.append("window.close();");
+        }
+        if (goBack) {
+            html.append("window.history.go(-1);");
+        }
+        html.append("</script>\n");
+        html.append("</body>\n");
+        html.append("</html>");
+        return html.toString();
+    }
+
+    public JSONArray toJSONArray(ResultSet rs) throws SQLException, JSONException {
+        JSONArray array = new JSONArray();
+        ResultSetMetaData metaData = rs.getMetaData();
+        int columnCount = metaData.getColumnCount();
+        while (rs.next()) {
+            JSONObject jsonObj = new JSONObject();
+            for (int i = 1; i <= columnCount; i++) {
+                String columnName = metaData.getColumnLabel(i);
+                String value = rs.getString(columnName);
+                value = value == null ? "" : value;
+                jsonObj.put(columnName, value);
+            }
+            array.add(jsonObj);
+        }
+        return array;
+    }
+}

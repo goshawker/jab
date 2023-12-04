@@ -1,37 +1,29 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <root>
     <file saveDir="d:\jad" overwrite="true"></file>
-    <!--
-    <items namespace="/ck/zz" tableName="ck_zz">
-        <item id="bh" lable="bh" type="text" length="300" default="" primarykey="true"></item>
-        <item id="mc" lable="mc" type="text" length="200" default=""  primarykey="true"></item>
-        <item id="Age" lable="Age" type="number" length="100" default=""></item>
-        <item id="Sex" lable="Sex" type="select" length="100"  default="" options="man|woman"></item>
-        <item id="BirthDate" lable="Birth Date" type="date" length="100" default=""></item>
-    </items>
 
-    <items namespace="/ck/fj" tableName="ck_fj">
+
+    <items namespace="/zz" tableName="ck_zz">
         <item id="bh" lable="编号" type="text" length="300" default=""></item>
         <item id="mc" lable="名称" type="text" length="200" default=""  primarykey="true"></item>
+    </items>
+
+
+    <items namespace="/fjzzglb" tableName="ck_fjzzglb" page="main|update|new">
+        <item id="fjbh" lable="方剂名称"  type="select" length="100"  default="" options="#SELECT BH AS DM,MC FROM ck_fj WHERE YXBZ='Y'#"  primarykey="true"></item>
+        <item id="zzbh" lable="症状名称"  type="checkbox" length="100" size="10" default="" options="#SELECT BH AS DM,MC FROM ck_zz WHERE YXBZ='Y'#"  primarykey="true"></item>
+    </items>
+
+    <items namespace="/main" tableName="ck_main" page="main">
+        <item id="zzbh" lable="症状名称"  type="checkbox" length="100" size="10" default="" options="#SELECT BH AS DM,MC FROM ck_zz WHERE YXBZ='Y'#"  primarykey="true"></item>
+        <item id="fjbh" lable="方剂名称"  type="select" length="100"  default="" options="#SELECT BH AS DM,MC FROM ck_fj WHERE YXBZ='Y'#"  primarykey="true"></item>
+    </items>
+
+    <items namespace="/fj" tableName="ck_fj">
+        <item id="bh" lable="编号" type="text" length="300" default="" primarykey="true"></item>
+        <item id="mc" lable="名称" type="text" length="200" default=""  ></item>
         <item id="fj" lable="方剂" type="text" length="300" default=""></item>
     </items>
-
-    <items namespace="/ck/zz" tableName="ck_zz">
-        <item id="bh" lable="编号" type="text" length="300" default=""></item>
-        <item id="mc" lable="名称" type="text" length="200" default=""  primarykey="true"></item>
-    </items>
-
-
-    <items namespace="/ck/fjzzglb" tableName="ck_fjzzglb" page="main|update|new">
-        <item id="fjbh" lable="方剂名称"  type="select" length="100"  default="" options="#SELECT BH AS DM,MC FROM ck_fj WHERE YXBZ='Y'#"  primarykey="true"></item>
-        <item id="zzbh" lable="症状名称"  type="checkbox" length="100" size="10" default="" options="#SELECT BH AS DM,MC FROM ck_zz WHERE YXBZ='Y'#"  primarykey="true"></item>
-    </items>
- -->
-    <items namespace="/ck/main" tableName="ck_main" page="main">
-        <item id="zzbh" lable="症状名称"  type="checkbox" length="100" size="10" default="" options="#SELECT BH AS DM,MC FROM ck_zz WHERE YXBZ='Y'#"  primarykey="true"></item>
-        <item id="fjbh" lable="方剂名称"  type="select" length="100"  default="" options="#SELECT BH AS DM,MC FROM ck_fj WHERE YXBZ='Y'#"  primarykey="true"></item>
-    </items>
-
 
     <!-- com.mysql.jdbc.Driver -->
     <database driver="com.mysql.cj.jdbc.Driver" ip="127.0.0.1" port="3306" instance="cmdb" user="root" pwd="mysql"></database>

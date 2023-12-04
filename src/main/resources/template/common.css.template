@@ -106,3 +106,16 @@ td.editGridHd {
     padding: 2px;
     FONT-WEIGHT: bold;
 }
+
+.spanSelect{
+   width = 'auto';
+   height = '15px';
+   padding = "8px";
+   backgroundColor = "#d4e3e5";
+   display = "inline-block";
+   border = "1px #a9c6c9 solid";
+   marginLeft = "4px";
+   marginTop = "2px";
+   whiteSpace = "normal";
+   wordBreak = "break-all";
+}
