@@ -1,3 +1,6 @@
+var pageSize = 10;
+var pageCount = 0, pageCurrentIndex = 1, pageIndexCount = 1;
+var pageData = new Array();
 
 function getContextPath(){
     return document.location.pathname.substring(0,document.location.pathname.indexOf("/",1));
@@ -24,6 +27,7 @@ function sendAjaxRequest(url,args){
 function createBrElement(){
     const br = document.createElement("br");
     br.innerHTML = "</br>";
+    return br;
 }
 function createSpanElement(html,data){
     const span = document.createElement("span", );
@@ -41,7 +45,7 @@ function createSpanElement(html,data){
     span.onmouseover = spanMouseover;
     span.onmouseout = spanMouseout;
     span.onclick = spanClick;
-    span.setAttribute("data-value", data;
+    span.setAttribute("data-value", data);
     return span;
 }
 
@@ -74,11 +78,11 @@ function spanClick() {
             checkedValue += lst[i].getAttribute("data-value") + ',';
         }
     }
-    queryFj(checkedValue);
+    initFjData(checkedValue);
 }
 
-function queryFj(obj) {
-    let requestUrl = getContextPath() + "/ck/main/action";
+function initFjData(obj) {
+    let requestUrl = getContextPath()+"#NAMESPACE#/action";
     //请求参数
     let parameters = 'requestMethod=query&data=' + obj;
     let xmlHttpRequest = sendAjaxRequest(requestUrl, parameters);
@@ -135,14 +139,68 @@ function jabQuery(){
           const data = JSON.parse(string);
           let count = data.length;
           let trHtml="";
+           //初始化分页数据
+          clearPage();
+          pageCount = count;
+          if (pageCount > pageSize) {
+              pageIndexCount = Math.ceil(pageCount / pageSize);
+              //生成分页按钮
+              let  divPageInfo= document.createElement("div");
+              divPageInfo.id="divPageInfo";
+              divPageInfo.style.display="inline-block";
+              divPageInfo.style.fontSize="10pt";
+              divPageInfo.innerHTML="共"+pageCount+"条记录，共"+pageIndexCount+"页，当前"+pageCurrentIndex+"页 &nbsp;&nbsp;";
+
+              let btnPageNext = document.createElement("button");
+              btnPageNext.innerHTML="下一页";
+              btnPageNext.onclick=nextPage;
+              btnPageNext.style.marginLeft = "4px";
+              btnPageNext.style.marginTop = "2px";
+              btnPageNext.style.marginRight = "20px";
+
+              let btnPagePrevious = document.createElement("button");
+              btnPagePrevious.innerHTML="上一页";
+              btnPagePrevious.onclick=previousPage;
+              btnPagePrevious.style.marginLeft = "4px";
+              btnPagePrevious.style.marginTop = "2px";
+              btnPagePrevious.style.marginRight = "5px";
+
+              document.getElementById("divPagenation").appendChild(divPageInfo);
+              document.getElementById("divPagenation").appendChild(btnPagePrevious);
+              document.getElementById("divPagenation").appendChild(btnPageNext);
+          }
           for (let i = 0; i < count; i++) {
             trHtml +="<tr  class=\"editGrid\" nowrap=\"nowrap\"   name=\"tdata\" id=\"tdata\">";
             #GRIDDATA#
-           // trHtml+="<td class='editGrid'  align='left'><a href='#NAMESPACE#/edit?#UPDATESTR#'>Edit</a> &nbsp;&nbsp; <a href='#NAMESPACE#/delete?#UPDATESTR#'>Delete</a></td>";
-            trHtml +="</tr>";
-          }
-          document.getElementById("tdata").outerHTML = trHtml;
 
+             trHtml += "</tr>";
+             if(pageCount > pageSize){
+                     //记录总数大于分页数，需要分页
+                    if(i!=0 && i%pageSize==0){
+                        pageData.push(trHtml);
+                        trHtml="";
+                    }
+                    //判断当前循环的数据，不足一页时如何处理
+                   if(pageCount-(i)<pageSize){
+                       if(i>=pageCount-1){
+                           pageData.push(trHtml);
+                           trHtml="";
+                       }
+                   }
+                }else{
+                    //如果不到一页的量，放到第一页
+                    if(i>=pageCount-1){
+                        pageData.push(trHtml);
+                        trHtml="";
+                    }
+                }
+            }
+            let trTdata=document.getElementById("tdata");
+            trTdata.outerHTML = pageData[pageCurrentIndex-1];
+            let t  = document.getElementsByName("tdata")[10];
+            if(t != 'undefined'){
+                t.parentNode.removeChild(t);
+            }
 
         } else if(xmlHttpRequest.status >= 400){
           alert('the request has failed. please try again later. error info:['+xmlHttpRequest.responseText+']');
@@ -150,7 +208,38 @@ function jabQuery(){
       }
     }
 
-  }
+}
+
+function clearPage(){
+    pageSize = 10;
+    pageCount = 0, pageCurrentIndex = 1, pageIndexCount = 1;
+    pageData.length=0;
+    document.getElementById("divPagenation").innerHTML="";
+}
+function previousPage(){
+    if(pageCurrentIndex <= pageIndexCount && pageCurrentIndex>1){
+        pageCurrentIndex--;
+        reBuildTrData();
+        document.getElementById("divPageInfo").innerHTML="共"+pageCount+"条记录，共"+pageIndexCount+"页，当前"+pageCurrentIndex+"页 &nbsp;&nbsp;";
+    }
+}
+function nextPage(){
+    if(pageCurrentIndex<pageIndexCount ){
+        pageCurrentIndex++;
+        reBuildTrData();
+        document.getElementById("divPageInfo").innerHTML="共"+pageCount+"条记录，共"+pageIndexCount+"页，当前"+pageCurrentIndex+"页 &nbsp;&nbsp;";
+    }
+}
+function reBuildTrData(){
+    let tdates = document.getElementsByName("tdata");
+    let table = document.getElementById("sortTbl");
+    for (let index = tdates.length-1; index >=0; index--) {
+        tdates[index].parentNode.removeChild(tdates[index]);
+    }
+    let tr = table.insertRow();
+    tr.id="tdata";
+    tr.outerHTML = pageData[pageCurrentIndex-1];
+}
 
 function jabEdit(args){
     let url =  getContextPath()+"#NAMESPACE#/update.html?"+args;
@@ -196,14 +285,19 @@ function jadUpdate(){
     form.action=requestUrl;
     form.submit();
 }
+function initUpdate(){
+  init();
+}
 
+function initNew(){
+  //let nextBh = getNextBh();
+
+}
 function init() {
-    initData();
+    #INITDM#
     #INITDATA#
 }
-function initData(){
-   #INITDM#
-}
+
 function initSelectDOM(obj,dm){
     let requestUrl =  getContextPath()+"#NAMESPACE#/action";
     //请求参数
@@ -262,6 +356,60 @@ function initCheckBoxDOM(obj,dm){
                 }
             } else if(xmlHttpRequest.status >= 400){
                 alert('the request has failed. please try again later. error info:['+xmlHttpRequest.responseText+']');
+            }
+        }
+    }
+}
+
+function initZZData(obj, dm) {
+    obj = obj.parentNode;
+    obj.innerHTML = "";
+     let requestUrl =  getContextPath()+"#NAMESPACE#/action";
+    //请求参数
+    let parameters = 'requestMethod=initDm&dm=' + dm;
+    let xmlHttpRequest = sendAjaxRequest(requestUrl, parameters);
+    xmlHttpRequest.onreadystatechange = () => {
+        if (xmlHttpRequest.readyState === 4) {
+            if (xmlHttpRequest.status >= 200 && xmlHttpRequest.status < 300) {
+                let string = xmlHttpRequest.responseText;
+                const data = JSON.parse(string);
+                let count = data.length;
+                let optionHtml = "";
+                for (let i = 0; i < count; i++) {
+                    obj.appendChild(createSpanElement(data[i].MC,data[i].DM));
+                    if (i > 0 && i % 17 == 0) {
+                        obj.appendChild(createBrElement());
+                    }
+                }
+            } else if (xmlHttpRequest.status >= 400) {
+                alert('the request has failed. please try again later. error info:[' + xmlHttpRequest.responseText + ']');
+            }
+        }
+    }
+}
+
+
+function getNextBh() {
+    let requestUrl =  getContextPath()+"#NAMESPACE#/action";
+    //请求参数
+    let parameters = 'requestMethod=getNextBh';
+    let xmlHttpRequest = sendAjaxRequest(requestUrl, parameters);
+    xmlHttpRequest.onreadystatechange = () => {
+        if (xmlHttpRequest.readyState === 4) {
+            if (xmlHttpRequest.status >= 200 && xmlHttpRequest.status < 300) {
+                let string = xmlHttpRequest.responseText;
+                const data = JSON.parse(string);
+                let count = data.length;
+                if(count>0){
+                    return data[0].bh;
+                    //设置编号
+
+                }else{
+                    return '-1';
+                }
+
+            } else if (xmlHttpRequest.status >= 400) {
+                alert('the request has failed. please try again later. error info:[' + xmlHttpRequest.responseText + ']');
             }
         }
     }

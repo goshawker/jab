@@ -46,14 +46,14 @@ public class ActiveServlet extends HttpServlet {
         if (table == null || data.isEmpty()) {
             throw new IllegalArgumentException("参数table、data不能为空");
         }
-        StringBuffer sql = new StringBuffer("update ").append(table);
+        StringBuffer sql = new StringBuffer("update ").append(table).append( " set ");
         Iterator iterator = data.keySet().iterator();
         String k = null;
         String v = null;
         while (iterator.hasNext()) {
             k = iterator.next().toString();
             v = data.get(k).toString();
-            sql.append(" set ").append(k).append("=").append(v).append(",");
+            sql.append(k).append("='").append(v).append("',");
         }
         if (sql.toString().endsWith(",")) {
             String subSequence = sql.toString().substring(0, sql.length()-1);
@@ -72,6 +72,7 @@ public class ActiveServlet extends HttpServlet {
                 sql.append(" and ").append(k).append("= '").append(v).append("'");
             }
         }
+         System.out.printf("%s \r\n",sql.toString());
         affectedRows = buildConnect().createStatement().executeUpdate(sql.toString());
         return affectedRows;
     }
@@ -98,17 +99,19 @@ public class ActiveServlet extends HttpServlet {
             k = iterator.next().toString();
             v = data.get(k).toString();
             sql.append(k).append(",");
-            value.append(v).append(",");
+            value.append("'").append(v).append("',");
         }
         if (sql.toString().endsWith(",")) {
             String subSequence = sql.toString().substring(0, sql.length()-1);
             sql.setLength(0);
             sql.append(subSequence).append(")");
 
-            subSequence = value.toString().substring(0, value.length());
+            subSequence = value.toString().substring(0, value.length()-1);
             value.setLength(0);
             value.append(subSequence).append(")");
         }
+        sql.append(" ").append(value);
+        System.out.printf("%s \r\n",sql.toString());
         affectedRows = buildConnect().createStatement().executeUpdate(sql.toString());
         return affectedRows;
     }
@@ -138,6 +141,7 @@ public class ActiveServlet extends HttpServlet {
             sql.append(" and ").append(k).append(" = '").append(v).append("'");
 
         }
+         System.out.printf("%s \r\n",sql.toString());
         affectedRows = buildConnect().createStatement().executeUpdate(sql.toString());
         return affectedRows;
     }
@@ -199,6 +203,7 @@ public class ActiveServlet extends HttpServlet {
             if (order != null && !order.isEmpty()) {
                 sql.append(" order by ").append(order);
             }
+             System.out.printf("%s \r\n",sql.toString());
             java.sql.PreparedStatement ps = buildConnect().prepareStatement(sql.toString());
             ResultSet rs = ps.executeQuery();
             JSONString = toJSONArray(rs).toString();

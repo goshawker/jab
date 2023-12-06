@@ -50,116 +50,6 @@ public class FileUtils {
         return inputStream;
     }
 
-    public static void generateAction() throws Exception {
-        String blank7 = "	    ";
-        /*查询代码*/
-        StringBuffer queryCode = new StringBuffer("/** TODO Auto-generated  */").append("\r\n");
-        /*新增代码*/
-        StringBuffer insertCode = new StringBuffer("/** TODO Auto-generated  */").append("\r\n");
-        /*更新代码*/
-        StringBuffer updateCode = new StringBuffer("/** TODO Auto-generated  */").append("\r\n");
-        /*删除代码*/
-        StringBuffer deleteCode = new StringBuffer("/** TODO Auto-generated  */").append("\r\n");
-
-        NamedNodeMap[] items = XmlUtils.parseItems();
-        String namespace = XmlUtils.getNodeValue(items[0], "namespace");
-        String tableName = XmlUtils.getNodeValue(items[0], "tableName");
-
-        StringBuilder QuerySQL = new StringBuilder("select ");
-        StringBuilder UpdateSQL = new StringBuilder("update ").append(tableName).append(" set ");
-
-        StringBuilder values_insert = new StringBuilder();
-
-        NamedNodeMap[] args = XmlUtils.parseItem();
-        Vector<String> keys_columns = new Vector<>();
-        Vector<String> nokeys_columns = new Vector<>();
-        Vector<String> all_columns = new Vector<>();
-        for (NamedNodeMap map : args) {
-            String id = XmlUtils.getNodeValue(map, "id").toLowerCase();
-            String primaryKey = XmlUtils.getNodeValue(map, "primarykey").toLowerCase();
-            //InsertSQL.append(id).append(",");
-            QuerySQL.append(id).append(",");
-            all_columns.add(id);
-            // whereCondition_query.append(" and ").append(id).append("=? ");
-            values_insert.append("?,");
-            if (StringUtils.isNotEmptyAndNull(primaryKey)) {
-                /*主键部分*/
-                keys_columns.add(id);
-                deleteCode.append(blank7).append("String ").append(id).append(" = request.getParameter(\"").append(id).append("\"); \r\n");
-                // whereCondition.append(" and ").append(id).append("=? ");
-            } else {
-                /*非主键部分*/
-                nokeys_columns.add(id);
-                UpdateSQL.append(id).append(" = ?,");
-            }
-
-            insertCode.append(blank7).append("String ").append(id).append(" = request.getParameter(\"").append(id).append("\"); \r\n");
-            updateCode.append(blank7).append("String ").append(id).append(" = request.getParameter(\"").append(id).append("\"); \r\n");
-            queryCode.append(blank7).append("String ").append(id).append(" = request.getParameter(\"").append(id).append("\"); \r\n");
-        }
-        //处理列拼接，多余部分
-        if (UpdateSQL.toString().trim().endsWith(",")) {
-            String tmp = UpdateSQL.toString().trim().substring(0, UpdateSQL.length() - 1);
-            UpdateSQL.setLength(0);
-            UpdateSQL.append(tmp);
-        }
-        //处理列拼接，多余部分
-        if (values_insert.toString().trim().endsWith(",")) {
-            String tmp = values_insert.substring(0, values_insert.length() - 1);
-            values_insert.setLength(0);
-            values_insert.append(tmp).append(")");
-        }
-
-        //处理列拼接，多余部分
-        if (QuerySQL.toString().trim().endsWith(",")) {
-            String tmp = QuerySQL.substring(0, QuerySQL.length() - 1);
-            QuerySQL.setLength(0);
-            QuerySQL.append(tmp);
-        }
-        QuerySQL.append(" from ").append(tableName);
-
-        //插入SQL
-        insertCode.append(blank7).append("java.sql.PreparedStatement ps =  null;\r\n");
-        //删除SQL
-        deleteCode.append(blank7).append("java.sql.PreparedStatement ps =  null;\r\n");
-        //更新SQL
-        updateCode.append(blank7).append("java.sql.PreparedStatement ps =  null;\r\n");
-        //查询SQL
-        queryCode.append(blank7).append("java.sql.PreparedStatement ps =  null;\r\n");
-
-        /*处理动态新增SQL*/
-        buildDynamicInsertSQL("insert into " + tableName, keys_columns, all_columns, insertCode);
-        /*处理动态查询SQL*/
-        buildDynamicWhereConditions(QuerySQL.toString(), all_columns, queryCode);
-        /*处理动态更新SQL*/
-        buildDynamicUpdateSQL(UpdateSQL.toString(), keys_columns, nokeys_columns, updateCode);
-        /*处理动态删除SQL*/
-        buildDynamicWhereConditions("delete from " + tableName, keys_columns, deleteCode);
-        deleteCode.append(blank7).append("affected_rows = ps.executeUpdate();").append("\r\n");
-        updateCode.append(blank7).append("affected_rows = ps.executeUpdate();").append("\r\n");
-        insertCode.append(blank7).append("affected_rows = ps.executeUpdate();").append("\r\n");
-        queryCode.append(blank7).append("java.sql.ResultSet rs = ps.executeQuery();").append("\r\n");
-        queryCode.append(blank7).append("JSONString = toJSONArray(rs).toString();").append("\r\n");
-
-        try {
-            HashMap<String, String> replace = new HashMap<>();
-            replace.put("#PACKAGE#", namespace.substring(1).replaceAll("/", "."));
-            replace.put("#NAMESPACE#", namespace);
-            replace.put("#INSERTCODE#", insertCode.toString());
-            replace.put("#QUERYCODE#", queryCode.toString());
-            replace.put("#DELETECODE#", deleteCode.toString());
-            replace.put("#UPDATECODE#", updateCode.toString());
-            DBUtils.init();
-            replace.put("#DRIVER#", DBUtils.driver);
-            replace.put("#USER#", DBUtils.user);
-            replace.put("#PWD#", DBUtils.pwd);
-            replace.put("#URL#", DBUtils.url);
-            generateCode("template/Active.java.template", replace, "JabActive.java", namespace);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public static void generateAction(String namespace, String tableName, NamedNodeMap[] items) throws Exception {
         String blank7 = "	    ";
         /*查询代码*/
@@ -185,7 +75,7 @@ public class FileUtils {
         updateMethodCode.append(blank7).append(blank7).append("HashMap<String,String> data = new HashMap<String,String>();\r\n");
         updateMethodCode.append(blank7).append(blank7).append("HashMap<String,String>  where = new HashMap<String,String> ();\r\n");
 
-        initDmMethodCode.append(blank7).append(blank7).append("returnData = queryTableData(\""+tableName+"\",null,null,null,false);\r\n");
+        initDmMethodCode.append(blank7).append(blank7).append("returnData = queryTableData(\"" + tableName + "\",null,null,null,false);\r\n");
 
 
         deleteMethodCode.append(blank7).append(blank7).append("HashMap<String,String> hashMap = new HashMap<String,String>();\r\n");
@@ -195,12 +85,12 @@ public class FileUtils {
 
             //query
             queryMethodCode.append(blank7).append(blank7).append("String ").append(id).append(" = request.getParameter(\"").append(id).append("\"); \r\n");
-            queryMethodCode.append(blank7).append(blank7).append("colume.add(\""+id+"\");\r\n");
-            queryMethodCode.append(blank7).append(blank7).append("where.put(\""+id+"\","+id+");\r\n");
+            queryMethodCode.append(blank7).append(blank7).append("colume.add(\"" + id + "\");\r\n");
+            queryMethodCode.append(blank7).append(blank7).append("where.put(\"" + id + "\"," + id + ");\r\n");
 
             //insert
             insertMethodCode.append(blank7).append(blank7).append("String ").append(id).append(" = request.getParameter(\"").append(id).append("\"); \r\n");
-            insertMethodCode.append(blank7).append(blank7).append("hashMap.put(\""+id+"\","+id+");\r\n");
+            insertMethodCode.append(blank7).append(blank7).append("hashMap.put(\"" + id + "\"," + id + ");\r\n");
 
             updateMethodCode.append(blank7).append(blank7).append("String ").append(id).append(" = request.getParameter(\"").append(id).append("\"); \r\n");
 
@@ -208,31 +98,31 @@ public class FileUtils {
 
             if (StringUtils.isNotEmptyAndNull(primaryKey)) {
                 /*主键部分*/
-                updateMethodCode.append(blank7).append(blank7).append("where.put(\""+id+"\", "+id+"); \r\n");
-                deleteMethodCode.append(blank7).append(blank7).append("hashMap.put(\""+id+"\", "+id+"); \r\n");
+                updateMethodCode.append(blank7).append(blank7).append("where.put(\"" + id + "\", " + id + "); \r\n");
+                deleteMethodCode.append(blank7).append(blank7).append("hashMap.put(\"" + id + "\", " + id + "); \r\n");
                 keyColume.append(id);
             } else {
                 /*非主键部分*/
-                updateMethodCode.append(blank7).append(blank7).append("data.put(\""+id+"\", "+id+"); \r\n");
+                updateMethodCode.append(blank7).append(blank7).append("data.put(\"" + id + "\", " + id + "); \r\n");
             }
         }
         //query
-        queryMethodCode.append(blank7).append(blank7).append("returnData =  queryTableData(\""+tableName+"\",colume,where,\""+keyColume+"\",true);");
+        queryMethodCode.append(blank7).append(blank7).append("returnData =  queryTableData(\"" + tableName + "\",colume,where,\"" + keyColume + "\",true);");
         //insert
         insertMethodCode.append(blank7).append(blank7).append(" try { \r\n");
-        insertMethodCode.append(blank7).append(blank7).append(blank7).append(" returnData = String.valueOf(insertTableData(\""+tableName+"\", hashMap)); \r\n");
+        insertMethodCode.append(blank7).append(blank7).append(blank7).append(" returnData = String.valueOf(insertTableData(\"" + tableName + "\", hashMap)); \r\n");
         insertMethodCode.append(blank7).append(blank7).append("  } catch (SQLException e) { throw new RuntimeException(e); } \r\n");
 
 
         updateMethodCode.append(blank7).append(blank7).append(" try { \r\n");
-        updateMethodCode.append(blank7).append(blank7).append(blank7).append(" returnData =  String.valueOf(updateTableData(\""+tableName+"\",data,where)); \r\n");
+        updateMethodCode.append(blank7).append(blank7).append(blank7).append(" returnData =  String.valueOf(updateTableData(\"" + tableName + "\",data,where)); \r\n");
         updateMethodCode.append(blank7).append(blank7).append("  } catch (SQLException e) { throw new RuntimeException(e); } \r\n");
 
         deleteMethodCode.append(blank7).append(blank7).append(" try { \r\n");
-        deleteMethodCode.append(blank7).append(blank7).append(blank7).append(" returnData = String.valueOf(deleteTableData(\""+tableName+"\",hashMap)); \r\n");
+        deleteMethodCode.append(blank7).append(blank7).append(blank7).append(" returnData = String.valueOf(deleteTableData(\"" + tableName + "\",hashMap)); \r\n");
         deleteMethodCode.append(blank7).append(blank7).append("  } catch (SQLException e) { throw new RuntimeException(e); } \r\n");
 
-        getNextBhMethodCode.append(blank7).append(blank7).append(" returnData = getNextBh(\""+tableName+"\",\""+keyColume+"\"); \r\n");
+        getNextBhMethodCode.append(blank7).append(blank7).append(" returnData = getNextBh(\"" + tableName + "\",\"" + keyColume + "\"); \r\n");
         try {
             HashMap<String, String> replace = new HashMap<>();
             replace.put("#PACKAGE#", namespace.substring(1).replaceAll("/", "."));
@@ -256,8 +146,6 @@ public class FileUtils {
     }
 
 
-
-
     public static void generateCss(String namespace) throws Exception {
         HashMap<String, String> replace = new HashMap<>();
         generateCode("template/common.css.template", replace, "common.css", namespace);
@@ -265,144 +153,6 @@ public class FileUtils {
 
     public static void generateJavascript(String namespace) throws Exception {
         generateCode("template/common.js.template", scripts, "common.js", namespace);
-    }
-
-    /**
-     * 生成动态SQL,WHERE条件部分
-     *
-     * @param resultSQL  sql前缀，如：select * from xxx
-     * @param parameters 需要校验是否为空的请求参数，如果为空则忽略掉
-     * @param javaCode   返回的java代码
-     */
-    public static void buildDynamicWhereConditions(String resultSQL, Vector<String> parameters, StringBuffer javaCode) {
-        // StringBuffer javaCode = new StringBuffer("");
-        String blank7 = "	    ";
-        String blank9 = "	      ";
-        if (resultSQL.length() > 0) {
-            javaCode.append(blank7).append("java.util.Vector<String> lst_value = new java.util.Vector<>();").append("\r\n");
-            javaCode.append(blank7).append("java.util.Vector<String> lst_key = new java.util.Vector<>();").append("\r\n");
-            //int i = 0;
-            for (String id : parameters) {
-                //i++;
-                //处理查询条件
-                javaCode.append(blank7).append("if(").append(id).append("!=null && ").append(id).append(".length() > 0){").append("\r\n");
-                javaCode.append(blank9).append("lst_value.add(").append(id).append("); \r\n");
-                javaCode.append(blank9).append("lst_key.add(\"").append(id).append("\"); \r\n");
-                javaCode.append(blank7).append("}").append("\r\n");
-            }
-            javaCode.append(blank7).append("for(String s : lst_key){").append("\r\n");
-            javaCode.append(blank9).append("todoSql += \" and \" + s +\" like ?\" ;").append("\r\n");
-            javaCode.append(blank7).append("}").append("\r\n");
-
-            javaCode.append(blank7).append("todoSql =\" ").append(resultSQL).append(" where 1=1 \" + todoSql; ").append("\r\n");
-            javaCode.append(blank7).append("ps =  buildConnect().prepareStatement(todoSql);").append("\r\n");
-
-            javaCode.append(blank7).append("for(int i=0;i<lst_value.size();i++){").append("\r\n");
-            javaCode.append(blank9).append("ps.setString(i+1,\"%\"+lst_value.get(i)+\"%\");").append("\r\n");
-            javaCode.append(blank7).append("}").append("\r\n");
-        }
-        // return javaCode;
-    }
-
-    /**
-     * 生产insert语句
-     *
-     * @param prefixSQL      前缀SQL
-     * @param keys_columns   主键列
-     * @param nokeys_columns 非主键列
-     * @param javaCode       生成的java代码
-     */
-    public static void buildDynamicUpdateSQL(String prefixSQL, Vector<String> keys_columns, Vector<String> nokeys_columns, StringBuffer javaCode) {
-        // StringBuffer javaCode = new StringBuffer("");
-        String blank7 = "	    ";
-        String blank9 = "	      ";
-        if (prefixSQL.length() > 0) {
-            javaCode.append(blank7).append("java.util.Vector<String> lst_value = new java.util.Vector<>();").append("\r\n");
-            //javaCode.append(blank7).append("java.util.Vector<String> lst_key = new java.util.Vector<>();").append("\r\n");
-            // int i = 0;
-            /*处理非key*/
-            for (String id : nokeys_columns) {
-                // i++;
-                /*处理非主键字段，为null改为”“*/
-                javaCode.append(blank9).append("/**处理非主键*/ \r\n");
-                javaCode.append(blank7).append("if(").append(id).append("==null){").append("\r\n");
-                javaCode.append(blank9).append(id).append("=\"\"; \r\n");
-                javaCode.append(blank7).append("}").append("\r\n");
-                javaCode.append(blank9).append("lst_value.add(").append(id).append("); \r\n");
-                //javaCode.append(blank9).append("lst_key.add(\"").append(id).append("\"); \r\n");
-            }
-            /*处理key*/
-            for (String id : keys_columns) {
-                //i++;
-                //处理查询条件
-                javaCode.append(blank9).append("/**处理主键*/ \r\n");
-                javaCode.append(blank9).append("lst_value.add(").append(id).append("); \r\n");
-                //javaCode.append(blank9).append("lst_key.add(\"").append(id).append("\"); \r\n");
-                javaCode.append(blank9).append("todoSql += \" and ").append(id).append("=?\" ;").append("\r\n");
-            }
-
-            javaCode.append(blank7).append("todoSql =\" ").append(prefixSQL).append(" where 1=1 \" + todoSql; ").append("\r\n");
-            javaCode.append(blank7).append("ps =  buildConnect().prepareStatement(todoSql);").append("\r\n");
-
-            javaCode.append(blank7).append("for(int i=0;i<lst_value.size();i++){").append("\r\n");
-            // queryCode.append(blank9).append("todoSql += \" and \" + lst_key.get(i) +\"=?\" ;").append("\r\n");
-            javaCode.append(blank9).append("ps.setString(i+1,lst_value.get(i));").append("\r\n");
-            javaCode.append(blank7).append("}").append("\r\n");
-        }
-        //return javaCode;
-    }
-
-    /**
-     * 生产insert语句
-     *
-     * @param prefixSQL    前缀SQL
-     * @param keys_columns 主键列
-     * @param all_columns  所有列
-     * @param javaCode     生成的java代码
-     */
-    public static void buildDynamicInsertSQL(String prefixSQL, Vector<String> keys_columns, Vector<String> all_columns, StringBuffer javaCode) {
-        // StringBuffer javaCode = new StringBuffer("");
-        String blank7 = "	    ";
-        String blank9 = "	      ";
-        if (prefixSQL.length() > 0) {
-            javaCode.append(blank7).append("java.util.Vector<String> lst_value = new java.util.Vector<>();").append("\r\n");
-            javaCode.append(blank7).append("java.util.Vector<String> lst_key = new java.util.Vector<>();").append("\r\n");
-            // int i = 0;
-            for (String id : all_columns) {
-                // i++;
-                if (keys_columns.contains(id)) {
-                    //如果主键为null或者为空，返回0
-                    javaCode.append(blank7).append("if(").append(id).append("==null || ").append(id).append(".length() == 0){").append("\r\n");
-                    javaCode.append(blank9).append("return \"0\"; \r\n");
-                    javaCode.append(blank7).append("}else{").append("\r\n");
-                } else {
-                    javaCode.append(blank7).append("if(").append(id).append(".length() > 0){").append("\r\n");
-                }
-                javaCode.append(blank9).append("lst_value.add(").append(id).append("); \r\n");
-                javaCode.append(blank9).append("lst_key.add(\"").append(id).append("\"); \r\n");
-                javaCode.append(blank7).append("}").append("\r\n");
-            }
-            //拼接字段
-            javaCode.append(blank7).append("for(int i=0;i<lst_key.size();i++){").append("\r\n");
-            javaCode.append(blank9).append("todoSql +=  lst_key.get(i)  ;").append("\r\n");
-            javaCode.append(blank9).append("if(i<lst_key.size()-1){ todoSql +=  \",\"; };").append("\r\n");
-            javaCode.append(blank7).append("}").append("\r\n");
-
-            //拼接?
-            javaCode.append(blank7).append("todoSql = \"(\" +todoSql+ \") values(\" ;").append("\r\n");
-            javaCode.append(blank7).append("for(int i=0;i<lst_key.size();i++){").append("\r\n");
-            javaCode.append(blank9).append("todoSql +=  \"?\" ;").append("\r\n");
-            javaCode.append(blank9).append("if(i<lst_key.size()-1){todoSql +=  \",\"; };").append("\r\n");
-            javaCode.append(blank7).append("}").append("\r\n");
-
-            javaCode.append(blank7).append("todoSql =\" ").append(prefixSQL).append(" \" +todoSql+\")\"; ").append("\r\n");
-            javaCode.append(blank7).append("ps =  buildConnect().prepareStatement(todoSql);").append("\r\n");
-
-            javaCode.append(blank7).append("for(int i=0;i<lst_value.size();i++){").append("\r\n");
-            javaCode.append(blank9).append("ps.setString(i+1,lst_value.get(i));").append("\r\n");
-            javaCode.append(blank7).append("}").append("\r\n");
-        }
-        //return javaCode;
     }
 
 
@@ -838,8 +588,9 @@ public class FileUtils {
                     .append(blank9 + blank7).append("</td>").append("\r\n");
             /*生成查询结果数据，灌装数据*/
 
-            queryResultData.append(blank7).append("trHtml +=\"<td class='editGrid'  align='left'>").append("\"")
-                    .append("+data[i]." + id + "+")
+            queryResultData.append(blank7).append("trHtml +=\"<td class='editGrid'  align='left' title='\"+data[i]." +id+
+                            "+\"'>").append("\"").append("+(data[i]." + id + ".length>50?data[i]." + id + ".substring(0,50).concat('...'):data[i]." + id + ")+")
+                   // .append("+data[i]." + id + "+")
                     .append("\"</td>\"").append(";\r\n");
 
             /*最后一个元素，添加操作代码*/

@@ -23,34 +23,34 @@ public class Active extends ActiveServlet {
               response.getWriter().write(html);
               return;
           }
-          if (method.contains("query")) {
+          if (method.equals("query")) {
                 #QUERYCODE#
                 response.getWriter().write(returnData);
 
 
-          } else if (method.contains("insert")) {
+          } else if (method.equals("insert")) {
               response.setContentType("text/html; charset=UTF-8");
               #INSERTCODE#
               String html = responseHtml(returnData, null, true,false);
               response.getWriter().write(html);
 
-          } else if (method.contains("update")) {
+          } else if (method.equals("update")) {
               response.setContentType("text/html; charset=UTF-8");
               #UPDATECODE#
               String html = responseHtml(returnData, null, true,false);
               response.getWriter().write(html);
 
-          } else if (method.contains("initDm")) {
+          } else if (method.equals("initDm")) {
               response.setContentType("text/html; charset=UTF-8");
               #INITDMCODE#
               response.getWriter().write(returnData);
 
-          }else if (method.contains("getNextBh")) {
+          }else if (method.equals("getNextBh")) {
              response.setContentType("text/html; charset=UTF-8");
              #GETNEXTBHCODE#
              response.getWriter().write(returnData);
 
-          }else if (method.contains("delete")) {
+          }else if (method.equals("delete")) {
               #DELETECODE#
               response.getWriter().write(returnData);
           }
